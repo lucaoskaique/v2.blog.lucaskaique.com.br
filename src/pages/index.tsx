@@ -1,5 +1,34 @@
-import Home from "@/templates/Home"
+import fs from "fs"
 
-export default function Index() {
-  return <Home />
+import { getAllPosts } from "@/lib/api"
+//TODO: implementar algolia
+// import { buildAlgoliaIndexes } from "@/lib/buildAlgoliaIndexes"
+import { generateRss } from "@/lib/generateRSS"
+import { generateSitemap } from "@/lib/generateSitemap"
+import { Post } from "@/types"
+
+export default function Index({ posts }: { posts: Post[] }) {
+  if (posts) return <p>{JSON.stringify(posts[0], null, 2)}</p>
+
+  return <h1>Home</h1>
+}
+
+export async function getStaticProps() {
+  const posts = getAllPosts()
+
+  if (process.env.NODE_ENV !== "development") {
+    await generateSitemap(posts)
+
+    const rss = await generateRss(posts)
+    fs.writeFileSync("./public/feed.xml", rss)
+
+    //TODO: implementar algolia
+    // await buildAlgoliaIndexes(posts)
+  }
+
+  return {
+    props: {
+      posts
+    }
+  }
 }
