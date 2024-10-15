@@ -1,0 +1,7 @@
+export { PostHeader } from "./PostHeader"
+export { PostTitle } from "./PostTitle"
+export { PostDescription } from "./PostDescription"
+export { ButtonBack } from "./ButtonBack"
+export { PostDate } from "./PostDate"
+export { MainContent } from "./MainContent"
+export { default as PostComponent } from "./PostComponent"
