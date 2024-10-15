@@ -137,3 +137,35 @@ pnpm start
 ```
 
 Ele irá rodar o projeto em produção.
+
+## Como adicionar posts com Markdown
+
+Para adicionar novos posts ao blog utilizando Markdown, siga os passos abaixo:
+
+1. **Crie um novo arquivo Markdown**: Na pasta `posts`, crie um novo arquivo com a extensão `.md`. Por exemplo, `meu-novo-post.md`.
+
+2. **Adicione o conteúdo do post**: No arquivo Markdown, adicione o conteúdo do seu post. Utilize a seguinte estrutura básica:
+
+   ```markdown
+   ---
+   title: "Título do Post"
+   date: "2023-10-01"
+   description: "Descrição breve do post."
+   ---
+
+   # Título do Post
+
+   Este é o conteúdo do seu post em Markdown.
+   ```
+
+3. **Salve o arquivo**: Salve o arquivo na pasta `posts`.
+
+4. **Atualize o blog**: O blog irá automaticamente detectar e renderizar o novo post. Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
+
+Agora você pode adicionar novos posts ao seu blog utilizando Markdown de forma simples e rápida.
+
+```
+
+### Explicação Adicionada:
+- **Como adicionar posts com Markdown**: Esta seção explica como criar e adicionar novos posts ao blog utilizando arquivos Markdown, incluindo a estrutura básica do arquivo e onde salvá-lo.
+```
