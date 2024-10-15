@@ -1,4 +1,29 @@
 import type { Config } from "tailwindcss"
+import { PluginCreator } from "tailwindcss/types/config"
+
+const defaultTiming = "0.2s ease"
+const bgTransition = `background ${defaultTiming}`
+const colorTransition = `color ${defaultTiming}`
+const defaultTransition = `${bgTransition}, ${colorTransition}`
+
+const containerPlugin: PluginCreator = ({ addUtilities }) => {
+  const newUtilities = {
+    ".transition-default": {
+      transition: defaultTransition
+    },
+    ".transition-color": {
+      transition: colorTransition
+    },
+    ".transition-background": {
+      transition: bgTransition
+    },
+    ".transition-all-custom": {
+      transition: `all ${defaultTiming}`
+    }
+  }
+
+  addUtilities(newUtilities)
+}
 
 const config: Config = {
   content: [
@@ -25,11 +50,17 @@ const config: Config = {
         }
       },
       fontFamily: {
-        alteHaas: [
-          '"Alte Haas Grotesk"',
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif"
+        sans: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"Segoe UI"',
+          "Roboto",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+          '"Segoe UI Symbol"'
         ]
       },
       padding: {
@@ -37,50 +68,20 @@ const config: Config = {
         section: "6rem"
       },
       colors: {
-        primary: "hsl(var(--primary))",
-        secondary: "hsl(var(--secondary))",
-        background: "hsl(var(--background))",
-        "background-secondary": "hsl(var(--background-secondary))",
-        highlight: "hsl(var(--highlight))",
-        lightColor: "hsl(var(--light))",
-        darkColor: "hsl(var(--dark))"
+        background: "var(--background)",
+        borders: "var(--borders)",
+        texts: "var(--texts)",
+        postColor: "var(--postColor)",
+        highlight: "var(--highlight)",
+        mediumBackground: "var(--mediumBackground)",
+        white: "var(--white)",
+        black: "var(--black)"
       },
       boxShadow: {
         button: "0px 0px 0px 1px rgba(0, 0, 0, 0.2) inset"
-      },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))"
-      },
-      keyframes: {
-        drawerAnimationDown: {
-          "0%": { transform: "translateY(-100%)" },
-          "100%": { transform: "translateY(0)" }
-        },
-        drawerAnimationUp: {
-          "0%": { transform: "translateY(0)" },
-          "100%": { transform: "translateY(-100%)" }
-        }
-      },
-      animation: {
-        drawerDown: "drawerAnimationDown 0.3s ease-in forwards",
-        drawerUp: "drawerAnimationUp 0.3s ease-out forwards"
-      },
-      /* Sets the base font size using the clamp() function:
-          - Minimum size: 1rem (16px)
-          - Preferred size: 2vw (2% of the viewport width)
-          - Maximum size: 1.2rem (19.2px)
-      */
-      fontSize: {
-        base: "clamp(1rem, 2vw, 1.2rem)",
-        h1: "clamp(3rem, 5vw, 4.5rem)",
-        h2: "clamp(1.75rem, 4vw, 2.25rem)",
-        h3: "clamp(1.5rem, 3.5vw, 2rem)",
-        paragraph: "clamp(1.5rem, 2.5vw, 1.5rem)"
       }
     }
   },
-  plugins: []
+  plugins: [containerPlugin]
 }
 export default config
