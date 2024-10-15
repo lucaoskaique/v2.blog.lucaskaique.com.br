@@ -1,6 +1,11 @@
 {
-  "name": "Resgate+",
-  "short_name": "Resgate+",
+  "name": "Lucas Kaique Blog",
+  "short_name": "LKB",
+  "description": "Um blog sobre tecnologia, programação e desenvolvimento web.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -12,8 +17,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "theme_color": "#323232",
-  "background_color": "#323232",
-  "display": "standalone"
+  ]
 }
