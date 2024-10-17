@@ -18,8 +18,8 @@ collections:
     folder: posts
     create: true
     slug: "{{slug}}"
-    media_folder: "/public/images/{{slug}}"
-    public_folder: "/images/{{slug}}"
+    media_folder: "public/assets/img/{{slug}}"
+    public_folder: "/assets/img/{{slug}}"
     fields:
       - { label: "Layout", name: "layout", widget: "hidden", default: "post" }
       - {
