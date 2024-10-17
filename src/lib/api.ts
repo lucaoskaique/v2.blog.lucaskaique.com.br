@@ -1,5 +1,3 @@
-import { format } from "date-fns"
-import { pt } from "date-fns/locale"
 import fs from "fs"
 import matter from "gray-matter"
 import { join } from "path"
@@ -19,13 +17,11 @@ export function getPostBySlug(slug: string): Post | null {
 
     const postData = data as Post["frontmatter"]
 
-    const date = format(new Date(postData.date), "dd 'de' MMMM 'de' yyyy", {
-      locale: pt
-    })
+    const date = new Date(postData.date).toString()
 
     return {
       slug: realSlug,
-      date: postData.date.toString(),
+      date: new Date(postData.date).toString(),
       frontmatter: {
         ...postData,
         date
