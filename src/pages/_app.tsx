@@ -14,8 +14,10 @@ export default function App({ Component, pageProps }: AppProps) {
       defaultTheme="dark"
       enableSystem
       disableTransitionOnChange>
-      <DefaultSeo {...SEO} />
-      <Component {...pageProps} />
+      <div className="flex w-full">
+        <DefaultSeo {...SEO} />
+        <Component {...pageProps} />
+      </div>
       <CookieConsent />
     </ThemeProvider>
   )
