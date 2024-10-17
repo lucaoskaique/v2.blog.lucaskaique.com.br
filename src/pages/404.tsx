@@ -1,15 +1,17 @@
+import { Container } from "@/components/Container"
 import Empty from "@/components/Empty"
 import Base from "@/templates/Base"
 
 export default function Page404() {
   return (
     <Base>
-      <div className="container">
+      <Container className="flex h-full items-center pt-16 sm:pt-32">
         <Empty
-          title="404: Not Found"
-          description="Ops...esta página não existe!"
-          hasLink></Empty>
-      </div>
+          title="Page not found"
+          description="Sorry, we couldn’t find the page you’re looking for."
+          hasLink
+        />
+      </Container>
     </Base>
   )
 }
