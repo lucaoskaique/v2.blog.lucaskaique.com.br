@@ -1,29 +1,31 @@
+import typographyPlugin from "@tailwindcss/typography"
 import type { Config } from "tailwindcss"
-import { PluginCreator } from "tailwindcss/types/config"
 
-const defaultTiming = "0.2s ease"
-const bgTransition = `background ${defaultTiming}`
-const colorTransition = `color ${defaultTiming}`
-const defaultTransition = `${bgTransition}, ${colorTransition}`
+import typographyStyles from "./typography"
 
-const containerPlugin: PluginCreator = ({ addUtilities }) => {
-  const newUtilities = {
-    ".transition-default": {
-      transition: defaultTransition
-    },
-    ".transition-color": {
-      transition: colorTransition
-    },
-    ".transition-background": {
-      transition: bgTransition
-    },
-    ".transition-all-custom": {
-      transition: `all ${defaultTiming}`
-    }
-  }
+// const defaultTiming = "0.2s ease"
+// const bgTransition = `background ${defaultTiming}`
+// const colorTransition = `color ${defaultTiming}`
+// const defaultTransition = `${bgTransition}, ${colorTransition}`
 
-  addUtilities(newUtilities)
-}
+// const containerPlugin: PluginCreator = ({ addUtilities }) => {
+//   const newUtilities = {
+//     ".transition-default": {
+//       transition: defaultTransition
+//     },
+//     ".transition-color": {
+//       transition: colorTransition
+//     },
+//     ".transition-background": {
+//       transition: bgTransition
+//     },
+//     ".transition-all-custom": {
+//       transition: `all ${defaultTiming}`
+//     }
+//   }
+
+//   addUtilities(newUtilities)
+// }
 
 const config: Config = {
   content: [
@@ -33,55 +35,24 @@ const config: Config = {
     "./src/templates/**/*.{js,ts,jsx,tsx,mdx}"
   ],
   darkMode: "class",
+  plugins: [typographyPlugin],
   theme: {
-    extend: {
-      container: {
-        center: true,
-        padding: {
-          DEFAULT: "1rem",
-          sm: "2rem"
-        },
-        screens: {
-          sm: "100%", // Full width for small screens (mobile)
-          md: "100%", // Full width for medium screens (tablet)
-          lg: "1024px", // 1024px width for large screens (desktop)
-          xl: "1280px", // 1280px width for extra-large screens (desktop)
-          "2xl": "1536px" // 1536px width for double extra-large screens (desktop)
-        }
-      },
-      fontFamily: {
-        sans: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          '"Segoe UI"',
-          "Roboto",
-          "Helvetica",
-          "Arial",
-          "sans-serif",
-          '"Apple Color Emoji"',
-          '"Segoe UI Emoji"',
-          '"Segoe UI Symbol"'
-        ]
-      },
-      padding: {
-        container: "4.5rem",
-        section: "6rem"
-      },
-      colors: {
-        background: "var(--background)",
-        borders: "var(--borders)",
-        texts: "var(--texts)",
-        postColor: "var(--postColor)",
-        highlight: "var(--highlight)",
-        mediumBackground: "var(--mediumBackground)",
-        white: "var(--white)",
-        black: "var(--black)"
-      },
-      boxShadow: {
-        button: "0px 0px 0px 1px rgba(0, 0, 0, 0.2) inset"
-      }
-    }
-  },
-  plugins: [containerPlugin]
+    fontSize: {
+      xs: ["0.8125rem", { lineHeight: "1.5rem" }],
+      sm: ["0.875rem", { lineHeight: "1.5rem" }],
+      base: ["1rem", { lineHeight: "1.75rem" }],
+      lg: ["1.125rem", { lineHeight: "1.75rem" }],
+      xl: ["1.25rem", { lineHeight: "2rem" }],
+      "2xl": ["1.5rem", { lineHeight: "2rem" }],
+      "3xl": ["1.875rem", { lineHeight: "2.25rem" }],
+      "4xl": ["2rem", { lineHeight: "2.5rem" }],
+      "5xl": ["3rem", { lineHeight: "3.5rem" }],
+      "6xl": ["3.75rem", { lineHeight: "1" }],
+      "7xl": ["4.5rem", { lineHeight: "1" }],
+      "8xl": ["6rem", { lineHeight: "1" }],
+      "9xl": ["8rem", { lineHeight: "1" }]
+    },
+    typography: typographyStyles
+  }
 }
 export default config
