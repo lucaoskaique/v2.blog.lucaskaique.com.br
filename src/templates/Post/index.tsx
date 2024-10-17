@@ -3,6 +3,7 @@ import { NextSeo } from "next-seo"
 import Prism from "prismjs"
 import { ComponentPropsWithoutRef, useEffect } from "react"
 
+import Comments from "@/components/Comments"
 import { Container } from "@/components/Container"
 import { Post } from "@/types"
 import { formatDate } from "@/utils/formatDate"
@@ -68,6 +69,9 @@ const PostTemplate = ({ post }: { post: Post }) => {
                   />
                 </div>
               </article>
+            </div>
+            <div>
+              <Comments title={post.frontmatter.title} />
             </div>
           </div>
         </Container>

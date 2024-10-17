@@ -16,7 +16,7 @@ const Home = ({ posts }: { posts: Post[] }) => {
       <Photos />
       <Container className="mt-24 md:mt-28">
         <div className="flex flex-col gap-16">
-          {posts.map((post) => (
+          {posts.slice(0, 5).map((post) => (
             <div key={post.slug}>
               <Card as="article">
                 <Card.Title href={`/posts/${post.slug}`}>
