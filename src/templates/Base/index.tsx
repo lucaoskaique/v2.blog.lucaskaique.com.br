@@ -1,40 +1,25 @@
 import { ReactNode } from "react"
 
-import Footer from "@/components/Footer"
-import Hero from "@/components/Hero"
-import Navbar from "@/components/Navbar"
-import { heroData } from "@/mock"
+import { Footer } from "@/components/Footer"
+import { Header } from "@/components/Header"
 
 export type BaseTemplateProps = {
   children: ReactNode
 }
 
 const Base = ({ children }: BaseTemplateProps) => (
-  <div className="relative flex min-h-screen w-full flex-col justify-between">
-    <div>
-      <Navbar />
-      <Hero
-        bgUrl={heroData.bgUrl}
-        home={{
-          logo: heroData.home?.logo,
-          title: heroData.home?.title
-        }}
-        donatePage={{
-          title: heroData.donatePage?.title,
-          paragraph1: heroData.donatePage?.paragraph1,
-          paragraph2: heroData.donatePage?.paragraph2,
-          donateCall: heroData.donatePage?.donateCall,
-          qrCodeUrl: heroData.donatePage?.qrCodeUrl
-        }}
-      />
+  <>
+    <div className="fixed inset-0 flex justify-center sm:px-8">
+      <div className="flex w-full max-w-7xl lg:px-8">
+        <div className="w-full bg-white ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-300/20" />
+      </div>
     </div>
-
-    <main>{children}</main>
-
-    <footer className="bg-highlight">
+    <div className="relative flex w-full flex-col">
+      <Header />
+      <main className="flex-auto">{children}</main>
       <Footer />
-    </footer>
-  </div>
+    </div>
+  </>
 )
 
 export default Base

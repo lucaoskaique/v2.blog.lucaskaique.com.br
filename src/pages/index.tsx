@@ -5,12 +5,13 @@ import { getAllPosts } from "@/lib/api"
 // import { buildAlgoliaIndexes } from "@/lib/buildAlgoliaIndexes"
 import { generateRss } from "@/lib/generateRSS"
 import { generateSitemap } from "@/lib/generateSitemap"
+import Home from "@/templates/Home"
 import { Post } from "@/types"
 
 export default function Index({ posts }: { posts: Post[] }) {
-  if (posts) return <p>{JSON.stringify(posts[0], null, 2)}</p>
+  // if (posts) return <p>{JSON.stringify(posts[0], null, 2)}</p>
 
-  return <h1>Home</h1>
+  return <Home posts={posts} />
 }
 
 export async function getStaticProps() {

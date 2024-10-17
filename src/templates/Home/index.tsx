@@ -1,43 +1,42 @@
-import Newsletter from "@/components/Newsletter"
-import SectionAbout from "@/components/SectionAbout"
-import DonateSection from "@/components/SectionDonate"
-import { donateSectionData, newsletterData, sectionAboutData } from "@/mock"
+import { Card } from "@/components/Card"
+import { Container } from "@/components/Container"
+import Hero from "@/components/Hero"
+import { Photos } from "@/components/Photos"
+import { Post } from "@/types"
+import { formatDate } from "@/utils/formatDate"
 
 import Base from "../Base"
 
-const Home = () => {
+const Home = ({ posts }: { posts: Post[] }) => {
   return (
     <Base>
-      <SectionAbout
-        title={sectionAboutData.title}
-        content={sectionAboutData.content}
-        label={sectionAboutData.label}
-        QrCode={sectionAboutData.QrCode}
-        image={sectionAboutData.image}
-        cards={sectionAboutData.cards}
-      />
-
-      <DonateSection
-        title={donateSectionData.title}
-        subtitle={donateSectionData.subtitle}
-        description={donateSectionData.description}
-        milestones={donateSectionData.milestones}
-        media={donateSectionData.media}
-      />
-
-      <div className="bg-highlight text-start text-paragraph leading-tight text-primary md:text-h3">
-        <p className="container py-container">
-          <span className="font-bold text-white">
-            Procuramos organizações parceiras
-          </span>
-          , dispostas a contribuir com todas as etapas de reconstrução do Rio
-          Grande do Sul para somar junto com a{" "}
-          <span className="font-bold text-white">Resgate+</span> no
-          desenvolvimento dos nossos projetos.
-        </p>
-      </div>
-
-      <Newsletter bgUrl={newsletterData.bgUrl} />
+      <Container className="mt-9">
+        <Hero />
+      </Container>
+      <Photos />
+      <Container className="mt-24 md:mt-28">
+        <div className="flex flex-col gap-16">
+          {posts.map((post) => (
+            <div key={post.slug}>
+              <Card as="article">
+                <Card.Title href={`/posts/${post.slug}`}>
+                  {post.frontmatter.title}
+                </Card.Title>
+                <Card.Eyebrow
+                  as="time"
+                  dateTime={post.frontmatter.date}
+                  decorate>
+                  {formatDate(post.frontmatter.date)}
+                </Card.Eyebrow>
+                <Card.Description>
+                  {post.frontmatter.description}
+                </Card.Description>
+                <Card.Cta>Read article</Card.Cta>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </Container>
     </Base>
   )
 }
