@@ -36,7 +36,7 @@ const Button: ForwardRefRenderFunction<
     icon,
     textColor = "primary",
     fontBold = "bold",
-    as: Component = "a",
+    as: Component = "button",
     className,
     ...props
   },
