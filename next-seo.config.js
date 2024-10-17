@@ -33,7 +33,7 @@ export default {
     },
     {
       name: "theme-color",
-      content: "#ffffff"
+      content: "#000"
     }
   ],
   additionalLinkTags: [
