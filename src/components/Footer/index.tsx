@@ -1,79 +1,39 @@
 import Link from "next/link"
+import { ReactNode } from "react"
 
-import Button from "../Button"
-import { navLinks } from "../Navbar"
-// import QrCodeCard from "../QrCodeCard"
-import { ResponsiveIcon, ResponsiveLogo } from "../ResponsiveBrand"
+import { ContainerInner, ContainerOuter } from "@/components/Container"
 
-const Footer = () => {
-  const social = [
-    { plataform: "Instagram", info: "@resgate.mais" },
-    { plataform: "E-mail", info: "resgatemais@gmail.com" },
-    { plataform: "Telefone", info: "(51) 99114-7322" }
-  ]
-  // const qrCodeUrl = "/images/qr-code.png"
-  const title = "FALE CONOSCO"
-
+function NavLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <div>
-      <div className="container flex flex-col items-start justify-between gap-8 py-container text-white sm:w-full sm:flex-row">
-        <Link href="/" className="flex justify-start sm:hidden">
-          <ResponsiveLogo className="hidden w-48 sm:block" highlight="black" />
-          <ResponsiveIcon className="w-16 sm:hidden" highlight="white" />
-        </Link>
-        <div className="flex flex-col gap-2 sm:gap-6">
-          <h2 className="text-paragraph font-bold leading-[18px]">{title}</h2>
-          <ul className="flex flex-col gap-1">
-            {social.map((social, i) => (
-              <li
-                key={i}
-                className="flex items-center gap-2 text-nowrap font-bold">
-                {social.plataform}:
-                <span className="font-medium">{social.info}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        {/* <div className="hidden md:block">
-        <QrCodeCard url={qrCodeUrl} />
-      </div> */}
-
-        <div className="flex flex-col gap-5 self-start">
-          <Link href="/" className="hidden justify-start sm:flex">
-            <ResponsiveLogo
-              className="hidden w-48 sm:block"
-              highlight="black"
-            />
-            <ResponsiveIcon className="w-16 sm:hidden" highlight="white" />
-          </Link>
-          <ul className="flex flex-col items-center sm:flex-row sm:gap-3">
-            {navLinks.map((nav, i) => (
-              <li key={i}>
-                {nav.href === "/donate" ? (
-                  <Button size="large" background="secondary" href={nav.href}>
-                    {nav.label}
-                  </Button>
-                ) : (
-                  <Button
-                    className="hidden px-0 sm:block"
-                    size="medium"
-                    background="transparent"
-                    href={nav.href}>
-                    {nav.label}
-                  </Button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div className="w-full text-center">
-        <p className="px-1 py-1 text-sm text-gray-300">
-          Desenvolvido por Comunidade DOS • © 2024
-        </p>
-      </div>
-    </div>
+    <Link
+      href={href}
+      className="transition hover:text-teal-500 dark:hover:text-teal-400">
+      {children}
+    </Link>
   )
 }
 
-export default Footer
+export function Footer() {
+  return (
+    <footer className="mt-32 flex-none">
+      <ContainerOuter>
+        <div className="border-t border-zinc-100 pb-16 pt-10 dark:border-zinc-700/40">
+          <ContainerInner>
+            <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-zinc-800 dark:text-zinc-200">
+                <NavLink href="/about">About</NavLink>
+                <NavLink href="/projects">Projects</NavLink>
+                <NavLink href="/speaking">Speaking</NavLink>
+                <NavLink href="/setup">Setup</NavLink>
+              </div>
+              <p className="text-sm text-zinc-400 dark:text-zinc-500">
+                &copy; {new Date().getFullYear()} Spencer Sharp. All rights
+                reserved.
+              </p>
+            </div>
+          </ContainerInner>
+        </div>
+      </ContainerOuter>
+    </footer>
+  )
+}
