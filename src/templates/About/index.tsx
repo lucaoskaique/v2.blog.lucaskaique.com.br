@@ -4,14 +4,36 @@ import Link from "next/link"
 import { ComponentPropsWithoutRef, ComponentType, ReactNode } from "react"
 
 import { Container } from "@/components/Container"
+import links from "@/components/Hero/content"
 import {
   GitHubIcon,
   InstagramIcon,
   LinkedInIcon,
-  XIcon
+  SoundCloudIcon,
+  XIcon,
+  YoutubeIcon
 } from "@/components/SocialIcons"
 
 import Base from "../Base"
+
+const getIconComponent = (label: string) => {
+  switch (label.toLowerCase()) {
+    case "github":
+      return GitHubIcon
+    case "X":
+      return XIcon
+    case "youtube":
+      return YoutubeIcon
+    case "instagram":
+      return InstagramIcon
+    case "soundcloud":
+      return SoundCloudIcon
+    case "linkedin":
+      return LinkedInIcon
+    default:
+      return null
+  }
+}
 
 function SocialLink({
   className,
@@ -28,7 +50,7 @@ function SocialLink({
     <li className={clsx(className, "flex")}>
       <Link
         href={href}
-        className="group flex text-sm font-medium text-zinc-800 transition hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-500">
+        className="group flex text-sm font-bold text-zinc-800 transition hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-500">
         <Icon className="h-6 w-6 flex-none fill-zinc-500 transition group-hover:fill-teal-500" />
         <span className="ml-4">{children}</span>
       </Link>
@@ -66,57 +88,58 @@ export default function About() {
           </div>
           <div className="lg:order-first lg:row-span-2">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              I’m Spencer Sharp. I live in New York City, where I design the
-              future.
+              I’m Lucas Kaique. I’m from Goiás and I live in Porto Alegre, where
+              I develop the future.
             </h1>
             <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
               <p>
-                I’ve loved making things for as long as I can remember, and
-                wrote my first program when I was 6 years old, just two weeks
-                after my mom brought home the brand new Macintosh LC 550 that I
-                taught myself to type on.
+                Hi, I’m a Senior Software Engineer and I’ve been coding since I
+                was 14 years old, where my passion for solving problems and
+                designing elegant solutions comes to life. Specializing in
+                back-end technologies like NodeJS, C#, and Go, I am also able to
+                create beautiful and engaging front-end experiences with React
+                and Next.js.
               </p>
               <p>
-                The only thing I loved more than computers as a kid was space.
-                When I was 8, I climbed the 40-foot oak tree at the back of our
-                yard while wearing my older sister’s motorcycle helmet, counted
-                down from three, and jumped — hoping the tree was tall enough
-                that with just a bit of momentum I’d be able to get to orbit.
+                My focus is on creating robust, efficient and user-friendly
+                applications that enhance user interaction and deliver value. In
+                addition to the world of programming, I have a vibrant career as
+                a DJ and event producer.
               </p>
               <p>
-                I spent the next few summers indoors working on a rocket design,
-                while I recovered from the multiple surgeries it took to fix my
-                badly broken legs. It took nine iterations, but when I was 15 I
-                sent my dad’s Blackberry into orbit and was able to transmit a
-                photo back down to our family computer from space.
+                These roles have highlighted my creative streak, giving me the
+                opportunity to orchestrate memorable experiences through music
+                and events. This combination of analytical programming and
+                artistic production skills shapes my unique approach to work,
+                allowing me to bring fresh, innovative ideas to the table.
               </p>
               <p>
-                Today, I’m the founder of Planetaria, where we’re working on
-                civilian space suits and manned shuttle kits you can assemble at
-                home so that the next generation of kids really <em>can</em>{" "}
-                make it to orbit — from the comfort of their own backyards.
+                Whether you’re looking for a sophisticated software solution or
+                an unforgettable event, I’m your go-to professional. I look
+                forward to using my specific skills to deliver unique results.
               </p>
             </div>
           </div>
           <div className="lg:pl-20">
             <ul>
-              <SocialLink href="#" icon={XIcon}>
-                Follow on X
-              </SocialLink>
-              <SocialLink href="#" icon={InstagramIcon} className="mt-4">
-                Follow on Instagram
-              </SocialLink>
-              <SocialLink href="#" icon={GitHubIcon} className="mt-4">
-                Follow on GitHub
-              </SocialLink>
-              <SocialLink href="#" icon={LinkedInIcon} className="mt-4">
-                Follow on LinkedIn
-              </SocialLink>
+              {links.map((link) => {
+                const IconComponent = getIconComponent(link.label)
+                return IconComponent ? (
+                  <SocialLink
+                    className="mt-4"
+                    key={link.label}
+                    href={link.url}
+                    aria-label={`Follow on ${link.label}`}
+                    icon={IconComponent}>
+                    {`Follow on ${link.label}`}
+                  </SocialLink>
+                ) : null
+              })}
               <SocialLink
                 href="mailto:spencer@planetaria.tech"
                 icon={MailIcon}
                 className="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-700/40">
-                spencer@planetaria.tech
+                me@lucaskaique.com.br
               </SocialLink>
             </ul>
           </div>
