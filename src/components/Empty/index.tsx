@@ -20,9 +20,7 @@ const Empty = ({ title, description, hasLink }: EmptyProps) => (
     </p>
     {hasLink && (
       <Link href="/" passHref className="mt-8">
-        <Button as="a" background="black">
-          Go back to Home
-        </Button>
+        <Button as="a">Go back to Home</Button>
       </Link>
     )}
   </div>
