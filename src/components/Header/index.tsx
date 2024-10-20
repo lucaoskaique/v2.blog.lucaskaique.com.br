@@ -167,7 +167,7 @@ function DesktopNavigation(props: ComponentPropsWithoutRef<"nav">) {
         <NavItem href="/about">About</NavItem>
         <NavItem href="/posts">Articles</NavItem>
         <NavItem href="/projects">Projects</NavItem>
-        <NavItem href="/speaking">Speaking</NavItem>
+        {/* <NavItem href="/speaking">Speaking</NavItem> */}
         <NavItem href="/setup">Setup</NavItem>
       </ul>
     </nav>
