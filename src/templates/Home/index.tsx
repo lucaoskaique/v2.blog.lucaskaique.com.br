@@ -62,13 +62,6 @@ const resume: Array<RoleProps> = [
     end: "2019"
   },
   {
-    company: "Instituto Mix",
-    title: "IT Instructor",
-    logo: "/images/logos/planetaria.svg",
-    start: "2014",
-    end: "2016"
-  },
-  {
     company: "Instituto Federal de Gois (IFG)",
     title: "Calculus Professor Assistent, University",
     logo: "/images/logos/planetaria.svg",
@@ -76,11 +69,18 @@ const resume: Array<RoleProps> = [
     end: "2016"
   },
   {
+    company: "Instituto Mix",
+    title: "Developer and IT Instructor",
+    logo: "/images/logos/planetaria.svg",
+    start: "2014",
+    end: "2016"
+  },
+  {
     company: "MMtec",
     title: "Industrial Engineering Technician",
     logo: "/images/logos/planetaria.svg",
-    start: "2015",
-    end: "2016"
+    start: "2013",
+    end: "2014"
   }
 ]
 
