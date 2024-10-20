@@ -3,6 +3,7 @@ import Image from "next/image"
 
 export function Photos() {
   const imagePaths = [
+    "https://avatars.githubusercontent.com/u/20323741?s=400&u=a7bb29a8c468f43c93263967dad8afeba24e5b22&v=4",
     "https://res.cloudinary.com/lucaos/image/upload/v1687836848/lucaoskaique/Carnaval_PLANO_2020_-_5_wveomc.jpg",
     "https://res.cloudinary.com/lucaos/image/upload/v1687836847/lucaoskaique/COICE-01_elisacomandulli_1_m9kkr8.jpg",
     "https://res.cloudinary.com/lucaos/image/upload/v1687836847/lucaoskaique/elisa_comanduli_COICE_2022_-_1_f1hnrr.jpg",
