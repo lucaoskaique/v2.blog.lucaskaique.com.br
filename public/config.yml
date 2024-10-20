@@ -1,9 +1,16 @@
 backend:
   name: github
   branch: main
-  repo: lucaoskaique/blog.lucaskaique.com.br
+  repo: lucaoskaique/v2.blog.lucaskaique.com.br
   base_url: https://blog.lucaskaique.com.br/
   auth_endpoint: api/auth/
+  commit_messages:
+  create: Create {{collection}} “{{slug}}”
+  update: Update {{collection}} “{{slug}}”
+  delete: Delete {{collection}} “{{slug}}”
+  uploadMedia: Upload “{{path}}”
+  deleteMedia: Delete “{{path}}”
+  openAuthoring: "{{message}}"
 
 media_folder: public/assets/img
 public_folder: /assets/img
