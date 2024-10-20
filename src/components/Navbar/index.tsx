@@ -113,12 +113,7 @@ export default function Navbar() {
                   {nav.href === "/donate" ? (
                     <Button href={nav.href}>{nav.label}</Button>
                   ) : (
-                    <Button
-                      size="medium"
-                      background="transparent"
-                      href={nav.href}>
-                      {nav.label}
-                    </Button>
+                    <Button href={nav.href}>{nav.label}</Button>
                   )}
                 </li>
               ))}
@@ -162,11 +157,6 @@ export default function Navbar() {
                     {navLinks.map((nav, i) => (
                       <li key={i}>
                         <Button
-                          textColor="primary"
-                          size="medium"
-                          background={
-                            nav.href === "/donate" ? "red" : "transparent"
-                          }
                           href={nav.href}
                           className={
                             nav.href === "/donate" ? "hidden md:block" : ""
