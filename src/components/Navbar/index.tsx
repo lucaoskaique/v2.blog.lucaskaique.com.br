@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import ThemeToggle from "@/components/ThemeToggler"
 
 import { Banner } from "../Banner"
-import Button from "../Button"
+import { Button } from "../Button"
 import { ResponsiveIcon } from "../ResponsiveBrand"
 
 export type NavLinksProps = {
@@ -150,7 +150,7 @@ export default function Navbar() {
                 />
                 <nav
                   ref={dropdownRef}
-                  className="fixed left-0 top-0 z-20 max-h-96 w-full animate-drawerDown bg-background"
+                  className="animate-drawerDown bg-background fixed left-0 top-0 z-20 max-h-96 w-full"
                   role="navigation">
                   <button
                     onClick={handleButtonClick}
