@@ -88,7 +88,7 @@ export function Photos() {
 
       return () => carousel.removeEventListener("scroll", handleScroll)
     }
-  }, [originalImages])
+  }, [])
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragging(true)
