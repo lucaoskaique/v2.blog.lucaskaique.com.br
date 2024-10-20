@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
-  titleTemplate: "%s | Lucas Kaique Blog",
-  defaultTitle: "Lucas Kaique - Desenvolvimento Web, Musica e Tecnologia.",
+  titleTemplate: "%s | Lucas Kaíque Blog",
+  defaultTitle: "Lucas Kaíque - Tecnologia, Musica e Desenvolvimento Web.",
   description:
     "Um blog sobre tecnologia, programação, música e desenvolvimento web.",
   canonical: "https://lucaskaique.com.br/",
@@ -9,8 +9,8 @@ export default {
     type: "website",
     locale: "pt_BR",
     url: "https://lucaskaique.com.br/",
-    site_name: "Lucas Kaique Blog",
-    title: "Desenvolvimento Web, Musica e Tecnologia",
+    site_name: "Lucas Kaíque",
+    title: "Lucas Kaíque - Tecnologia, Musica e Desenvolvimento Web.",
     description: "Um blog sobre tecnologia, programação e desenvolvimento web.",
     images: [
       {
