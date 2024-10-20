@@ -20,7 +20,7 @@ const PostTemplate = ({ post }: { post: Post }) => {
   return (
     <>
       <NextSeo
-        title={`${post.frontmatter.title} - Lucas Kaíque`}
+        title={`${post.frontmatter.title}`}
         description={post.frontmatter.description}
         openGraph={{
           url: `https://lucaskaique.com.br/${post.slug}`,

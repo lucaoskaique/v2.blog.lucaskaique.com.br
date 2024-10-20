@@ -4,17 +4,17 @@ export default {
   defaultTitle: "Lucas Kaique - Desenvolvimento Web, Musica e Tecnologia.",
   description:
     "Um blog sobre tecnologia, programação, música e desenvolvimento web.",
-  canonical: "https://blog.lucaskaique.com.br/",
+  canonical: "https://lucaskaique.com.br/",
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "https://blog.lucaskaique.com.br",
+    url: "https://lucaskaique.com.br/",
     site_name: "Lucas Kaique Blog",
     title: "Desenvolvimento Web, Musica e Tecnologia",
     description: "Um blog sobre tecnologia, programação e desenvolvimento web.",
     images: [
       {
-        url: "https://blog.lucaskaique.com.br/android-chrome-192x192.png",
+        url: "https://res.cloudinary.com/lucaos/image/upload/v1687836847/lucaoskaique/pysales_Carnaval_PLANO_2020_-_7_fhn3rb.jpg",
         width: 1200,
         height: 630,
         alt: "Desenvolvimento Web, Musica e Tecnologia",
