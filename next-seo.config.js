@@ -1,8 +1,9 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
   titleTemplate: "%s | Lucas Kaique Blog",
-  defaultTitle: "Desenvolvimento Web, Musica e Tecnologia.",
-  description: "Um blog sobre tecnologia, programação e desenvolvimento web.",
+  defaultTitle: "Lucas Kaique - Desenvolvimento Web, Musica e Tecnologia.",
+  description:
+    "Um blog sobre tecnologia, programação, música e desenvolvimento web.",
   canonical: "https://blog.lucaskaique.com.br/",
   openGraph: {
     type: "website",
