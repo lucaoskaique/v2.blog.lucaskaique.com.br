@@ -1,6 +1,6 @@
 import { sectionAboutData } from "@/mock"
 
-import Button from "../Button"
+import { Button } from "../Button"
 import QrCodeCard from "../QrCodeCard"
 import { ResponsiveLogo } from "../ResponsiveBrand"
 
@@ -11,15 +11,15 @@ export type NewsletterProps = {
 export default function Newsletter({ bgUrl }: NewsletterProps) {
   return (
     <div className="custom-bg w-full">
-      <div className="container flex flex-col items-center justify-between py-container max-md:gap-12 lg:flex-row">
+      <div className="py-container container flex flex-col items-center justify-between max-md:gap-12 lg:flex-row">
         <div className="flex h-full flex-col items-start justify-center gap-4 md:gap-8">
-          <h2 className="text-center text-paragraph text-white sm:text-h2">
+          <h2 className="text-paragraph sm:text-h2 text-center text-white">
             <span className="text-h3 font-bold">Cadastrar email</span> para
             receber mais infos
           </h2>
           <div className="flex w-[340px]">
             <input
-              className="w-full rounded-sm bg-white py-1 pl-2 text-base text-black outline-none sm:text-paragraph"
+              className="sm:text-paragraph w-full rounded-sm bg-white py-1 pl-2 text-base text-black outline-none"
               type="email"
               placeholder="exemplo@email.com"
               name="email-cadastro"

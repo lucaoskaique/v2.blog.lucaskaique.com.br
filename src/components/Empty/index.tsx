@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import Button from "../Button"
+import { Button } from "../Button"
 
 export type EmptyProps = {
   title: string
