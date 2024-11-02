@@ -12,8 +12,8 @@ backend:
   deleteMedia: Delete “{{path}}”
   openAuthoring: "{{message}}"
 
-media_folder: public/assets/img
-public_folder: /assets/img
+# media_folder: public/assets/img
+# public_folder: /assets/img
 publish_mode: editorial_workflow
 slug:
   encoding: "ascii"
@@ -25,7 +25,7 @@ collections:
     folder: posts
     create: true
     slug: "{{slug}}"
-    media_folder: "public/assets/img/{{slug}}"
+    media_folder: "../public/assets/img/{{slug}}"
     public_folder: "/assets/img/{{slug}}"
     fields:
       - { label: "Layout", name: "layout", widget: "hidden", default: "post" }
