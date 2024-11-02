@@ -37,6 +37,17 @@ const config: Config = {
   darkMode: "class",
   plugins: [typographyPlugin],
   theme: {
+    extend: {
+      animation: {
+        scroll: "scroll 40s linear infinite"
+      },
+      keyframes: {
+        scroll: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(calc(-250px * 7))" }
+        }
+      }
+    },
     fontSize: {
       xs: ["0.8125rem", { lineHeight: "1.5rem" }],
       sm: ["0.875rem", { lineHeight: "1.5rem" }],
