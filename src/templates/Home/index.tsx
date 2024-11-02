@@ -15,70 +15,70 @@ const resume: Array<RoleProps> = [
   {
     company: "ScaleIP",
     title: "Senior FullStack Engineer (contractor)",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://scaleip.com/favicon.ico",
     start: "2024",
     end: "2024"
   },
   {
     company: "Dev em Dobro",
     title: "Senior Software Engineer and Educator",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://devemdobro.com/wp-content/uploads/2022/07/01-cod.png",
     start: "2023",
     end: "2024"
   },
   {
     company: "Tech4Humans",
     title: "Senior Backend Software Engineer",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://cdn.prod.website-files.com/65155fabb679475d43638cde/653ba727faf096baab78c334_favicon.png",
     start: "2022",
     end: "2023"
   },
   {
     company: "Duo Studio Interativo",
     title: "Tech Lead, Senior Software Engineer",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://duo.studio/img/home/favicon.png",
     start: "2021",
     end: "2023"
   },
   {
     company: "Stefanini Brasil",
     title: "Full-Stack Software Engineer",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://stefanini.com.br/favicon.ico",
     start: "2021",
     end: "2021"
   },
   {
     company: "Banrisul",
     title: "Full-Stack Software Engineer",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://banrisul.com.br/favicon.ico",
     start: "2019",
     end: "2021"
   },
   {
     company: "UERGS",
     title: "IT Support Intern",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://uergs.edu.br/themes/uergs/ico/favicon.ico",
     start: "2018",
     end: "2019"
   },
   {
     company: "Instituto Federal de Gois (IFG)",
     title: "Calculus Professor Assistent, University",
-    logo: "/images/logos/planetaria.svg",
+    logo: "http://www.ifg.edu.br/templates/padraogoverno01/favicon.ico",
     start: "2015",
     end: "2016"
   },
   {
     company: "Instituto Mix",
     title: "Developer and IT Instructor",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://institutomix.com.br/favicon.webp",
     start: "2014",
     end: "2016"
   },
   {
     company: "MMtec",
     title: "Industrial Engineering Technician",
-    logo: "/images/logos/planetaria.svg",
+    logo: "https://www.mmtec.com.br/wp-content/uploads/2016/07/mmtec-faviconmodelo.jpg",
     start: "2013",
     end: "2014"
   }
