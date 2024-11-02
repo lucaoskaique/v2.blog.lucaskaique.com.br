@@ -80,7 +80,7 @@ export function Photos() {
           width: 960px; */
         }
 
-        .slider::before,
+        /* .slider::before,
         .slider::after {
           background: linear-gradient(
             to right,
@@ -103,7 +103,7 @@ export function Photos() {
         .slider::before {
           left: 0;
           top: 0;
-        }
+        } */
 
         .slide-track {
           animation: scroll 40s linear infinite;
