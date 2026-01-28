@@ -1,7 +1,7 @@
 {
   "name": "resgatemais",
-  "version": "0.1.0",
-  "description": "Organização Audiovisual da Sociedade Civil.",
+  "version": "1.0.0",
+  "description": "A blog about programming, music and life.",
   "private": true,
   "author": "@lucaoskaique",
   "scripts": {
@@ -11,24 +11,13 @@
     "lint": "next lint",
     "generate": "pnpm plop --plopfile generators/plopfile.js",
     "prepare": "husky",
-    "pre-commit": "lint-staged",
-    "preinstall": "npx only-allow pnpm",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest",
     "type-check": "tsc --noEmit"
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,css,scss,md}": [
-      "prettier --write"
-    ]
-  },
   "engines": {
-    "node": "20"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.10",

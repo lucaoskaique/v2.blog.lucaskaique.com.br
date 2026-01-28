@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { ComponentPropsWithoutRef } from "react"
+import React, { ComponentPropsWithoutRef } from "react"
 
 import { Button } from "@/components/Button"
 import { Card } from "@/components/Card"
@@ -12,17 +12,24 @@ import { formatDate } from "@/utils/formatDate"
 import Base from "../Base"
 
 const resume: Array<RoleProps> = [
+    {
+    company: "AngelQ",
+    title: "Senior FullStack Engineer (contractor)",
+    logo: "https://www.angelq.ai/hubfs/Untitled%20design%20(5).png",
+    start: "2024",
+    end: "now"
+  },
   {
     company: "ScaleIP",
     title: "Senior FullStack Engineer (contractor)",
-    logo: "https://scaleip.com/favicon.ico",
+    logo: "https://cdn.prod.website-files.com/6799214c33dc1c6865edd51a/67fd2a19cb1c6bb46bf8b7db_favicon-outlined.png",
     start: "2024",
     end: "2024"
   },
   {
     company: "Dev em Dobro",
     title: "Senior Software Engineer and Educator",
-    logo: "https://devemdobro.com/wp-content/uploads/2022/07/01-cod.png",
+    logo: "https://www.devemdobro.com/wp-content/uploads/2025/06/FAVICON-150x150.png",
     start: "2023",
     end: "2024"
   },
@@ -36,7 +43,7 @@ const resume: Array<RoleProps> = [
   {
     company: "Duo Studio Interativo",
     title: "Tech Lead, Senior Software Engineer",
-    logo: "https://duo.studio/img/home/favicon.png",
+    logo: "https://duo.studio/wp-content/uploads/2025/07/favicon.png",
     start: "2021",
     end: "2023"
   },
