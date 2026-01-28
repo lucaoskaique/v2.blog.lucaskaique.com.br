@@ -1,0 +1,1785 @@
+
+    <rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+      <channel>
+        <title>Lucas Kaíque</title>
+        <link>https://lucaskaique.com.br</link>
+        <description>Um blog de um Engenheiro de Software, Produtor de Eventos, DJ no tempo livre e fala de Javascript, React e outras tecnologias.</description>
+        <language>en</language>
+        <lastBuildDate>Sat, 02 Nov 2024 05:24:00 GMT</lastBuildDate>
+        <atom:link href="https://lucaskaique.com.br" rel="self" type="application/rss+xml"/>
+        
+    <item>
+      <guid>https://lucaskaique.com.br/quando-usar-ssg-vs-ssr-no-next-js-uma-duvida-sincera-para-um-caso-real</guid>
+      <title>Quando usar SSG vs SSR no Next.js: Uma dúvida sincera para um caso real</title>
+      <description>Hoje acordei com uma dúvida que tive durante o desenvolvimento do site de um cliente: quando usar Server-Side Rendering (SSR) e quando usar Static Site Generation (SSG) no Next.js?</description>
+      <link>https://lucaskaique.com.br/quando-usar-ssg-vs-ssr-no-next-js-uma-duvida-sincera-para-um-caso-real</link>
+      <pubDate>Sat, 02 Nov 2024 05:24:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p>As vezes fazendo um blog ou site a gente acha que tomou a melhor decisão mas ai você acorda a noite e pensa que talvez não foi a melhor solução e enquanto não responder se foi ou não com toda certeza desse universo, você não dorme, que foi o meu caso.</p>
+<p></p>
+<h2 id="user-content-a-dúvida-inicial"><a href="#a-d%C3%BAvida-inicial">A Dúvida Inicial</a></h2>
+<p>Minha confusão começou depois que já estavam prontas as páginas e suas rotas para categorias e tags dos posts. Eu tinha duas rotas principais:</p>
+<pre><code>src/pages/posts/category/[category].tsx
+src/pages/posts/tag/[tag].tsx
+</code></pre>
+<p>E a grande questão era: usei SSR (Server-Side Rendering) para ambas, foi a melhor estratégia?</p>
+<blockquote>
+<p><em>Antes de mais nada estou usando NextJS 14.2 com Pages Router, até porque SSR e SSG não é uma preocupação no App Router.</em></p>
+</blockquote>
+<h2 id="user-content-entendendo-o-cenário"><a href="#entendendo-o-cen%C3%A1rio">Entendendo o Cenário</a></h2>
+<p>Para saber se tomei a decisão certa, precisei responder três perguntas fundamentais:</p>
+<ol>
+<li>
+<p><strong>Com que frequência as categorias e tags mudam?</strong></p>
+<ul>
+<li>Categorias: São fixas, não mudam</li>
+<li>Tags: São dinâmicas e podem ser infinitas</li>
+</ul>
+</li>
+<li>
+<p><strong>Quantas categorias e tags existem?</strong></p>
+<ul>
+<li>Categorias: Apenas 5 tipos fixos</li>
+<li>Tags: Quantidade ilimitada</li>
+</ul>
+</li>
+<li>
+<p><strong>Como funciona a navegação?</strong></p>
+<ul>
+<li>Quando clicamos em uma categoria ou tag, somos direcionados para uma página que lista todos os posts relacionados</li>
+<li>Exemplo: <code>/posts/category/rock</code> ou <code>/posts/tag/jazz</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="user-content-a-solução"><a href="#a-solu%C3%A7%C3%A3o">A Solução</a></h2>
+<p>Talvez para Tags foi uma boa ideia, pelo volume de tags, mas pra categories....E depois de analisar bem o cenário, chegamos à seguinte conclusão:</p>
+<h3 id="user-content-para-categorias-ssg-static-site-generation"><a href="#para-categorias-ssg-static-site-generation">Para Categorias: SSG (Static Site Generation)</a></h3>
+<pre><code class="language-typescript">// pages/posts/category/[category].tsx
+export async function getStaticPaths() {
+  // Como são apenas 5 categorias fixas
+  const categories = ['rock', 'jazz', 'classical', 'pop', 'electronic']
+  
+  return {
+    paths: categories.map(category => ({
+      params: { category }
+    })),
+    fallback: false // Não precisamos de fallback
+  }
+}
+
+export async function getStaticProps({ params }) {
+  const posts = await getPostsByCategory(params.category)
+  
+  return {
+    props: {
+      posts,
+      category: params.category
+    },
+    revalidate: 3600 // Regera a cada hora
+  }
+}
+</code></pre>
+<p><strong>Por quê?</strong></p>
+<ul>
+<li>São apenas 5 categorias fixas</li>
+<li>As categorias não mudam</li>
+<li>Melhor performance</li>
+<li>Menor custo de servidor</li>
+<li>Ótimo para SEO</li>
+</ul>
+<h3 id="user-content-para-tags-ssr-server-side-rendering"><a href="#para-tags-ssr-server-side-rendering">Para Tags: SSR (Server-Side Rendering)</a></h3>
+<pre><code class="language-typescript">// pages/posts/tag/[tag].tsx
+export async function getServerSideProps({ params }) {
+  const posts = await getPostsByTag(params.tag)
+
+  return {
+    props: {
+      posts,
+      tag: params.tag
+    }
+  }
+}
+</code></pre>
+<p><strong>Por quê?</strong></p>
+<ul>
+<li>Número ilimitado de tags</li>
+<li>Novas tags podem ser adicionadas a qualquer momento</li>
+<li>Precisa ser dinâmico</li>
+<li>Não faz sentido gerar páginas estáticas para todas as possibilidades</li>
+</ul>
+<h2 id="user-content-dicas-práticas"><a href="#dicas-pr%C3%A1ticas">Dicas Práticas</a></h2>
+<ol>
+<li>
+<p><strong>Para Categorias (SSG)</strong></p>
+<ul>
+<li>Use <code>getStaticProps</code> com <code>getStaticPaths</code></li>
+<li>Defina <code>fallback: false</code> já que as categorias são fixas</li>
+<li>Considere usar <code>revalidate</code> se quiser atualizar a lista de posts periodicamente</li>
+</ul>
+</li>
+<li>
+<p><strong>Para Tags (SSR)</strong></p>
+<ul>
+<li>Use <code>getServerSideProps</code></li>
+<li>Não precisa se preocupar com paths predefinidos</li>
+<li>Mantenha um bom cache no servidor para melhorar performance</li>
+</ul>
+</li>
+</ol>
+<h2 id="user-content-bônus-teste-seu-conhecimento-"><a href="#b%C3%B4nus-teste-seu-conhecimento-">Bônus: Teste seu conhecimento! 🤔</a></h2>
+<h3 id="user-content-a-pergunta-do-milhão-"><a href="#a-pergunta-do-milh%C3%A3o-">A Pergunta do Milhão 🌽</a></h3>
+<p>Para a página de <code>pages/posts/[slug].tsx</code> usaremos SSG ou SSR? Pensa antes de responder...</p>
+<p>Se você respondeu SSG (e ISR junto), você tá correto! 🎉</p>
+<p><strong>Por quê?</strong></p>
+<ul>
+<li>Posts geralmente são conteúdo estático</li>
+<li>Com ISR, podemos regenerar páginas quando novos posts são adicionados</li>
+<li>Não precisa regenerar todas as páginas quando um novo post é criado</li>
+<li>Melhor performance para o usuário</li>
+<li>Ótimo para SEO</li>
+<li>Menor custo de infraestrutura (comparado a SSR)</li>
+</ul>
+<p><strong>Código de exemplo:</strong></p>
+<pre><code class="language-typescript">// pages/posts/[slug].tsx
+export async function getStaticPaths() {
+  const posts = await getAllPosts()
+  
+  return {
+    paths: posts.map(post => ({
+      params: { slug: post.slug }
+    })),
+    fallback: 'blocking' // Importante para ISR: permite gerar novas páginas sob demanda
+  }
+}
+
+export async function getStaticProps({ params }) {
+  const post = await getPostBySlug(params.slug)
+  
+  return {
+    props: {
+      post
+    },
+    revalidate: 3600 // ISR: regenera a cada hora se necessário
+  }
+}
+</code></pre>
+<p><strong>Benefícios do ISR neste caso:</strong></p>
+<ul>
+<li>Páginas existentes continuam estáticas e rápidas</li>
+<li>Novos posts são gerados automaticamente quando acessados</li>
+<li>Atualiza periodicamente sem precisar fazer novo build</li>
+<li>Melhor equilíbrio entre performance e conteúdo atual</li>
+</ul>
+<h2 id="user-content-conclusão"><a href="#conclus%C3%A3o">Conclusão</a></h2>
+<p>A chave é entender bem o seu caso de uso. No nosso cenário:</p>
+<ul>
+<li>Categorias são previsíveis e limitadas → SSG</li>
+<li>Tags são dinâmicas e ilimitadas → SSR</li>
+</ul>
+<p>Esta combinação nos dá o melhor dos dois mundos: páginas ultra rápidas para navegação por categorias e flexibilidade total para tags.</p>
+<h2 id="user-content-recursos-úteis"><a href="#recursos-%C3%BAteis">Recursos Úteis</a></h2>
+<ul>
+<li></li>
+<li></li>
+</ul>
+<p>Espero que este artigo ajude você a tomar a melhor decisão para o seu projeto! Se ficou alguma dúvida, manda nos comentários! 😉</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/descomplicando-o-graphql-no-wordpress-qual-e-o-significado-de-edges-e-node</guid>
+      <title>Descomplicando o GraphQL no WordPress: qual é o significado de "edges" e "node"?</title>
+      <description>Você tá consumindo um endpoint GraphQL e retorno tem "edges" e "node". Você tá fornecendo uma estrutura JSON limpa pra consulta e parece que o WPGraphQL está poluindo seus dados sem nenhum benefício óbvio aparente. E se pergunta por que esses termos estão incluídos na resposta do endpoint GraphQL e se é possível se livrar deles para um retorno mais simples de dados??</description>
+      <link>https://lucaskaique.com.br/descomplicando-o-graphql-no-wordpress-qual-e-o-significado-de-edges-e-node</link>
+      <pubDate>Tue, 24 Sep 2024 04:30:00 GMT</pubDate>
+      <content:encoded><![CDATA[<h2 id="user-content-o-que-é-graphql-e-por-que-está-bombando"><a href="#o-que-%C3%A9-graphql-e-por-que-est%C3%A1-bombando">O que é GraphQL e por que está bombando?</a></h2>
+<p>Já falei sobre no post anterior mas se você não leu imagina só: você tá num buffet self-service top da cidade (para quem é de Porto Alegre esses tão escassos hoje em dia). Em vez de pegar aquele prato feito que vem com um monte de coisa que você nem come (como acontece às vezes com APIs REST), você monta exatamente o que quer comer. Style, né? Pois é assim que funciona o GraphQL. Você pede só os dados que precisa, nada a mais, nada a menos. Resultado? Seu site fica mais rápido e você economiza dados. Todo mundo sai ganhando!</p>
+<h2 id="user-content-wpgraphql-quando-o-wordpress-entra-na-dança"><a href="#wpgraphql-quando-o-wordpress-entra-na-dan%C3%A7a">WPGraphQL: Quando o WordPress entra na dança</a></h2>
+<p>Agora, pensa no seu site WordPress. Tem post, página, comentário, usuário... uma porrada de coisa. Já falamos também no outro artigo, que o WPGraphQL é um plugin que traz toda essa mágika 🪄 do GraphQL pro WordPress.</p>
+<h2 id="user-content-edges-e-nodes-os-inseparáveis-do-graphql"><a href="#edges-e-nodes-os-insepar%C3%A1veis-do-graphql">Edges e Nodes: Os inseparáveis do GraphQL</a></h2>
+<p>Quando a gente começa a brincar com WPGraphQL, logo esbarra em dois conceitos: edges e nodes. Parece complicado, mas é mais simples do que parece:</p>
+<ul>
+<li><strong>Nodes</strong>: São os dados mesmo. Um post, um comentário, um usuário. É a informação que você quer pegar.</li>
+<li><strong>Edges</strong>: É o caminho pra chegar nessa informação. Parece desnecessário, mas pelo visto não é pois::: paginação e metadados.</li>
+</ul>
+<p>É tipo uma árvore genealógica. Os nodes são as pessoas, e as edges são as linhas que conectam elas.</p>
+<h2 id="user-content-na-prática-como-fica"><a href="#na-pr%C3%A1tica-como-fica">Na prática, como fica?</a></h2>
+<p>Vamos ver um exemplo rapidinho de como buscar posts no WPGraphQL:</p>
+<pre><code class="language-graphql">query {
+  posts(first: 5) {
+    edges {
+      node {
+        title
+        excerpt
+      }
+    }
+  }
+}
+</code></pre>
+<p>Aqui a gente tá pedindo os 5 primeiros posts, mas só o título e o resumo de cada um. Simples, né?</p>
+<h2 id="user-content-quando-usar-cada-coisa"><a href="#quando-usar-cada-coisa">Quando usar cada coisa?</a></h2>
+<ul>
+<li><strong>Lista simples</strong>: Quando você só quer uma lista rápida e direta, sem frescura.</li>
+<li><strong>Só Nodes</strong>: Útil pra quando você quer paginar, mas não precisa de informações extras sobre cada item.</li>
+<li><strong>Edges e Nodes</strong>: O pacote completo. Ideal pra quando você precisa de paginação avançada ou metadados sobre cada item da lista.</li>
+</ul>
+<h1 id="user-content-descomplicando-o-graphql-no-wordpress-minha-experiência-com-wpgraphql"><a href="#descomplicando-o-graphql-no-wordpress-minha-experi%C3%AAncia-com-wpgraphql">Descomplicando o GraphQL no WordPress: Minha Experiência com WPGraphQL</a></h1>
+<p>[Conteúdo anterior permanece o mesmo...]</p>
+<h2 id="user-content-quando-usar-cada-coisa-1"><a href="#quando-usar-cada-coisa-1">Quando usar cada coisa?</a></h2>
+<p>Galera, vamos ver na prática quando usar cada tipo de estrutura. Colei aqui uns exemplos pra ficar mais fácil de entender:</p>
+<ol>
+<li><strong>Lista simples</strong>: Quando você só quer uma lista rápida e direta, sem frescura.</li>
+</ol>
+<p>Exemplo: Pegar o nome e o slug das 5 primeiras categorias.</p>
+<pre><code class="language-graphql">query {
+  categories(first: 5) {
+    name
+    slug
+  }
+}
+</code></pre>
+<p>Sacou? Direto ao ponto, sem edges nem nodes. Só o que a gente precisa.</p>
+<ol start="2">
+<li><strong>Só Nodes</strong>: Útil pra quando você quer paginar, mas não precisa de informações extras sobre cada item.</li>
+</ol>
+<p>Exemplo: Buscar os 10 posts mais recentes, com opção de paginação.</p>
+<pre><code class="language-graphql">query {
+  posts(first: 10) {
+    nodes {
+      title
+      date
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+</code></pre>
+<p>Aqui a gente já tá usando paginação, mas ainda tá bem enxuto, sacou?</p>
+<ol start="3">
+<li><strong>Edges e Nodes</strong>: O pacote completo. Ideal pra quando você precisa de paginação avançada ou metadados sobre cada item da lista.</li>
+</ol>
+<p>Exemplo: Pegar os 5 primeiros posts, incluindo informações sobre a posição de cada post na lista.</p>
+<pre><code class="language-graphql">query {
+  posts(first: 5) {
+    edges {
+      node {
+        title
+        excerpt
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+</code></pre>
+<p>Bem chic né?! Agora temos o 'cursor' pra cada post, que é aquela informação extra que falei. Dá pra fazer umas mágicas de paginação avançada com isso.</p>
+<p>No WPGraphQL, você vai ver muito o uso de edges e nodes. Pode parecer exagero às vezes, mas essa padronização parece facilitar muito quando o projeto cresce.</p>
+<h2 id="user-content-concluindo"><a href="#concluindo">Concluindo...</a></h2>
+<p>GraphQL e WPGraphQL podem parecer um bicho de sete cabeças no começo, mas quando a ficha cai, você vê o tanto de possibilidades que se abrem. É uma ferramenta poderosa que dá mais controle e eficiência pro seu desenvolvimento.</p>
+<p>Escrevi esse artigo porque é algo que estava nas minhas anotações dessa seman e to tentando colocar mais ideias e pesquisas minhas aqui.</p>
+<p>Tem alguma experiência pra compartilhar ou dúvida pra tirar? Comenta aí embaixo! Vamos trocar uma ideia e aprender juntos.</p>
+<p>Falou, jovens! Boa semana!</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/lidando-com-projetos-wordpress-quando-voce-nao-e-especialista-wpgraphql-ou-rest-api-para-headless-wordpress</guid>
+      <title>Lidando com projetos WordPress quando você não é especialista: WPGraphQL ou REST API para Headless WordPress</title>
+      <description>Imagina que você conseguiu um cliente e esse cliente tem um site wordpress, mas você não trabalha com wordpress e ainda assim quer fechar o contrato, o que você faz? Bom, foi o que aconteceu comigo e pode acontecer com você, então nesse post vamos conversar um pouco sobre esse estudo de caso.</description>
+      <link>https://lucaskaique.com.br/lidando-com-projetos-wordpress-quando-voce-nao-e-especialista-wpgraphql-ou-rest-api-para-headless-wordpress</link>
+      <pubDate>Fri, 13 Sep 2024 05:05:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p>E aí, galera! Tô aqui pra contar uma parada bem louca que rolou comigo recentemente. Vocês não vão acreditar!</p>
+<ul>
+<li>Como eu decidi se valia a pena entrar nessa roubada (spoiler: tá indo!)</li>
+<li>A inspiração que me levou pro caminho do WordPress headless</li>
+<li>O que é WordPress headless e por que é uma boa</li>
+<li>As opções pra fazer o WordPress virar headless: REST API vs WPGraphQL</li>
+<li>As vantagens do WPGraphQL e por que eu escolhi ele</li>
+</ul>
+<p>Se você já se viu numa saia justa parecida, ou só tá curioso pra saber como foi, cola aqui! Vamos trocar uma ideia sobre como a gente pode se virar nos trinta quando aparece um projeto fora da nossa zona de conforto.</p>
+<p>Bora lá?</p>
+<h2 id="user-content-como-eu-decidi-se-valia-a-pena-entrar-nessa-roubada"><a href="#como-eu-decidi-se-valia-a-pena-entrar-nessa-roubada">Como eu decidi se valia a pena entrar nessa roubada</a></h2>
+<p>Então, galera, é o seguinte: caiu no meu colo um cliente, vamos chamar ele de <em>N</em>, que tem um site/blog com mais de 15 anos de postagens e muitos acessos diários. Eu já atendia eles faz um tempo pra umas coisinhas pequenas, mas a ideia de desenvolver um novo site, que já tava sem atualização há anos, tava sempre no ar.</p>
+<p>As negociações começaram em fevereiro de 2024, mas o projeto só começou a rolar mesmo há alguns meses. E aí vem o pepino: o site todo era WordPress. Pra quem não manja, WordPress é "um programa de código aberto que você pode usar pra criar um site, blog ou aplicativo bem legal sem muito sofrimento".</p>
+<p>Meu único contato com WordPress foi lá na adolescência, quando eu tinha um blog pra escrever minhas noias. Migrei pra lá depois de deletar sem querer meu Blogspot (sim, foi muito clicar sem ler, achei que tava fazendo backup, quase chorei). Depois que virei desenvolvedor, sempre ouvi falar de WP e sei que grande parte da web ainda usa ele. Pelo menos 80% da web roda em PHP (pra nossa tristeza, né? kkkkk). Mentira, respeito PHP, sempre vou respeitar coisas sólidas.</p>
+<p>Então, por que raios eu aceitei esse desafio? Simples: porque eu posso e tenho um "probleminha" na cabeça onde tô constantemente me desafiando. Já me ferrei muito por isso, mas faz parte do aprendizado, né?</p>
+<h2 id="user-content-o-desafio-wordpress-headless"><a href="#o-desafio-wordpress-headless">O desafio: WordPress Headless</a></h2>
+<p>No fim das contas, decidimos que poderíamos ficar com WordPress, mas também tentar migrar pra uma stack nova. Aí que o bicho pegou: como fazer essa comunicação se vamos manter o WP como CMS (Content Management System) e fazer um site à parte?</p>
+<p>O requisito era: "não podemos perder essa base de dados". E eu também não queria fazer uma migração pra outro lugar, o que ia deixar tudo mais caro pro cliente e dar mais trabalho pra mim.</p>
+<p>Aí me veio uma ideia maluca: e se a gente usasse o WordPress como headless? Pois é, galera, tô falando de WordPress headless! Mas calma aí, vou explicar melhor essa parada.</p>
+<h2 id="user-content-a-inspiração-strapi-e-cms-headless"><a href="#a-inspira%C3%A7%C3%A3o-strapi-e-cms-headless">A inspiração: Strapi e CMS Headless</a></h2>
+<p>Antes de seguir, deixa eu contar uma história que me ajudou a chegar nessa solução. Em 2021, um brother meu, o @felipe marcolin, me falou sobre um tema que ficou martelando na minha cabeça. Ele mencionou o Strapi, que é um "CMS headless de última geração, de código aberto e javascript, que permite que experiências ricas em conteúdo sejam criadas, gerenciadas e expostas a qualquer dispositivo digital."</p>
+<p>Achei a ideia tão foda que fui atrás de um curso pra aprender mais. Acabei caindo num curso do William Justen em 2022. Esse cara é brabo e muito didático, um diferencial na comunidade. Lá aprendi mais sobre Strapi e sobre a melhor versão do app. Hoje em dia, na v4, eu não curto tanto porque eles fecharam muito o opensource e não dá pra customizar tanto, mas ainda é uma solução animal pra colocar rápido em produção.</p>
+<p>E aí que tá a sacada: um CMS headless é basicamente um sistema de gerenciamento de conteúdo da web só de backend, que funciona principalmente como um repositório de conteúdo. Isso me fez pensar: será que dá pra fazer isso com WordPress?</p>
+<h2 id="user-content-wordpress-headless-o-que-é-isso"><a href="#wordpress-headless-o-que-%C3%A9-isso">WordPress headless: o que é isso?</a></h2>
+<p></p>
+<p>Então, o WordPress normal não é um CMS headless de cara. Ele é aquele CMS que todo mundo conhece, fácil de usar e flexível pra criar e gerenciar conteúdo. Mas tradicionalmente, ele mistura o gerenciamento de conteúdo com a forma de apresentar esse conteúdo, tudo num pacote só.</p>
+<p>Mas aí os developers malucos criaram o tal do WordPress headless usando a API REST dele. Nesse esquema, o WordPress continua sendo o CMS onde você cria, gerencia e guarda o conteúdo. A diferença é que, em vez de mostrar o site direto pelos templates e temas do WordPress, a parte do frontend fica separada do backend.</p>
+<p>Isso permite que a gente construa aplicativos usando tecnologias e frameworks diferentes, mas ainda aproveitando as paradas legais de gerenciamento de conteúdo do WordPress. É um jeito de fazer o WordPress funcionar mais como headless, mesmo não sendo a configuração padrão.</p>
+<h2 id="user-content-as-opções-rest-api-vs-wpgraphql"><a href="#as-op%C3%A7%C3%B5es-rest-api-vs-wpgraphql">As opções: REST API vs WPGraphQL</a></h2>
+<h3 id="user-content-rest-api-do-wordpress"><a href="#rest-api-do-wordpress">REST API do WordPress</a></h3>
+<p>A API REST é tipo o coringa do WordPress. Desde a versão 4.7, ela já vem embutida e não precisa de plugin nenhum pra funcionar. Com ela, você consegue pegar os dados do seu site no formato JSON.</p>
+<p>Pra usar, é só adicionar /wp-json ao URL do site:</p>
+<pre><code>http://seusite.com/wp-json
+</code></pre>
+<p>Daí você tem endpoints pra posts, páginas, comentários, mídia e por aí vai. Por exemplo:</p>
+<pre><code>http://seusite.com/wp-json/wp/v2/posts
+http://seusite.com/wp-json/wp/v2/comments
+http://seusite.com/wp-json/wp/v2/media
+</code></pre>
+<h3 id="user-content-wpgraphql"><a href="#wpgraphql">WPGraphQL</a></h3>
+<p>Agora, se você quer uma parada mais moderna e eficiente, tem o WPGraphQL. É um plugin baseado em GraphQL que permite fazer consultas mais precisas e personalizadas.</p>
+<p></p>
+<p></p>
+<p>Com o WPGraphQL, você tem um único endpoint e pode pedir exatamente os dados que precisa, sem ficar pegando um monte de coisa que não vai usar. Por exemplo:</p>
+<pre><code class="language-graphql">{
+  post(id: "123") {
+    title
+    content
+    comments {
+      edges {
+        node {
+          content
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<p>Nesse exemplo, a gente tá pegando o título, conteúdo e comentários de um post específico, tudo numa tacada só!</p>
+<h2 id="user-content-as-vantagens-do-wpgraphql"><a href="#as-vantagens-do-wpgraphql">As vantagens do WPGraphQL</a></h2>
+<p>Galera, deixa eu falar mais sobre o WPGraphQL, porque essa parada é muito massa:</p>
+<ol>
+<li>
+<p>Endpoint único pra recuperação precisa de dados: Com o WPGraphQL, você tem um endpoint unificado, tipo <code>/graphql</code>, que te permite pegar exatamente os dados que você precisa. É bem diferente da API REST, onde você precisa fazer várias chamadas pra pegar tudo que quer.</p>
+</li>
+<li>
+<p>Consultas direcionadas pra uma recuperação eficiente: Com o GraphQL, você pode criar consultas específicas pro que você precisa. Isso evita que você pegue um monte de dado que não vai usar. Por exemplo:</p>
+</li>
+</ol>
+<pre><code class="language-graphql">{
+  posts {
+    title
+    date
+    author {
+      name
+    }
+  }
+}
+</code></pre>
+<p>Nessa consulta, a gente tá pegando só o título, a data e o nome do autor dos posts. Nada de informação extra que a gente não vai usar!</p>
+<ol start="3">
+<li>Vários recursos raiz: No WPGraphQL, você pode consultar vários recursos de uma vez só. Tipo, você pode pegar posts e páginas numa única consulta:</li>
+</ol>
+<pre><code class="language-graphql">{
+  posts {
+    edges {
+      node {
+        title
+        content
+      }
+    }
+  }
+
+  pages {
+    edges {
+      node {
+        title
+        content
+      }
+    }
+  }
+}
+</code></pre>
+<p>Isso deixa tudo mais rápido e eficiente.</p>
+<h2 id="user-content-qual-escolher"><a href="#qual-escolher">Qual escolher?</a></h2>
+<p>Bom, galera, a escolha entre REST API e WPGraphQL vai depender do que você precisa pro seu projeto. Se quer uma solução já integrada no WordPress, vai de REST API. Se quer algo mais moderno e eficiente, o WPGraphQL pode ser uma boa.</p>
+<p>No fim das contas, o importante é escolher a ferramenta que melhor se encaixa no seu fluxo de trabalho e nas metas do projeto. Assim você garante uma integração suave entre o WordPress e o framework de frontend que você escolher.</p>
+<p>No meu caso, acabei optando pelo WPGraphQL pra fazer a POC (Proof of Concept) pro nosso cliente N. A ideia era usar o WordPress como backend pra alimentar nosso frontend em Next.js, que a gente escolheu pra ajudar no SEO, que era o grande foco do projeto.</p>
+<p>E aí, o que acharam dessa lourada? Já passaram por algo parecido? Conta aí nos comentários! Até a próxima, galera!</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/my-git-cheatsheet</guid>
+      <title>My git cheatsheet</title>
+      <description>My git cheatsheet</description>
+      <link>https://lucaskaique.com.br/my-git-cheatsheet</link>
+      <pubDate>Sat, 29 Jun 2024 02:21:00 GMT</pubDate>
+      <content:encoded><![CDATA[<h2 id="user-content-vs-questions"><a href="#vs-questions"><code>vs</code> Questions</a></h2>
+<hr>
+<ol>
+<li><a href="http://stackoverflow.com/questions/804115">http://stackoverflow.com/questions/804115</a> (<code>rebase</code> vs <code>merge</code>).</li>
+<li><a href="https://www.atlassian.com/git/tutorials/merging-vs-rebasing">https://www.atlassian.com/git/tutorials/merging-vs-rebasing</a> (<code>rebase</code> vs <code>merge</code>)</li>
+<li><a href="https://www.atlassian.com/git/tutorials/undoing-changes/">https://www.atlassian.com/git/tutorials/undoing-changes/</a> (<code>reset</code> vs <code>checkout</code> vs <code>revert</code>)</li>
+<li><a href="http://stackoverflow.com/questions/2221658">http://stackoverflow.com/questions/2221658</a> (HEAD^ vs HEAD~) (See <code>git rev-parse</code>)</li>
+<li><a href="http://stackoverflow.com/questions/292357">http://stackoverflow.com/questions/292357</a> (<code>pull</code> vs <code>fetch</code>)</li>
+<li><a href="http://stackoverflow.com/questions/39651">http://stackoverflow.com/questions/39651</a> (<code>stash</code> vs <code>branch</code>)</li>
+<li><a href="http://stackoverflow.com/questions/8358035">http://stackoverflow.com/questions/8358035</a> (<code>reset</code> vs <code>checkout</code> vs <code>revert</code>)</li>
+<li><a href="http://stackoverflow.com/questions/5798930">http://stackoverflow.com/questions/5798930</a> (<code>git reset</code> vs <code>git rm --cached</code>)</li>
+</ol>
+<h2 id="user-content-general-questions"><a href="#general-questions">GENERAL QUESTIONS</a></h2>
+<hr>
+<ol>
+<li><a href="http://stackoverflow.com/questions/5788037">http://stackoverflow.com/questions/5788037</a> (Recover from <code>git reset --hard</code>).</li>
+<li><a href="http://stackoverflow.com/questions/1146973/">http://stackoverflow.com/questions/1146973/</a> (Revert all local changes to previous state)</li>
+<li><a href="http://effectif.com/git/recovering-lost-git-commits">http://effectif.com/git/recovering-lost-git-commits</a> (Recovering lost commit)</li>
+<li><a href="https://stackoverflow.com/questions/79165">https://stackoverflow.com/questions/79165</a> (Migrating from SVN)</li>
+<li><a href="https://davidwalsh.name/squash-commits-git">https://davidwalsh.name/squash-commits-git</a> (Combining multiple commits into one using <code>git rebase</code>).</li>
+<li><a href="https://stackoverflow.com/questions/1425892">https://stackoverflow.com/questions/1425892</a> (Merging two git repo)</li>
+</ol>
+<h2 id="user-content-websites-reference"><a href="#websites-reference">WEBSITES REFERENCE</a></h2>
+<hr>
+<ol>
+<li><a href="http://gitready.com/">http://gitready.com/</a> (Git Tips and Tricks with explanation)</li>
+<li><a href="https://github.com/git-tips/tips">https://github.com/git-tips/tips</a> (Repo for most common git tips)</li>
+<li><a href="http://gitimmersion.com/">http://gitimmersion.com/</a> (Small Online Book)</li>
+<li></li>
+<li><a href="http://www.ohshitgit.com">http://www.ohshitgit.com</a> (Take a look)</li>
+<li><a href="https://github.com/nvie/gitflow">https://github.com/nvie/gitflow</a> (Alternative branch model for git.)</li>
+<li><a href="https://github.com/magit/magit">https://github.com/magit/magit</a> (Git GUI for Emacs).</li>
+</ol>
+<h2 id="user-content-fast-git-reference"><a href="#fast-git-reference">FAST GIT REFERENCE</a></h2>
+<hr>
+<ol>
+<li>
+<p>First download the cheetsheat from official: <a href="http://git-scm.com">http://git-scm.com</a></p>
+</li>
+<li>
+<p>For starters and intermediate, focus on only these commands:</p>
+<ul>
+<li>Configuring : <code>config, help</code>.</li>
+<li>Creating : <code>init, clone</code>.</li>
+<li>Make Changes: <code>status, diff, add, commit, reset, rm, mv (not important)</code>.</li>
+<li>Branching &#x26; Merging: <code>branch, checkout, merge, stash</code></li>
+<li>Review History: <code>log, tag, diff, show</code></li>
+<li>Update and Publish: <code>fetch, pull, push, remote</code>.</li>
+<li>Very Imp: <code>reflog</code> . <a href="http://effectif.com/git/recovering-lost-git-commits">http://effectif.com/git/recovering-lost-git-commits</a></li>
+</ul>
+</li>
+<li>
+<p>Commands that are not in official cheatsheet (and advanced): <code>revert, apply, cherry-pick, rebase, clean, show-ref, update-ref, ls-files</code></p>
+<ul>
+<li>Debugging Commands: <code>bisect, blame</code>.</li>
+</ul>
+</li>
+<li>
+<p><code>git stash</code> is lightweight alternative to <code>git branch</code>.</p>
+</li>
+<li>
+<p>Git has three stages:</p>
+<ul>
+<li>Committed : means data is safely stored in your local database.</li>
+<li>Modified : means you've changed the file but not committed.</li>
+<li>Staged : means you've marked a modified file in its current version to go into your next commit snapshot.</li>
+</ul>
+</li>
+<li>
+<p>Workflow of git:</p>
+<ul>
+<li>Working Directory: holds the actual files</li>
+<li>Index: Acts as a staging area. That is, snapshot for next commit. Will be done by <code>git add</code> command.</li>
+<li>HEAD : Points to the last commit (and current branch) you've made.</li>
+</ul>
+</li>
+<li>
+<p>Anything that is committed in Git can almost be recovered. However files which are not committed can't be recovered.</p>
+</li>
+<li>
+<p>Description of Update and Fetch Commands:</p>
+<ul>
+<li><code>remote</code>: it only manage set of track repositories.</li>
+<li><code>fetch</code>: You can fetch new work from that remote server after cloning. Not similar to <code>clone</code>. You can later merge that repo with your existing with <code>merge</code> command.</li>
+<li><code>pull</code>: Automatically fetch and merge newest commit from remote server to local branch. By default, it combines fetch and merge.</li>
+<li><code>push</code>: This will push to the remote server from local branch.</li>
+</ul>
+</li>
+<li>
+<p>When you do branch switching, files in your working directory will change to match that branch.</p>
+</li>
+<li>
+<p>Using <code>git reflog</code> you can get back your destroyed commit (done via <code>git reset --hard</code>) using either</p>
+<ul>
+<li><code>git checkout -b newBranchName &#x3C;shaViaReflog></code></li>
+<li><code>git reset --hard &#x3C;shaViaReflog></code>
+But use it in rare cases, because you reflog keep state via sha and it's hard to see which sha belongs to specific commit.</li>
+</ul>
+</li>
+<li>
+<p><code>git cherry-pick</code> is a low level version of <code>rebase</code>.</p>
+</li>
+<li>
+<p>For advanced user who want to explore more, see <a href="https://github.com/nvie/gitflow">gitflow</a>. A Git extensions for creating repo operations using different branch model.</p>
+</li>
+</ol>
+<h3 id="user-content-git-tips-and-shortcuts"><a href="#git-tips-and-shortcuts">GIT TIPS AND SHORTCUTS</a></h3>
+<hr>
+<p>Most used commands are: <code>init, clone, status, log, add, commit, reset, rm, branch, checkout, merge, stash</code></p>
+<pre><code class="language-bash">    ## -- Initializing a new git repository
+        $$ git init
+
+    ## -- Useful git log commands
+        $$ git log --oneline        ## print short sha in one line
+        $$ git log -3               ## show only first 3 commit
+        $$ git log --author="John"  ## show commits only by this author
+
+
+    ## -- Cloning a git repository
+    ## The other protocols are: ssh, ftp, file://, http(s):// etc...
+        $$ git clone git://github.com/something/foo.git
+
+    ## -- Show the status of file
+        $$ git status -s  # in short format
+
+    ## -- Add the file to staging area.
+        $$ git add foo.js bar.js   ## `--` is used to seperate files from `add` options.
+        $$ git add .    # add all the files
+
+    ## -- Show what have changed since you last commit
+        $$ git diff  ## with a `--cached` option, show the changes that will go into the next commit snapshot.
+
+    ## -- Commit the changes after you add the files to staging area
+        $$ git commit -m 'with an inline message'
+
+    ## -- Auto-commit and track changes to modified file.
+    ## NOTE: The files you've not added doesn't track by commit with `-a` command.
+        $$ git commit -a -m 'with an inline message'
+
+    ## -- Ammend last commit (i.e, merge to previous commit)
+    ## https://nathanhoad.net/git-amend-your-last-commit
+    ## After doing `git add .`
+        $$ git commit --amend   # alternate is `git reset --soft HEAD~`.
+        ## amend a commit without changing previous message
+        $$ git commit --amend --no-edit
+
+
+    ## -- Unstage file from the index only.  See `git reset` also.
+    ## NOTE: `git rm` without `--cached` will simply remove the file from both index and working directory.
+        $$ git rm --cached  # exact opposite of git add.
+
+    ## -- Throw away local changes after commit (Use with caution)
+        $$ git checkout &#x3C;file>
+        # if the branch name and file name are same, then do this
+        $$ git checkout -- &#x3C;file>
+        ## for all changes (it's perfect for time travel on previous commit)
+        $$ git checkout -f # or `git reset --hard` (but previous one is more safer because with that you're in detached state.)
+
+
+    ## Delete a single entry from git reflog. (git reflog is useful as it keeps 2 months history).
+        $$ git reflog delete HEAD@{N}    ## `N`: 1,2 etc... or &#x3C;sha>
+
+    ## Undo the last commit, but keep the history and adds a new history
+    ## http://stackoverflow.com/questions/27032850/ (for `git reset` vs `git revert` with image)
+        $$ git revert
+
+    ## -- check where HEAD is
+        $$ git show-ref
+
+    ## Remove the initial commit (git reset doesn't work here, it works only after second commit)
+    ## http://stackoverflow.com/questions/6632191/how-to-revert-initial-git-commit
+        $$ git update-ref -d HEAD
+
+
+    ## Push a specific branch
+        $$ git push origin &#x3C;mylocalbranch>
+
+    ## -- Detailed explaination of `git reset` (all three options). P.S. Use git checkout for time travel.
+    ## http://stackoverflow.com/a/6866485/2092405
+    ## NOTE: All the below three options remove log, so if you want to get back to previous state, you can pick
+    ## &#x3C;sha> from git reflog and do git reset on this.
+    ## Suppose the structure is
+         A-B-C
+             ↑ (master)
+    ## Then, nuke commit C and never see it again. Do this:
+        $$ git reset --hard HEAD~1
+        ## the result is:
+             A-B
+               ↑ (master)
+       ## To undo this command, use;
+           $$ git reset --hard &#x3C;newShaOfReflog>  ## or (git reset --hard HEAD@{1})
+
+    ## Undo the last commit, but keep your changes in working directory.
+    ## It will delete the index the from git log also and show you untracked and unstaged files:
+        $$ git reset HEAD~1  ## move the pointer one index back (or git reset --mixed HEAD~1)
+        ## the result is:
+        A-B-C
+          ↑ (master)
+        ## To undo this command, use;
+            $$ git reset &#x3C;newShaOfReflog>  ## or (git reset HEAD@{1})
+
+    ## Undo the last commit, but don't touch the index and working directory.
+    ## When you do git status, you'll see that the same files are in the index as before.
+    ## In fact, right after this command, you could do `git commit` and you'd be redoing the same commit you just had.
+        $$ git reset --soft HEAD~1
+
+
+    ## Add a changed file to old commit (not last commit). I.E., fix up old commit
+    http://stackoverflow.com/a/2719659/2092405
+
+    ## merge a specific commit from one branch to another branch.
+        ## make sure you're in the branch where you want merge.
+        $$ git cherry-pick &#x3C;commit-id-of-feature-branch>
+
+    ## Merge two specific commit together (using rebase)
+    http://stackoverflow.com/questions/2563632/how-can-i-merge-two-commits-into-one
+
+    ## Modify a specific commit in git
+    http://stackoverflow.com/questions/1186535/how-to-modify-a-specified-commit-in-git
+    ## if you're getting this error. Needs a single revision. See this: http://stackoverflow.com/questions/26174757/
+    ## Option: 2
+        $$ git checkout &#x3C;shaToThatCommit>
+        $$ touch newfile.txt
+        $$ git add .
+        $$ git commit --amend --no-edit
+        $$ git rebase --onto HEAD &#x3C;shaToThatCommit> master  ## it will do automatic git checkout to master branch
+
+
+    ## Branching and Merging
+    ## ---------------------
+    ## List out all the branches
+        $$ git branch
+    ## Create a new branch `testing` at your last commit
+        $$ git branch testing
+    ## Switch to branch
+        $$ git checkout testing
+    ## Shortcut to create a new branch and checkout
+        $$ git checkout -b newbranch
+    ## Delete a branch
+        $$ git branch -d testing
+    ## Merge the &#x3C;branch> on the current working branch
+    ## Merge tip: If you're doing merge say, from `wip` to `live` branch and you've edit `live` branch files
+    ## then it will not undo changed file which is what we want.
+    ## Also, merge conflict occurs when same file changed in both branch, you merged. You can reverse the merge conflict
+    ## with `--abort` option
+        $$ git merge testing    ## this will merge `testing` branch onto current (`master`) branch.
+    ## checkout arbitrary commits instead of branch
+        $$ git checkout HEAD~2
+    ## Undo deleted branch
+        $$ git reflog    ## to see the hash code of branch before deletion.
+        $$ git checkout &#x3C;hashcodeFromReflog>  ## to restore, and then create the same branch from there.
+</code></pre>
+<h2 id="user-content-git-reset-vs-git-revert"><a href="#git-reset-vs-git-revert">Git reset vs Git revert</a></h2>
+<hr>
+<p><strong>NOTE</strong>: <code>git revert</code> is advanced command and it may accidently delete your files, if you haven't committed.
+<a href="http://stackoverflow.com/questions/8358035/whats-the-difference-between-git-revert-checkout-and-reset">http://stackoverflow.com/questions/8358035/whats-the-difference-between-git-revert-checkout-and-reset</a></p>
+<ul>
+<li>Basically <code>git revert</code> undo changes with new commit history (i.e., introduce a new commit that reverse the specified one) while <code>git reset</code> (with <code>--hard</code>) <strong>BEWARE</strong>. Any changes to tracked files in the working tree and index are discarded.</li>
+<li><code>git reset</code> (with <code>--soft</code>) option doesn't touch the index file nor working tree. In this case, index file is staged but not committed and right after this command you can use <code>git commit</code>.</li>
+<li><code>git reset</code> (with <code>--mixed</code>) option reset the index but not the working tree. In this case, index file is not staged, so after this command you have to use <code>git add</code> and <code>git commit</code>.</li>
+</ul>
+<h2 id="user-content-git-rm-and-git-reset"><a href="#git-rm-and-git-reset">Git rm and Git reset</a></h2>
+<hr>
+<p><code>git rm</code> remove the file from the index (with <code>--cached</code> option).
+<code>git reset</code> is specifically about updating the index, moving the HEAD.
+These two options are <code>equivalent only when we first add a file</code>. After that with <code>git reset</code> you can move the index while with <code>git rm --cached</code>, you completly destroy the index.</p>
+<h2 id="user-content-fix-a-head-detached-from-message"><a href="#fix-a-head-detached-from-message">Fix a <code>head detached from</code> message</a></h2>
+<hr>
+<p>See: <a href="http://stackoverflow.com/questions/10228760/fix-a-git-detached-head">http://stackoverflow.com/questions/10228760/fix-a-git-detached-head</a>
+Summary: Basically checkout the branch using <code>git checkout branchname</code></p>
+<h2 id="user-content-relative-refs"><a href="#relative-refs">Relative Refs</a></h2>
+<hr>
+<p><a href="https://www.atlassian.com/git/tutorials/refs-and-the-reflog/refspecs">https://www.atlassian.com/git/tutorials/refs-and-the-reflog/refspecs</a>
+The <code>~</code> character lets you reach parent commits. For eg: The following display the grandparent of HEAD:
+<code>git show HEAD~2</code>. The <code>~</code> character will always follow the first parent of a merge commit.
+If you want to follow different parent, use <code>^</code> character
+For eg: If HEAD is the merge commit, then following returns the second parent of HEAD:
+<code>git show HEAD^2</code>
+Some examples:</p>
+<pre><code class="language-sh">    # Only list commits that are parent of the second parent of a merge commit
+    $$ git log HEAD^2
+    # Remove the last 3 commits from the current branch
+    $$ git reset HEAD~3
+    # Interactively rebase the last 3 commits on the current branch
+    $$ git rebase -i HEAD~3
+</code></pre>
+<h2 id="user-content-git-fetch-pull-push-remote"><a href="#git-fetch-pull-push-remote">Git <code>fetch</code>, <code>pull</code>, <code>push</code>, <code>remote</code></a></h2>
+<hr>
+<p><strong>NOTE: You can't push to non-bare repository if the branches are same on both remote and local server</strong>
+By default updating the current branch with non-bare repo is denied. If you're the only user, you can set git config
+<code>git config --bool core.bare true</code> and then delete all files except <code>.git</code> in remote.
+<a href="http://stackoverflow.com/a/2933656/2092405">http://stackoverflow.com/a/2933656/2092405</a>
+Some common git urls:</p>
+<pre><code class="language-sh">    ssh://[user@]host.xz[:port]/path/to/repo.git/
+    git://host.xz[:port]/path/to/repo.git/
+    http[s]://host.xz[:port]/path/to/repo.git/
+    ftp[s]://host.xz[:port]/path/to/repo.git/
+    [user@]host.xz:path/to/repo.git/
+    /path/to/repo.git/
+    file:///path/to/repo.git/
+</code></pre>
+<p><code>git pull</code> is basically shorthand for <code>git fetch</code> followed by <code>git merge FETCH_HEAD</code>
+<code>git fetch</code>: Downlaod new data and branches from remote repository
+<code>git push</code>: Push your new branches to remote repository.
+<code>git remote</code>: Manage (list, add and delete) remote repository aliases.</p>
+<ol>
+<li>To push local repository to your server</li>
+</ol>
+<pre><code class="language-sh">    ## On your server (create a bare repository)
+    $$ git init --bare repo.git
+    ## On local
+    $$ git remote add origin ssh://server/var/www/frontend.git
+    $$ git push origin master
+    ## After that, use:
+    $$ cd /var/www/; git init; git clone frontend.git
+
+    ## or alternative way without bare repository
+    ## switch to different branch locally
+    ## and then on your server
+    $$ git init
+    ## from local repository
+    $$ git push ssh://server/path/to/git otherBranch
+    ## then merge the otherBranch to master in remote repository
+
+    ## Shortcut without switching repository
+    $$ git remote add origin ssh://server/path/to/git
+    $$ git push origin master:someOtherBranch       ## this push from master to `someOtherBranch`.
+</code></pre>
+<h5 id="user-content-end"><a href="#end">END</a></h5>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/a-saga-do-tb-303-do-esquecimento-ao-estrelato-eletronico</guid>
+      <title>A Saga do TB-303: Do Esquecimento ao Estrelato Eletrônico</title>
+      <description>Em celebração ao 303 Day, vamos explorar a incrível jornada do TB-303, um equipamento que não só revolucionou a música eletrônica, mas também se tornou um símbolo de inovação e resiliência fazendo um paralelo com Desenvolvimento de Software.</description>
+      <link>https://lucaskaique.com.br/a-saga-do-tb-303-do-esquecimento-ao-estrelato-eletronico</link>
+      <pubDate>Sun, 03 Mar 2024 09:55:52 GMT</pubDate>
+      <content:encoded><![CDATA[<p></p>
+<p>Era uma vez, em 1981, em uma terra tecnológica de Osaka, no Japão, uma pequena caixa prateada emergiu dos confins criativos da Roland Corporation. Esta não era uma caixa qualquer; era o TB-303, uma criação destinada a substituir o baixista humano para artistas solitários. Desenhado sob a supervisão do engenhoso Tadao Kikumoto, o TB-303 deveria ser o parceiro perfeito para a máquina de ritmos TR-606, unidos pelo revolucionário DIN Sync.</p>
+<p></p>
+<p>No entanto, o destino tinha outros planos. A tentativa de emular o baixo elétrico não capturou o coração dos músicos, deixando o TB-303 em uma névoa de incompreensão e desinteresse. Com uma produção que cessou rapidamente, o futuro parecia sombrio para esta caixa de sons estranhos.</p>
+<p><strong>A Virada Inesperada: Chicago, 1985</strong></p>
+<p></p>
+<p>Mas, como em todas as boas narrativas, um plot twist estava à espreita. Na vibrante cena underground de Chicago, uma tribo de visionários musicais, conhecida como Phuture, descobriu esta máquina abandonada. DJ Pierre, Spanky e Herb J não viam um equipamento falho; viam uma tela em branco para a criatividade. Sem manual e sem regras, começaram a experimentar.</p>
+<p>Ao torcer os botões do TB-303, transformaram suas falhas em características, seus bipes em batidas. Aqui, nas profundezas da criatividade, nasceu o Acid House, um som que definiria uma era. Com faixas pioneiras como:</p>
+<ol>
+<li>"Acid Tracks" de Phuture</li>
+</ol>
+<p></p>
+<ol start="2">
+<li>‘I’ve Lost Control’ - Sleezy D</li>
+</ol>
+<p></p>
+<ol start="3">
+<li>"Can You Feel It" de Mr. Fingers</li>
+</ol>
+<p></p>
+<p>O som do TB-303 se tornou sinônimo de uma revolução musical. O TB-303, uma vez um fracasso, agora era a voz de uma nova geração pulsante.</p>
+<p></p>
+<p><strong>O Paralelo com o Desenvolvimento de Software</strong></p>
+<p>E aqui, meus amigos, é onde nossa história se cruza com o mundo do desenvolvimento de softwares. O TB-303, em sua essência, reflete a jornada do desenvolvimento de software. Ambos começam com uma intenção clara, mas muitas vezes, é no desvio, na falha, onde a verdadeira inovação é encontrada.</p>
+<p>Assim como o TB-303 foi redescoberto e reimaginado, os desenvolvedores frequentemente encontram novas vidas para códigos antigos ou projetos mal entendidos. A flexibilidade, a experimentação e a capacidade de ver além do uso pretendido são qualidades compartilhadas por músicos pioneiros e desenvolvedores de software.</p>
+<p>A saga do TB-303 nos ensina que, no coração da inovação, reside a vontade de explorar o desconhecido e redefinir o "fracasso" como um trampolim para o sucesso. No desenvolvimento de software, como na música, a transformação surge não apenas da criação do novo, mas da reinvenção do velho.</p>
+<p>Então vamos lembrar da história do TB-303. Que possamos abraçar nossos próprios bipes e falhas por mais estranhos que sejam, pois quem sabe? Talvez estejamos a apenas alguns ajustes de nossa própria revolução.</p>
+<p>E assim, a história completa do TB-303, de seu humilde início ao estrelato global, espelha a jornada tumultuada, mas ultimamente triunfante, que muitos desenvolvedores de software enfrentam. Em cada linha de código, como em cada batida do 303, reside a potencial próxima grande virada.</p>
+<hr>
+<p>Mas a jornada do TB-303 não termina nas pistas de dança dos anos 80; ela se estende até a era digital de hoje, com um renascimento na forma de uma experiência interativa online: o <a href="https://roland50.studio">Roland50.studio</a>.</p>
+<p><strong>Renascimento Digital: Roland50.studio</strong></p>
+<p>No coração deste renascimento está o <a href="https://roland50.studio">Roland50.studio</a>, uma plataforma online criativa que celebra meio século de inovação musical da Roland. Esta plataforma digital é uma homenagem aos dispositivos que moldaram a música como a conhecemos, permitindo que usuários de todo o mundo explorem e interajam com versões virtuais de instrumentos lendários, incluindo, é claro, o icônico TB-303.</p>
+<p></p>
+<p>A Roland colaborou com o renomado designer de som <a href="https://www.yurisuzuki.com">Yuri Suzuki</a> para criar uma experiência digital que não apenas emula o som do TB-303, mas também captura o espírito de experimentação que definiu sua história. No Roland50.studio, você pode manipular o TB-303 virtual com o clique de um mouse, torcendo os botões e deslizando os controles deslizantes para criar seu próprio som acid house. É uma ponte entre gerações, conectando a nostalgia dos sons analógicos com a acessibilidade da tecnologia digital.</p>
+<p><strong>O Paralelo com o Desenvolvimento de Software</strong></p>
+<p>Aqui, a história do TB-303 se entrelaça novamente com o desenvolvimento de software. O Roland50.studio é um testemunho do poder da tecnologia moderna para reimaginar o passado, transformando instrumentos físicos em experiências digitais acessíveis. Assim como os desenvolvedores refatoram e melhoram o código antigo para novos usos, o Roland50.studio refatora o TB-303 para a era da internet.</p>
+<p>Esta plataforma não é apenas uma ferramenta de criação musical; é uma lição em inovação de software. Mostra como interfaces intuitivas e design centrado no usuário podem tornar a tecnologia avançada acessível a um público mais amplo. Para os desenvolvedores, representa um desafio: como podemos transformar nossos próprios "TB-303s" de software, os projetos esquecidos e mal compreendidos, em algo novo e emocionante para a era digital?</p>
+<p><strong>A Batida Continua</strong></p>
+<p>O Roland50.studio, com seu TB-303 virtual, é uma celebração da inovação contínua. Assim como o TB-303 encontrou uma nova vida nas mãos de DJs e produtores de acid house, agora encontra uma nova expressão na web, inspirando uma nova geração de criadores.</p>
+<p>Para os desenvolvedores, a mensagem é clara: a inovação não se trata apenas de criar algo novo, mas também de reimaginar o que já existe. Assim como o TB-303 foi transformado de um fracasso comercial em uma lenda da música eletrônica, os projetos de software podem ser reimaginados para novos propósitos e audiências.</p>
+<p>Então, da próxima vez que você visitar o Roland50.studio e brincar com o TB-303 virtual, lembre da jornada deste pequeno sintetizador: de Osaka para o mundo, do esquecimento ao estrelato, e agora, para a nuvem. E lembre, na programação como na música, sempre há espaço para reinvenção e inovação.</p>
+<p>**Bônus: Playlist que utilizando o TB-303**</p>
+<p><strong>Links importantes</strong></p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/dominando-os-atalhos-do-javascript</guid>
+      <title>Dominando as malicias do JavaScript 😈</title>
+      <description>Hoje, nosso foco está nos atalhos que gosto de chamar de "malicias" de JavaScript, são técnicas que ajudam a deixar seu código mais limpo e eficaz.</description>
+      <link>https://lucaskaique.com.br/dominando-os-atalhos-do-javascript</link>
+      <pubDate>Mon, 26 Feb 2024 01:56:55 GMT</pubDate>
+      <content:encoded><![CDATA[<p></p>
+<p>Salve, galerinha viciada em JavaScript!</p>
+<p>Eu sou Lucas Kaique, seu engenheiro de software dedicado, trazendo mais insights de JavaScript. Hoje, nosso foco está nos atalhos que gosto de chamar de "malicias" de JavaScript, são técnicas que ajudam a deixar seu código mais limpo e eficaz.</p>
+<p>Vamos explorar exemplos práticos, alternando entre a abordagem padrão do JavaScript e suas contrapartes abreviadas.</p>
+<p>Então, sem mais delongas, vamos aprimorar suas habilidades em JavaScript!</p>
+<h3 id="user-content-1-arrow-functions-ou-funções-de-flecha"><a href="#1-arrow-functions-ou-fun%C3%A7%C3%B5es-de-flecha">1. Arrow Functions ou Funções de Flecha:</a></h3>
+<p><strong>Aplicação:</strong> Definições Simplificadas de Funções</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">function add(a, b) {
+  return a + b
+}
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">const add = (a, b) => a + b
+</code></pre>
+<h3 id="user-content-2-template-literals"><a href="#2-template-literals">2. Template Literals:</a></h3>
+<p><strong>Aplicação:</strong> Junção Dinâmica de Strings</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">const name = "Lucas Kaique"
+const greeting = "Olá, " + name + "!"
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">const name = "Lucas Kaique"
+const greeting = `Olá, ${name}!`
+</code></pre>
+<h3 id="user-content-3-desestruturação-de-arrays"><a href="#3-desestrutura%C3%A7%C3%A3o-de-arrays">3. Desestruturação de Arrays:</a></h3>
+<p><strong>Aplicação:</strong> Troca de Valores entre Variáveis</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">let a = 5
+let b = 10
+
+let temp = a
+a = b
+b = temp
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">let a = 5
+let b = 10
+
+;[a, b] = [b, a]
+</code></pre>
+<h3 id="user-content-4-avaliação-de-curto-circuito"><a href="#4-avalia%C3%A7%C3%A3o-de-curto-circuito">4. Avaliação de Curto-Circuito:</a></h3>
+<p><strong>Aplicação:</strong> Substituição para Valores Não Definidos ou Nulos</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">const username = getUsernameFromAPI()
+const displayName = username ? username : "Anônimo"
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">const username = getUsernameFromAPI()
+const displayName = username || "Anônimo"
+</code></pre>
+<h3 id="user-content-5-valores-padrão-para-parâmetros"><a href="#5-valores-padr%C3%A3o-para-par%C3%A2metros">5. Valores Padrão para Parâmetros:</a></h3>
+<p><strong>Aplicação:</strong> Definindo Valores Iniciais para Parâmetros de Função</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">function greet(name) {
+  name = name || "Visitante"
+  return `Olá, ${name}!`
+}
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">function greet(name = "Visitante") {
+  return `Olá, ${name}!`
+}
+</code></pre>
+<h3 id="user-content-6-abreviação-de-propriedades-de-objetos"><a href="#6-abrevia%C3%A7%C3%A3o-de-propriedades-de-objetos">6. Abreviação de Propriedades de Objetos:</a></h3>
+<p><strong>Aplicação:</strong> Formação de Objetos com Variáveis</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">const name = "Lucas Kaique"
+const age = 30
+
+const person = {
+  name: name,
+  age: age
+}
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">const name = "Lucas Kaique"
+const age = 30
+
+const person = {
+  name,
+  age
+}
+</code></pre>
+<h3 id="user-content-7-operador-ternário"><a href="#7-operador-tern%C3%A1rio">7. Operador Ternário:</a></h3>
+<p><strong>Aplicação:</strong> Atribuição Condicional</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">let isAdmin
+if (user.role === "admin") {
+  isAdmin = true
+} else {
+  isAdmin = false
+}
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">const isAdmin = user.role === "admin"
+</code></pre>
+<p><strong>Versão ainda mais curta:</strong></p>
+<pre><code class="language-javascript">const isAdmin = user.role === "admin" ? true : false
+</code></pre>
+<h3 id="user-content-8-operador-de-coalescência-nula"><a href="#8-operador-de-coalesc%C3%AAncia-nula">8. Operador de Coalescência Nula:</a></h3>
+<p><strong>Aplicação:</strong> Definição de Valores Padrão para Variáveis Nulas ou Não Definidas</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">const fetchUserData = () => {
+  return "Lucas Kaique" // altere para null ou undefined para observar o comportamento
+}
+
+const data = fetchUserData()
+const username = data !== null &#x26;&#x26; data !== undefined ? data : "Visitante"
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">const fetchUserData = () => {
+  return "Lucas Kaique" // altere para null ou undefined para observar o comportamento
+}
+
+const data = fetchUserData()
+const username = data ?? "Visitante"
+</code></pre>
+<h3 id="user-content-9-desestruturação-de-objetos"><a href="#9-desestrutura%C3%A7%C3%A3o-de-objetos">9. Desestruturação de Objetos:</a></h3>
+<p><strong>Aplicação:</strong> Extração de Propriedades de Objetos</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">const user = {
+  name: "Lucas Kaique",
+  age: 30,
+  country: "Brasil"
+}
+
+const name = user.name
+const age = user.age
+const country = user.country
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">const user = {
+  name: "Lucas Kaique",
+  age: 30,
+  country: "Brasil"
+}
+
+const { name, age, country } = user
+</code></pre>
+<h3 id="user-content-10-operador-spread"><a href="#10-operador-spread">10. Operador Spread:</a></h3>
+<p><strong>Aplicação:</strong> União de Arrays ou Objetos</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">const arr1 = [1, 2, 3]
+const arr2 = [4, 5, 6]
+const combinedArray = arr1.concat(arr2)
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">const arr1 = [1, 2, 3]
+const arr2 = [4, 5, 6]
+const combinedArray = [...arr1, ...arr2]
+</code></pre>
+<h3 id="user-content-11-atribuição-lógica-or"><a href="#11-atribui%C3%A7%C3%A3o-l%C3%B3gica-or">11. Atribuição Lógica OR:</a></h3>
+<p><strong>Aplicação:</strong> Definição de Valor Padrão para Variáveis</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">let count
+if (!count) {
+  count = 1
+}
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">let count
+count ||= 1
+</code></pre>
+<h3 id="user-content-12-avaliação-de-curto-circuito-para-chamada-de-função"><a href="#12-avalia%C3%A7%C3%A3o-de-curto-circuito-para-chamada-de-fun%C3%A7%C3%A3o">12. Avaliação de Curto-Circuito para Chamada de Função:</a></h3>
+<p><strong>Aplicação:</strong> Prevenção de Execução Desnecessária de Função</p>
+<p><strong>JavaScript Padrão:</strong></p>
+<pre><code class="language-javascript">function fetchData() {
+  if (shouldFetchData) {
+    return fetchDataFromAPI()
+  } else {
+    return null
+  }
+}
+</code></pre>
+<p><strong>Forma Simplificada:</strong></p>
+<pre><code class="language-javascript">function fetchData() {
+  return shouldFetchData &#x26;&#x26; fetchDataFromAPI()
+}
+</code></pre>
+<p>Cabô!!</p>
+<p>Implemente essas formas abreviadas em seu código e observe como suas habilidades em JavaScript se expandem.</p>
+<p>Até a proxima.</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/como-publicar-um-projeto-next-js-no-github-pages</guid>
+      <title>Como publicar um projeto Next.js no Github Pages </title>
+      <description>Neste artigo, vou te orientar no processo de publicação de um projeto Next.js no Github Pages </description>
+      <link>https://lucaskaique.com.br/como-publicar-um-projeto-next-js-no-github-pages</link>
+      <pubDate>Sun, 25 Feb 2024 01:22:43 GMT</pubDate>
+      <content:encoded><![CDATA[<h2 id="user-content-neste-artigo-vou-te-orientar-no-processo-de-publicação-de-um-projeto-nextjs-no-github-pages-"><a href="#neste-artigo-vou-te-orientar-no-processo-de-publica%C3%A7%C3%A3o-de-um-projeto-nextjs-no-github-pages-">Neste artigo, vou te orientar no processo de publicação de um projeto Next.js no Github Pages .</a></h2>
+<p>Eu trabalho no <a href="https://www.instagram.com/devemdobro/">Dev em Dobro</a>, uma Edtech cuja missão é ajudar devs iniciantes a se sentirem menos perdidos quando começam a aprender programação. Pensando nisso, frequentemente organizamos eventos gratuitos onde ensinamos a criar um site do zero com HTML, CSS e JavaScript. E no final, mostramos como subir seu site para deixá-lo online utilizando o GitHub Pages.</p>
+<p>Se você ainda não conhece, o GitHub Pages é uma plataforma de hospedagem gratuita dentro do GitHub que permite aos usuários publicar sites diretamente a partir de um repositório no GitHub. Isso significa que você pode hospedar seu código-fonte no GitHub e transformá-lo em um site acessível para qualquer pessoa na internet. É uma ótima ferramenta para apresentar seus projetos, portfólios ou até mesmo artigos de blog. Além disso, é bastante popular entre os desenvolvedores devido à sua integração com o GitHub e à facilidade de uso.</p>
+<p>Muitos alunos tentam sempre fazer deploy de uma aplicação no GitHub Pages mas não sabem realmente como ele funciona. Muitos alunos tentam sempre fazer deploy de uma aplicação no github pages mas não sabe realmente como ele funciona. Eles tentam fazer o deploy e, quando algo dá errado, ficam frustrados, e vem chorar "ah mas não funciona" 😂. Brincadeiras a parte, mas entender o GitHub Pages é o primeiro passo para o sucesso. Lembre que, ele é destinado para arquivos estáticos, e aqui entra o pulo do gato para projetos Next.js: você precisa transformá-los de dinâmicos para estáticos.</p>
+<p>Este tutorial vai ser muito massa porque vamos integrar as GitHub Actions com o GitHub Pages. Isso significa que você não vai estar apenas publicando sua aplicação Next.js na internet; você vai estar configurando uma pipeline automática. Uma pipeline é um conjunto de processos e ferramentas automatizados, comumente usado em integração contínua e entrega contínua (CI/CD). Nesse contexto, uma pipeline é um processo que guia o desenvolvimento de software através de um caminho de criação, testes e implantação do código. O objetivo da automação do processo é minimizar erros humanos e manter a consistência até a implantação.</p>
+<p>Assim, toda vez que você atualizar seu código no seu repositório GitHub, as GitHub Actions entrarão em cena e farão o deploy do seu projeto direto no GitHub Pages. Prático, né?</p>
+<h3 id="user-content-desvendando-o-mistério"><a href="#desvendando-o-mist%C3%A9rio">Desvendando o mistério:</a></h3>
+<ul>
+<li><strong>GitHub Actions</strong>: Imagine ter uma equipe de mini robôs dedicados só pra você, sempre de olho no seu repositório. Quando você faz um push, eles saltam para a ação como pequenos heróis do código, realizando tarefas essenciais – eles podem testar seu código para garantir que tudo está nos trinques, verificar a qualidade para que você mantenha seu padrão ou, especificamente para nosso propósito, fazer o deploy do seu projeto automaticamente.</li>
+<li><strong>GitHub Pages</strong>: Pense nisso como seu próprio espaço de hospedagem web, cortesia do GitHub. É o local ideal para exibir seus projetos de forma profissional, mostrar ao mundo seu portfólio brilhante ou até mesmo compartilhar seus projetos pessoais e experimentos, tudo isso a partir do conforto do seu repositório GitHub.</li>
+</ul>
+<p>Aqui uns links caso tenha interesse em se aprofundar:</p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+<h3 id="user-content-preparação-é-chave"><a href="#prepara%C3%A7%C3%A3o-%C3%A9-chave">Preparação é chave:</a></h3>
+<p>Para gente seguir nessa quest, um pouquinho de bagagem é necessário. Um conhecimento introdutório em React e Next.js vai longe – não precisa ser um mestre lvl 80, apenas entender o básico já é suficiente. E, claro, uma noção fundamental de como o GitHub funciona é crucial, afinal, vai ser onde toda a nossa ação vai acontecer.</p>
+<h3 id="user-content-guia-rápido"><a href="#guia-r%C3%A1pido">Guia Rápido:</a></h3>
+<ol>
+<li>
+<p><strong>Ative o GitHub Pages</strong>: Vá nas configurações do seu repositório, ache a seção do GitHub Pages e configure para usar as GitHub Actions. Você está basicamente dizendo ao GitHub: "Ei, vou automatizar isso, fique de olho".</p>
+<p></p>
+<p></p>
+</li>
+<li>
+<p><strong>Prepare seu App Next.js</strong>: Como o GitHub Pages prefere conteúdo estático, você vai ajustar seu Next.js para saída de páginas estáticas. Você vai mexer no <code>next.config.js</code> para garantir que ele exporte seu projeto como arquivos estáticos. Assim, o GitHub pode exibir seu site sem problemas.</p>
+</li>
+</ol>
+<pre><code class="language-javascript">/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export", // &#x3C;=== permite exportações estáticas
+  reactStrictMode: true
+}
+
+module.exports = nextConfig
+</code></pre>
+<p>Agora, após executar a próxima <code>next build</code>, Next.js irá gerar uma pasta <code>out</code> contendo arquivos estáticos do nosso projeto. Nas próximas etapas, essa vai ser a pasta que nós pegaremos carregaremos no GitHub Pages.</p>
+<p>PS: você pode usar <a href="https://nextjs.org/docs/pages/building-your-application/data-fetching/get-static-props">getStaticProps </a>e <a href="https://nextjs.org/docs/pages/building-your-application/data-fetching/get-static-paths">getStaticPaths</a> para gerar arquivos estáticos pro seu projeto.</p>
+<ol start="3">
+<li><strong>Corrija Problemas de Caminho</strong>: Seu projeto pode ter problemas com imagens ou estilos quebrados porque o GitHub Pages coloca ele em um subdiretório. Você vai resolver isso definindo um <code>basePath</code> no seu <code>next.config.js</code>. Isso diz ao seu app: "Ei, não estamos mais no mesmo lugar; estamos nesse novo endereço".</li>
+</ol>
+<p>O Github publica páginas em um subcaminho de um domínio e usa o nome do projeto como um subcaminho. Parece confuso, então vamos usar a URL do meu projeto como exemplo:</p>
+<p></p>
+<p>Como você pode ver, o Github atribuiu um subdomínio dedicado para mim chamado lucaoskaique(com meu nome de usuário). Mas o projeto é publicado no subcaminho, que no meu caso é /nextjs-to-github-pages. Infelizmente, isso levará a problemas com imagens e estilos ausentes.</p>
+<p>Por padrão, Next.js mapeia todos os ativos estáticos do domínio. Isso significa que o arquivo <code>favicon.ico</code> será resolvido para <code>lucaoskaique.github.io/favicon.ico</code> em vez de <code>lucaoskaique.github.io/nextjs-to-github-pages/favicon.icon</code>.</p>
+<p>Para corrigir isso, podemos configurar um prefixo de caminho adicionando basePath dentro do arquivo next.config.js:</p>
+<pre><code class="language-javascript">/** @type {import('next').NextConfig} */
+const nextConfig = {
+  basePath: "/nextjs-to-github-pages",
+  output: "export",
+  reactStrictMode: true
+}
+
+module.exports = nextConfig
+</code></pre>
+<p>No meu caso, é <code>/nextjs-to-github-pages</code> ja que meu projeto chama nextjs-to-github-pages. Não esquece de botar o <code>(/)</code> no inicio do path.</p>
+<ol start="4">
+<li><strong>Configure as GitHub Actions</strong>: Aqui é onde a mágica acontece. Você vai criar duas actions: uma para configurar o Node.js (tipo preparando seu ambiente) e outra para a mágica de publicação (levando seu lindo site estático para o mundo ver).</li>
+</ol>
+<ul>
+<li>Ação de configuração do Node (setup-node action) – Essa ação é responsável por configurar o Node.js e instalar todas as dependências. Ter uma ação autônoma para a configuração do Node.js nos permite reutilizá-la em outras pipelines. Por exemplo, no meu projeto, tenho pipelines que executam linter de código e testes. Provavelmente, você também terá mais de uma ação.</li>
+<li>Ação de publicação (publish action) – Esta ação gerencia o processo de build e publica o projeto Next.js no GitHub Pages toda vez que você der um push na branch main do repositório.</li>
+</ul>
+<p>Agora, você pode entender por que é benéfico dividir a implantação em duas ações.</p>
+<p>Deixe-me começar explicando a ação de configuração do Node (setup-node action). Se liga no código:</p>
+<pre><code class="language-yaml"># File: .github/workflows/setup-node/action.yml
+name: setup-node
+description: "Configura Node.js ⚙️ - Cache dependencies ⚡ - Instala dependências 🔧"
+runs:
+  using: "composite"
+  steps:
+    - name: Configura Node.js ⚙️
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Cache dependencies ⚡
+      id: cache_dependencies
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: node-modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Instala dependências 🔧
+      shell: bash
+      if: steps.cache_dependencies.outputs.cache-hit != 'true'
+      run: npm ci
+</code></pre>
+<p>Importante: Coloque este arquivo no diretório <code>.github/workflows/setup-node</code> do seu projeto. Certifique-se de nomear o arquivo como <code>action.yml</code>.</p>
+<p>O que este código faz?</p>
+<ul>
+<li>Ele declara uma ação composta. A ação composta permite agrupar múltiplos passos de um workflow em uma única ação, combinando múltiplos comandos de execução em uma única ação reutilizável.</li>
+<li>Ele cria um novo ambiente de build e configura o Node.js 20 lá.</li>
+<li>Ele instala dependências npm e utiliza um mecanismo de cache para acelerar este processo.</li>
+</ul>
+<p>Estas são as partes mais importantes da ação de configuração do Node (setup-node action).</p>
+<p>Agora, vamos passar para a última ação, que é a publicação (publish).</p>
+<pre><code class="language-yaml"># File: .github/workflows/publish.yml
+name: publish-to-github-pages
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Configura Node.js ⚙️ - Cache dependencies ⚡ - Instala dependências 🔧
+        uses: ./.github/workflows/setup-node
+
+      - name: Configura Pages ⚙️
+        uses: actions/configure-pages@v4
+        with:
+          static_site_generator: next
+
+      - name: Build com Next.js 🏗️
+        run: npx next build
+
+      - name: Upload do artefato 📡
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Publica no GitHub Pages 🚀
+        id: deployment
+        uses: actions/deploy-pages@v4
+</code></pre>
+<p>Coloque este arquivo no diretório <code>.github/workflows</code> do seu projeto. Você pode nomear o arquivo como desejar – eu o chamei de <code>publish.yml</code>.</p>
+<p>O que este código faz?</p>
+<ul>
+<li>Esta ação é executada quando o código é enviado ou mesclado na branch principal.</li>
+<li>Ela utiliza a ação setup-node para configurar o ambiente.</li>
+<li>A ação tem dois estágios: no primeiro estágio, o aplicativo Next.js é empacotado. No segundo estágio, nós fazemos o upload dos artefatos do primeiro estágio para o GitHub Pages.</li>
+<li>Estes são os aspectos mais importantes da pipeline de implantação. Eu pulei a configuração de permissões e concorrência, pois permanecem inalteradas para todas as implantações.</li>
+</ul>
+<p>Agora, sua action está pronta para ser usada.</p>
+<ol start="5">
+<li><strong>Faça o Push e Observe</strong>: Depois de fazer essas alterações, quando você fizer o push, as GitHub Actions vão iniciar automaticamente o deploy para o GitHub Pages.</li>
+</ol>
+<p>Após fazer o commit e o push das suas mudanças para a branch principal, o GitHub automaticamente iniciará o deploy para o GitHub Pages.</p>
+<p>Para inspecionar o processo, navegue até a aba Actions (1 na imagem abaixo), e selecione a ação publish-to-github-pages no menu do lado esquerdo (2). Você verá todas as suas implantações na tela (elas são chamadas de workflows).</p>
+<p></p>
+<p>Agora, precisamos selecionar o primeiro desses workflows, e você verá uma implantação em dois estágios. No estágio de deploy, você pode encontrar um link para o seu site no GitHub Pages.</p>
+<p></p>
+<p>E aí, é só curtir seu projeto rodando liso na web!</p>
+<h2 id="user-content-finalizando"><a href="#finalizando">Finalizando</a></h2>
+<p>O GitHub Pages pode não ser a solução ideal para sites com tráfego massivo de milhões de acessos. No entanto, representa uma opção incrível para desenvolver seu portfólio ou para a hospedagem de sites de projetos open-source.</p>
+<p>Existem diversas alternativas gratuitas disponíveis para hospedagem de sites atualmente. Contudo, quis destacar esta opção específica. O GitHub Pages foi criado por desenvolvedores para desenvolvedores – é possível considerá-lo como o habitat natural de um programador. Acredito que todo dev deveria estar familiarizado com ele.</p>
+<p>Espero que este artigo sirva como um incentivo para aprender mais sobre as GitHub Actions. Não hesite em experimentar abordagens diferentes e tentar criar algo próprio. Cada aplicação precisa ser lançada, e veja este artigo apenas como um ponto de partida.</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/12-dicas-de-javascript-que-todo-desenvolvedor-deve-conhecer</guid>
+      <title>12 Dicas de JavaScript que Todo Desenvolvedor Deve Conhecer</title>
+      <description>Hoje e quero compartilhar com vocês 12 dicas super úteis que podem melhorar significativamente suas habilidades de programação e a eficiência do desenvolvimento de projetos</description>
+      <link>https://lucaskaique.com.br/12-dicas-de-javascript-que-todo-desenvolvedor-deve-conhecer</link>
+      <pubDate>Fri, 23 Feb 2024 07:53:08 GMT</pubDate>
+      <content:encoded><![CDATA[<p></p>
+<p>Salve galera! Sextou hoje e quero compartilhar com vocês 12 dicas super úteis que podem melhorar significativamente suas habilidades de programação e a eficiência do desenvolvimento de projetos. Essas dicas abrangem desde manipulações de strings até a melhoria da segurança do código. Chega mais!!!</p>
+<ol>
+<li>
+<p><strong>Camel Case Superior</strong>: Escreva nomes compostos com a primeira letra de cada palavra em maiúsculo, exceto a primeira. É mais que um estilo; é um padrão que traz clareza ao seu código.</p>
+<pre><code class="language-javascript">function camelize(str) {
+  return str.replace(/([a-z]+)/g, (match, group) =>
+    group ? group.charAt(0).toUpperCase() + match.slice(1) : ""
+  )
+}
+console.log(camelize("ola mundo")) // Saída: olaMundo
+</code></pre>
+</li>
+<li>
+<p><strong>Segmentação de Três Dígitos</strong>: Torne números grandes mais legíveis, aplicando a segmentação a cada três dígitos. Ideal para valores financeiros e grandes contagens.</p>
+<pre><code class="language-javascript">function numFormat(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+console.log(numFormat("123456789")) // Saída: 123,456,789
+</code></pre>
+</li>
+<li>
+<p><strong>Acesso Seguro a Propriedades</strong>: Evite erros ao acessar propriedades indefinidas em objetos com um método à prova de falhas.</p>
+<pre><code class="language-javascript">const a = {}
+const proxy = new Proxy(a, {
+  get(target, propKey, receiver) {
+    return Reflect.get(target, propKey, receiver) ?? {}
+  }
+})
+console.log(proxy.b.c) // Saída: undefined
+</code></pre>
+</li>
+<li>
+<p><strong>Tipo de Dispositivo Móvel</strong>: Identifique rapidamente se o usuário está em um Android, iPhone ou iPad para uma experiência de usuário otimizada.</p>
+<pre><code class="language-javascript">function getBrowserInfo() {
+  const userAgent = navigator.userAgent.toLowerCase()
+  return {
+    isAndroid: Boolean(userAgent.match(/android/gi)),
+    isIphone: Boolean(userAgent.match(/iphone|ipod/gi)),
+    isIpad: Boolean(userAgent.match(/ipad/gi))
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Simulação de Requisição de Formulário</strong>: Implemente a funcionalidade de exportação de arquivos de maneira simples e eficaz.</p>
+<pre><code class="language-javascript">function exportFunc(url, params) {
+  const form = document.createElement("form")
+  form.style.display = "none"
+  form.action = url
+  form.method = "post"
+  document.body.appendChild(form)
+
+  for (const key in params) {
+    const input = document.createElement("input")
+    input.type = "hidden"
+    input.name = key
+    input.value = params[key]
+    form.appendChild(input)
+  }
+  form.submit()
+  form.remove()
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Vinculação de Eventos Universal</strong>: Garanta que seus ouvintes de eventos funcionem em qualquer navegador.</p>
+<pre><code class="language-javascript">function customEventBind(ele, eventType, callBack) {
+  if (ele.addEventListener) {
+    ele.addEventListener(eventType, callBack, false)
+  } else if (ele.attachEvent) {
+    ele.attachEvent("on" + eventType, callBack)
+  } else {
+    ele["on" + eventType] = callBack
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Configuração de Cookies</strong>: Gerencie cookies de forma eficiente com controle total sobre seus atributos.</p>
+<pre><code class="language-javascript">function setCookie({ key, value, expires, path, domain, secure }) {
+  let cookieString = `${key}=${encodeURIComponent(value)}`
+  if (expires) {
+    const expirationDate = new Date()
+    expirationDate.setTime(
+      expirationDate.getTime() + expires * 24 * 60 * 60 * 1000
+    )
+    cookieString += `; expires=${expirationDate.toUTCString()}`
+  }
+  if (path) cookieString += `; path=${path}`
+  if (domain) cookieString += `; domain=${domain}`
+  if (secure) cookieString += "; secure"
+  document.cookie = cookieString
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Informações do Navegador</strong>: Extraia detalhes do navegador do usuário para melhorar a compatibilidade do seu site.</p>
+<pre><code class="language-javascript">function getBrowserInfo() {
+  const userAgent = navigator.userAgent;
+  const browserRegex = /(Chrome|Firefox|Safari|Opera|Edge|Trident)\[/ ]?(\d+)/;
+  const browserMatch = userAgent.match(browserRegex);
+  return {
+    browserName: browserMatch ? browserMatch\[1] : 'Desconhecido',
+    browserVersion: browserMatch ? browserMatch\[2] : 'Desconhecido'
+  };
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Informações do Sistema Operacional</strong>: Saiba com qual sistema operacional o usuário está navegando para otimizar sua experiência.</p>
+<pre><code class="language-javascript">function getUserOsInfo() {
+  const userAgent = navigator.userAgent
+  const osRegex = /((Windows NT)|(Mac OS X)|(Android)|(iOS))\s*([\d._]+)/
+  const osMatch = userAgent.match(osRegex)
+  return {
+    osName: osMatch ? osMatch[1] : "Desconhecido",
+    osVersion: osMatch ? osMatch[5] : "Desconhecido"
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Validação de Data</strong>: Garanta que as datas de início e fim sejam coerentes e lógicas.</p>
+<pre><code class="language-javascript">function compareDate(beginDate, endDate) {
+  const start = new Date(beginDate)
+  const end = new Date(endDate)
+  return start &#x3C;= end
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Parâmetros de URL</strong>: Capte facilmente valores de parâmetros de URLs para análises e funcionalidades personalizadas.</p>
+<pre><code class="language-javascript">function getQueryStringRegExp(name) {
+  const reg = new RegExp("(^|&#x26;)" + name + "=([^&#x26;]*)(&#x26;|$)", "i")
+  const r = window.location.search.substr(1).match(reg)
+  if (r != null) return unescape(r[2])
+  return null
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Exportação de Arquivos Excel</strong>: Simplifique a criação e exportação de arquivos Excel com uma função personalizada.</p>
+<pre><code class="language-javascript">function exportExcel(headers, data, fileName = "export.xlsx") {
+  // Código simplificado para a criação e exportação do arquivo Excel
+}
+</code></pre>
+</li>
+</ol>
+<p>Espero que essas dicas ajudem vocês!!! Até a mais!!!!</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/3-tecnicas-pessoais-que-transformaram-minha-carreira-em-desenvolvimento</guid>
+      <title>3 Técnicas Pessoais Que Transformaram Minha Carreira em Desenvolvimento</title>
+      <description>Sabe quando você começa a codar e só quer que as coisas funcionem? Pois é, mas aí você descobre que rola fazer isso de um jeito bem mais top. Tem três coisas que, se você começar a usar agora, vão dar um up no seu código rapidinho.</description>
+      <link>https://lucaskaique.com.br/3-tecnicas-pessoais-que-transformaram-minha-carreira-em-desenvolvimento</link>
+      <pubDate>Sun, 11 Feb 2024 11:36:36 GMT</pubDate>
+      <content:encoded><![CDATA[<p></p>
+<h3 id="user-content-evoluindo-na-programação-lições-de-um-full-stack"><a href="#evoluindo-na-programa%C3%A7%C3%A3o-li%C3%A7%C3%B5es-de-um-full-stack"><strong>Evoluindo na Programação: Lições de um Full Stack</strong></a></h3>
+<p>Há quase um ano, entrei numa experiência muito divertida no mundo do desenvolvimento, participando ativamente do Dev em Dobro, ajudando no papel de instrutor e mentor. Durante esse período, não apenas compartilhei conhecimentos e esclareci dúvidas, mas também testemunhei o crescimento impressionante de inúmeros alunos, do zero à competência em desenvolvimento web.</p>
+<p>Esta jornada reacendeu reflexões sobre meus próprio inicio na programação. Me lembro dos dias em que, sem uma orientação formal, cada linha de código que funcionava era um motivo de celebrar. Essa abordagem "go horse" no código, embora divertida, muitas vezes me deixava à deriva em um mar de práticas questionáveis e dúvidas horrendas.</p>
+<p>Refletindo sobre essa trajetória, identifiquei três princípios fundamentais que teriam acelerado meu progresso e refinado minha abordagem ao desenvolvimento desde o início. São lições que transcenderam minha experiência com desenvolvimento. Aqui estão elas:</p>
+<h4 id="user-content-1-escrevendo-código-para-humanos"><a href="#1-escrevendo-c%C3%B3digo-para-humanos"><strong>1. Escrevendo Código para Humanos</strong></a></h4>
+<p>Na programação, a verdadeira arte eu vejo que é escrever código que seja facilmente compreendido por outros desenvolvedores. No início, muitos escrevem código pensando na máquina, performace e etc, mas a realidade é que nosso público principal são os colegas de equipe que vão ler, entender e modificar esse código. Simplificar a complexidade e priorizar a clareza não é apenas uma questão de cortesia profissional, mas uma habilidade essencial na construção de sistemas robustos e colaborativos.</p>
+<p>Esse conceito, embora pareça básico, foi uma verdadeira mudança de paradigma para mim. No início, minha visão de programação era puramente técnica: eu via o código como um meio de instruir o computador, focando em como "falar" com a máquina, todo mundo de todos os cursos e trabalho falavam só sobre performance. Mas, com o tempo, percebi algo fundamental que o código é de dev para dev, não de dev para máquina.</p>
+<p>A máquina, no final das contas, vai converte tudo em zeros e uns e não tem a menor preocupação com a legibilidade ou a elegância do código. São os nossos colegas que precisam navegar, entender e, muitas vezes, expandir ou corrigir o que escrevemos.</p>
+<p>Vamos ilustrar isso com um exemplo prático: a função <code>groupBy</code>.</p>
+<p>Primeiro se liga:</p>
+<pre><code class="language-javascript">const groupBy = (arr, groupFn) =>
+  arr.reduce(
+    (grouped, obj) => ({
+      ...grouped,
+      [groupFn(obj)]: [...(grouped[groupFn(obj)] || []), obj]
+    }),
+    {}
+  )
+</code></pre>
+<p>Aqui, demonstramos que podemos condensar operações complexas em uma única linha. Embora isso possa nos fazer sentir mais experientes, na realidade, torna a compreensão do código muito mais difícil para qualquer pessoa que precise revisá-lo.</p>
+<p>Agora, considere esta outra implementação:</p>
+<pre><code class="language-javascript">const groupBy = (arr, groupFn) => {
+  const grouped = {}
+  for (const obj of arr) {
+    const groupName = groupFn(obj)
+    if (!grouped[groupName]) {
+      grouped[groupName] = []
+    }
+    grouped[groupName].push(obj)
+  }
+  return grouped
+}
+</code></pre>
+<p>Esse código pode ser lido de cima para baixo, e é possível entender instantaneamente o que acontece em cada linha. Ele pode não ter a mesma "elegância" da versão anterior, mas sua legibilidade é imensamente superior. E é justamente isso que valorizamos: um código que qualquer pessoa na equipe possa revisitar no futuro e agradecer pela clareza.</p>
+<p>Esse princípio de priorizar a legibilidade não só facilita a manutenção do código como também promove uma cultura de colaboração e aprendizado contínuo entre os desenvolvedores. Portanto, da próxima vez que você se sentar para codar, lembre de que está escrevendo para humanos, não para máquinas.</p>
+<h4 id="user-content-2-escondendo-informações-atrás-das-cortinas"><a href="#2-escondendo-informa%C3%A7%C3%B5es-atr%C3%A1s-das-cortinas"><strong>2. Escondendo Informações Atrás das Cortinas</strong></a></h4>
+<p>Uma das maiores revelações que tive foi a eficácia de abstrair detalhes complexos por trás de funções claras e bem definidas. Isso não apenas melhora a legibilidade do código, mas também sua modularidade. Ao encapsular operações complexas, facilitamos a manutenção e incentivamos a reutilização do código.</p>
+<p>Minha passagem pelo Dev em Dobro foi mais do que apenas um período de ensino; foi um lembrete constante do poder da educação contínua e do compartilhamento de conhecimento. Ver desenvolvedores emergentes abraçando esses princípios e aplicando-os em seus projetos reforça a crença de que, independentemente de onde começamos, o crescimento contínuo é sempre possível.</p>
+<p>Espero que compartilhando essas lições, possa inspirar outros a refletirem sobre suas práticas de codificação e a buscarem sempre a evolução. Afinal, o desenvolvimento de software é uma jornada sem fim, repleta de aprendizados constantes e oportunidades de melhorar não apenas nossos códigos, mas também a nós mesmos como profissionais e mentores.</p>
+<p>Para quem já mexeu com React, os hooks são um exemplo perfeito desse princípio:</p>
+<pre><code class="language-javascript">import React, { useState, useEffect } from "react"
+
+function FriendListItem(props) {
+  const [isOnline, setIsOnline] = useState(null)
+
+  useEffect(() => {
+    function handleStatusChange(status) {
+      setIsOnline(status.isOnline)
+    }
+
+    ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange)
+    return () => {
+      ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange)
+    }
+  })
+
+  return (
+    &#x3C;li style={{ color: isOnline ? "green" : "black" }}>{props.friend.name}&#x3C;/li>
+  )
+}
+</code></pre>
+<p>Nesse caso, temos um componente que mostra um item de lista com a cor dinâmica baseada no status do amigo. Apesar de funcionar direitinho, esse código esconde dentro dele lógicas que não têm muito a ver com o propósito principal do componente <code>FriendListItem</code>.</p>
+<p>Se a gente pegar essa lógica e criar um hook customizado chamado <code>useFriendStatus</code>, dá para simplificar o componente assim:</p>
+<pre><code class="language-javascript">import React, { useState, useEffect } from "react"
+
+function FriendListItem(props) {
+  const isOnline = useFriendStatus(props.friend.id)
+
+  return (
+    &#x3C;li style={{ color: isOnline ? "green" : "black" }}>{props.friend.name}&#x3C;/li>
+  )
+}
+</code></pre>
+<p>Isso traz dois benefícios bem legais:</p>
+<ol>
+<li>A gente pode reutilizar a lógica do <code>useFriendStatus</code> em outros lugares.</li>
+<li>Simplificamos nosso componente para mostrar apenas o que realmente importa para sua funcionalidade.</li>
+</ol>
+<p>Falando de um jeito mais amplo, o princípio de esconder informações é sobre colocar detalhes irrelevantes para trás de funções abstratas. Assim, a gente não precisa se preocupar com os detalhes de implementação dentro da função abstrata - podemos focar mais no que ela faz, ou seja, no nome da função que indica seu propósito.</p>
+<p>Dessa forma, o código fica mais limpo, fácil de entender e manter, liberando mais tempo para a gente focar na solução dos problemas em vez de decifrar o que cada pedaço do código está fazendo.</p>
+<h4 id="user-content-3-return-early-em-vez-de-usar-coisas-aninhadas"><a href="#3-return-early-em-vez-de-usar-coisas-aninhadas"><strong>3. “Return Early” em Vez de Usar Coisas Aninhadas</strong></a></h4>
+<p>A ultima dica tem a ver especialmente com lidar com validações em rotas de API, é tentador cair na armadilha das condições aninhadas. O padrão "retorne cedo" simplifica a lógica, evitando a complexidade e melhorando a legibilidade do código. Adotar essa prática não só torna o código mais limpo, mas também facilita sua manutenção a longo prazo.</p>
+<p>Veja só como geralmente a coisa começa:</p>
+<pre><code class="language-javascript">export const handler = async (req, res) => {
+  if (req.method === "POST" || req.method === "OPTIONS") {
+    const email = validateEmail(req.body.email)
+    if (email) {
+      const user = findUserByEmail(email)
+      if (user) {
+        return res.status(200).json({ user })
+      } else {
+        return res.status(404).json({ message: "Usuário não encontrado" })
+      }
+    } else {
+      return res.status(422).json({ message: "Faltou o email" })
+    }
+  } else {
+    return res.status(405).json({ message: "Esse método não rola" })
+  }
+}
+</code></pre>
+<p>Esse código pode não estar super complexo, mas já começa a ficar um pouco enrolado. O grande truque aqui é que, em vez de seguir uma linha reta, parece que a gente tá fazendo zig-zag pra entender o fluxo.</p>
+<p>Agora, que tal a gente tentar um jeito diferente de escrever isso, utilizando o que chamamos de "Padrão de Retorno Antecipado"? Esse padrão ajuda a cortar o caminho quando algo não está nos conformes, deixando o fluxo mais lógico e direto.</p>
+<p>Olha só como poderia ficar:</p>
+<pre><code class="language-javascript">export const handler = async (req, res) => {
+  if (req.method !== "POST" &#x26;&#x26; req.method !== "OPTIONS") {
+    return res.status(405).json({ message: "Esse método não rola" })
+  }
+
+  const email = validateEmail(req.body.email)
+  if (!email) {
+    return res.status(422).json({ message: "Faltou o email" })
+  }
+
+  const user = findUserByEmail(email)
+  if (!user) {
+    return res.status(404).json({ message: "Usuário não encontrado" })
+  }
+
+  return res.status(200).json({ user })
+}
+</code></pre>
+<p>Dessa forma, o código fica mais limpo e a gente consegue entender o que tá acontecendo passo a passo, de uma maneira bem mais tranquila. Ao invés de um monte de condicionais aninhados, a gente vai direto ao ponto e trata cada caso separadamente, deixando o caminho livre até chegar no resultado que a gente quer lá no final.</p>
+<hr>
+<p>E﻿spero que essas dicas tenham sido úteis e que essas pequenas dicas te engrandeçam na sua jornada de estudos</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/como-filtrar-um-objeto-no-javascript</guid>
+      <title>Como Filtrar um Objeto no JavaScript</title>
+      <description>Infelizmente, os objetos JavaScript não possuem uma função filter(). Mas isso não significa que você não pode usar filter() para filtrar objetos, você só precisa ser capaz de iterar sobre um objeto e convertê-lo em um array usando Object.entries().</description>
+      <link>https://lucaskaique.com.br/como-filtrar-um-objeto-no-javascript</link>
+      <pubDate>Sun, 04 Feb 2024 08:25:28 GMT</pubDate>
+      <content:encoded><![CDATA[<p>Objetos em JavaScript não são iteráveis como vetores ou cadeias de caracteres (não é possível percorrê-los com loops). Isso significa que você não pode aplicar diretamente <code>filter()</code>, o método de laço for, ou qualquer outro método de iteração em um objeto. Então, como se pode filtrar um objeto em JavaScript?</p>
+<p>Isso é possível ao transformar o objeto em um vetor utilizando um dos métodos estáticos de objeto, tais como <code>Object.keys()</code>, <code>Object.values()</code> ou <code>Object.entries()</code>. Posteriormente, você pode empregar o método filter() para realizar a filtragem no vetor e gerar um novo vetor com os elementos que passaram pelo filtro.</p>
+<p>Imagine que você possui um objeto que armazena detalhes de usuários, como nome, idade e profissão. Esses métodos estáticos de objeto têm a capacidade de retornar as chaves, os valores ou cada par de chave-valor na forma de um vetor.</p>
+<pre><code class="language-javascript">const detalhesDoUsuario = {
+  primeiroNome: "Lucas",
+  sobrenome: "Kaique",
+  nomeDeUsuario: "lucaoskaique",
+  email: "me@lucaskaique.com.br",
+  empresa: "Example Inc.",
+  endereco: "1234 Exemplo",
+  idade: 29,
+  passatempo: "DJ"
+}
+
+let arrayDeChaves = Object.keys(detalhesDoUsuario)
+
+console.log(arrayDeChaves)
+</code></pre>
+<p>Isso exibirá um vetor com as chaves do objeto:</p>
+<p><code>['primeiroNome', 'sobrenome', 'nomeDeUsuario', 'email', 'empresa', 'endereco', 'idade', 'passatempo']</code>
+Agora você pode empregar o método <code>filter()</code> para navegar pelo vetor e criar um novo vetor com os elementos filtrados:</p>
+<pre><code class="language-javascript">let chavesFiltradas = arrayDeChaves.filter((chave) => chave.length > 5)
+
+console.log(chavesFiltradas)
+</code></pre>
+<p>Isso resultará em um vetor de chaves cujo tamanho é superior a 5:</p>
+<p><code>['primeiroNome', 'sobrenome', 'nomeDeUsuario', 'empresa', 'endereco', 'passatempo']</code>
+No entanto, certamente você desejará realizar uma operação de filtragem mais significativa. Por exemplo, você pode querer filtrar pares de chave-valor do objeto que incluem um nome de um objeto extenso. Para isso, primeiramente obtenha as chaves, filtre-as e depois utilize o método reduce() para converter as chaves filtradas em um objeto com as chaves filtradas e seus respectivos valores:</p>
+<pre><code class="language-javascript">const detalhesDoUsuario = {
+  primeiroNome: "Lucas",
+  sobrenome: "Kaique",
+  nomeDeUsuario: "lucaoskaique",
+  email: "me@lucaskaique.com.br",
+  empresa: "Example Inc.",
+  endereco: "1234 Exemplo",
+  idade: 29,
+  passatempo: "DJ"
+}
+
+const nomesDeUsuario = Object.keys(detalhesDoUsuario)
+  .filter((chave) => chave.includes("Nome"))
+  .reduce((objeto, chave) => {
+    return Object.assign(objeto, {
+      [chave]: detalhesDoUsuario[chave]
+    })
+  }, {})
+
+console.log(nomesDeUsuario)
+</code></pre>
+<p>Isso resultará em um objeto com as chaves filtradas e seus respectivos valores:</p>
+<pre><code class="language-json">{
+  "primeiroNome": "Lucas",
+  "sobrenome": "Kaique",
+  "nomeDeUsuario": "lucaoskaique"
+}
+</code></pre>
+<h3 id="user-content-em-síntese"><a href="#em-s%C3%ADntese">Em síntese</a></h3>
+<p>Você aprendeu a filtrar um objeto em JavaScript convertendo ele em um array utilizando o método <code>filter()</code>.</p>
+<p>Fonte
+<a href="https://www.freecodecamp.org/news/filter-arrays-in-javascript/">https://www.freecodecamp.org/news/filter-arrays-in-javascript/</a></p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/react-voce-esta-usando-useeffect-errado</guid>
+      <title>React: Você está Usando useEffect() Errado</title>
+      <description>React: Você está Usando useEffect() Errado, Faça Isso em Vez Disso</description>
+      <link>https://lucaskaique.com.br/react-voce-esta-usando-useeffect-errado</link>
+      <pubDate>Mon, 29 Jan 2024 04:09:41 GMT</pubDate>
+      <content:encoded><![CDATA[<p>Uma vez que se decide avançar com o aprendizado do <strong>React</strong>, hooks estão entre as primeiras coisas a aprender (e se frustrar). Hooks são partes essenciais do <strong>React</strong>, já que foram criados para resolver vários problemas que apareceram nas primeiras versões do <strong>React</strong>, quando todo o render era feito dentro das funções do ciclo de vida do componente, como <strong>componentDidMount()</strong>, <strong>componentWillMount()</strong>, <strong>componentDidUpdate()</strong>.</p>
+<p>Dito isso, os primeiros hooks que todos começam a usar são <strong>useState()</strong> e <strong>useEffect()</strong>. O primeiro é usado para gerenciamento de estado e controle de quando o componente deve ser renderizado novamente, enquanto o segundo se comporta de forma um tanto semelhante às funções do ciclo de vida mencionadas acima.</p>
+<p>O hook <strong>useEffect()</strong> pode receber dois parâmetros: o primeiro é uma função de retorno de chamada, enquanto o segundo é opcional e define quando esse hook deve ser chamado.</p>
+<pre><code class="language-javascript">  useEffect((prevProps) => { // prevProps são opcionais e têm alguns usos específicos. Compare com o que acontece com as funções do ciclo de vida.
+    // Conteúdo da função personalizada…
+    conteúdo da função personalizada…
+
+    return () => {
+      // Código para executar quando o componente é desmontado ou quando as dependências mudam
+      // Ajuda a evitar vazamentos de memória e comportamento inesperado
+    };
+  }, [dependências em forma de array]);
+</code></pre>
+<p>Um ponto que confunde muitos iniciantes é como o segundo parâmetro funciona. Aqui está um resumo:</p>
+<blockquote>
+<p>Caso A: Se nada for adicionado, então <strong>useEffect</strong> será executado a cada mudança de estado dentro do componente atual.</p>
+<p><em>Caso B: Se um array vazio for adicionado ([]), então o <strong>useEffect</strong> será executado apenas uma vez quando o componente for montado.</em></p>
+<p><em>Caso C: Se algum array for fornecido ([estado]), então <strong>useEffect</strong> será executado toda vez que o estado mudar.</em></p>
+<p><em>Caso D: Se algum array for fornecido ([estado1, estado2, …], <strong>useEffect</strong> será executado toda vez que <strong>QUALQUER</strong> um desses estados mudar.</em></p>
+</blockquote>
+<p>Agora que revisamos como o <strong>useEffect</strong> funciona, é essencial aprofundar-se em uma técnica de otimização conhecida como <em>memoização</em>. <em>Memoização</em> ajuda a prevenir renderizações desnecessárias e pode melhorar significativamente o desempenho dos seus componentes, especialmente ao lidar com arrays de dependências no <strong>useEffect</strong>.</p>
+<p>A ideia principal do hook <strong>useEffect</strong> é sincronizar a transferência de dados com <strong>APIs</strong> externas ou outro sistema, como quando você está acessando um banco de dados ou esperando que uma requisição <strong>HTTP</strong> seja completada. O problema é que tendemos a usar esse hook em toda situação possível dentro do nosso código, especialmente nos <em>Casos A</em> e C mencionados acima, e o código pode se tornar incrivelmente ilegível com apenas algumas linhas de código, incluindo disparar um loop se você mudar um dos estados no array de dependências durante o processo.</p>
+<p>Isso também pode tornar seu código ineficiente, já que o useEffect funciona como se você estivesse se afastando para executar algum código e depois voltando para a thread principal. Isso poderia ser mais eficiente.</p>
+<p>Ótimo, agora você sabe que, às vezes, <strong>useEffect</strong> não é a melhor solução. Agora vamos olhar cada caso em detalhe.</p>
+<p>Vamos falar sobre cada um dos casos de uso em detalhe:</p>
+<blockquote>
+<p>Caso A — Sem array de dependência: Este deve ser abolido do seu código, pois certamente disparará cálculos desnecessários toda vez que um estado mudar. Neste caso, você deve especificar quais estados realmente devem disparar essa função usando um array de dependências.</p>
+<p><em>Caso B — Array de dependência vazio: Este é um dos bons, a única recomendação que posso fornecer é manter apenas um destes para cada componente e envolver seu conteúdo em uma função.</em></p>
+<p><em>Caso C — Apenas um estado de dependência. Está ok usar se você está processando dados externos. Caso contrário, você deve mudá-lo para a solução que irei fornecer abaixo.</em></p>
+<p><em>Caso C</em> — Múltiplos estados de dependência no mesmo <strong>useEffect</strong>. Este é o que considero o mais problemático. Recomendo que você tente desembaraçar os estados em diferentes hooks useEffect antes de qualquer coisa, pois isso torna seu código muito ilegível.</p>
+</blockquote>
+<p>Agora para a solução que prometi. Vamos considerar estes dois Componentes (Pai e Filho):</p>
+<pre><code class="language-javascript">// ParentComponent.js
+import React, { useState, useEffect } from 'react';
+import ChildComponent from './ChildComponent';
+
+function ParentComponent() {
+  const [contagem, setContagem] = useState(0);
+  const [mensagem, setMensagem] = useState('Olá do Pai!');
+
+useEffect(() => {
+ setMensagem(`Botão clicado ${contagem} vezes!`);
+},[contagem]}
+
+  return (
+      &#x3C;ChildComponent contagem={contagem} mensagem={mensagem} setContagem={setContagem} />
+  );
+}
+
+export default ParentComponent;
+
+// ChildComponent.js
+import React from 'react';
+
+function ChildComponent({ contagem, mensagem, setContagem }) {
+  return (
+    &#x3C;div>
+      &#x3C;h3>Componente Filho&#x3C;/h3>
+      &#x3C;p>Contagem recebida do Pai: {contagem}&#x3C;/p>
+      &#x3C;p>Mensagem recebida do Pai: {mensagem}&#x3C;/p>
+      &#x3C;button onClick={() => {setContagem(contagem+1)}>Clique em mim&#x3C;/button>
+    &#x3C;/div>
+  );
+}
+
+export default ChildComponent;
+</code></pre>
+<p>Agora vamos explicar o que está acontecendo aqui:</p>
+<blockquote>
+<p>1 — Uma vez que o usuário clica no botão no Componente Filho, mudamos o estado "contagem" incrementando 1. Isso levará um ciclo de renderização para acontecer e mudar o estado.</p>
+<p><em>2 — Uma vez que o estado "contagem" muda, o componente filho será renderizado novamente e também disparará o hook <strong>useEffect</strong> em ambos os componentes, o que disparará a mudança no estado "mensagem". Novamente, isso só acontecerá no próximo render.</em></p>
+<p><em>3 — Quando o estado "mensagem" muda, então outra renderização acontece nos componentes mudando a mensagem.</em></p>
+<p><em>Neste caso, acabamos tendo duas renderizações. Pode não parecer muito, mas pode crescer em grande escala uma vez que você tem mais estados em jogo.</em></p>
+<p><em>Agora veja o que acontece quando fazemos as seguintes mudanças nos componentes:</em></p>
+</blockquote>
+<pre><code class="language-javascript">// ParentComponent.js
+import React, { useState } from 'react';
+import ChildComponent from './ChildComponent';
+
+function ParentComponent() {
+  const [contagem, setContagem] = useState(0);
+  const [mensagem, setMensagem] = useState('Olá do Pai!');
+const incrementarContagem = () => {
+ setContagem(contagem + 1);
+setMensagem(`Botão clicado ${contagem + 1} vezes!`);
+}
+
+  return (
+      &#x3C;ChildComponent contagem={contagem} mensagem={mensagem}
+        callbackFunction={incrementarContagem} />
+  );
+}
+
+export default ParentComponent;
+
+// ChildComponent.js
+import React from 'react';
+
+function ChildComponent({ contagem, mensagem, callbackFunction }) {
+  return (
+    &#x3C;div>
+      &#x3C;h3>Componente Filho&#x3C;/h3>
+      &#x3C;p>Contagem recebida do Pai: {contagem}&#x3C;/p>
+      &#x3C;p>Mensagem recebida do Pai: {mensagem}&#x3C;/p>
+      &#x3C;button onClick={callbackFunction}>Clique em mim&#x3C;/button>
+    &#x3C;/div>
+  );
+}
+
+export default ChildComponent;
+</code></pre>
+<p>Mudamos o código para passar uma <strong>Função de Retorno de Chamada</strong> para o Componente Filho. Você pode notar que:</p>
+<blockquote>
+<ul>
+<li>Não temos mais um useEffect definido no Componente Pai. Isso torna o código mais fácil de ler, já que podemos entender nosso código como, digamos, mais linear e de um único thread do que o original.</li>
+<li><em>Não precisamos esperar dois ciclos de renderização para exibir nossa mensagem final, ou pior, renderizar ambos os componentes duas vezes.</em></li>
+<li><em>Podemos separar preocupações entre componentes, tornando-os mais reutilizáveis e mais fáceis de ler ou adaptar, já que podemos colocar o que quisermos na função de retorno de chamada.</em></li>
+<li><em>Ambos os estados mudam ao mesmo tempo, evitando o encadeamento de declarações <strong>useEffect</strong>.</em></li>
+</ul>
+</blockquote>
+<p>Em conclusão, os insights fornecidos aqui oferecem orientação valiosa, mas é importante reconhecer que desenvolvimento de software é uma área dinâmica, e as soluções serão sempre as mesmas para sempre. O hook useEffect é uma parte importante do React, mas nem sempre é a melhor solução.</p>
+<p>Obrigado pela leitura!</p>
+<p>T﻿ranslated from [[<a href="https://blog.stackademic.com/why-you-should-avoid-using-useeffect-hook-in-react-and-what-to-do-instead-740660e33420%5D%5D(">https://blog.stackademic.com/why-you-should-avoid-using-useeffect-hook-in-react-and-what-to-do-instead-740660e33420]](</a><a href="https://blog.stackademic.com/why-you-should-avoid-using-useeffect-hook-in-react-and-what-to-do-instead-740660e33420">https://blog.stackademic.com/why-you-should-avoid-using-useeffect-hook-in-react-and-what-to-do-instead-740660e33420</a>)</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/dstrb-0130-lucaos-kaique</guid>
+      <title>DSTRB:0130 - Lucaos Kaique</title>
+      <description>Set gravado para Coletivo de música eletrônica de Floripa - SC, Brasil</description>
+      <link>https://lucaskaique.com.br/dstrb-0130-lucaos-kaique</link>
+      <pubDate>Thu, 12 Oct 2023 05:40:52 GMT</pubDate>
+      <content:encoded><![CDATA[<h1 id="user-content-dstrb0130---lucaos-kaique"><a href="#dstrb0130---lucaos-kaique">DSTRB:0130 - Lucaos Kaique</a></h1>
+<p>Lucaos Kaique, oriundo do interior de Goiás e atualmente estabelecido em terras gaúchas, desempenha um duplo papel como engenheiro de software profissional e dedicado produtor de eventos, propondo-se a criar atmosferas musicais únicas e experiências sonoras marcantes em seu tempo livre. Como membro-chave do @<a href="https://soundcloud.com/coletivocentral">coletivocentral</a>, ele tem sido o motor da transformação de bares em pontos culturais da cidade desde 2019, promovendo a cultura DJ e oferecendo acesso para aqueles que estão começando na música.</p>
+<p>É o fundador da @<a href="https://soundcloud.com/coic_e">coic_e</a>, uma iniciativa inovadora lançada em 2020 que convida artistas a explorar ritmos percussivos. A principal missão da iniciativa é valorizar e realçar as sonoridades da América Latina e do Brasil, proporcionando uma contribuição singular e vibrante ao cenário musical. O projeto busca explorar a club music, infundindo ritmos latinos. Situando-se no cruzamento entre música, programação e arte, o projeto traz uma abordagem multidimensional à expressão artística e com uma equipe muito cheia de energia.</p>
+<p>Lucaos sobre o cast: Este set é um fruto de harmonização e inovação, capturando a essência do que tenho apresentado nas minhas performances, unindo o melhor de várias vertentes e eras musicais. Sua fundação reside nas tradições de house, drum'n bass e UK garage, mas o set se estende além de uma simples compilação de diferentes estilos, tornando-se uma jornada de alquimia sonora em busca da combinação perfeita de gêneros.</p>
+<p>Adicionando nuances de latin club e pop music, o set ganha uma pitada exótica, convidando o ouvinte a se submergir nesse emaranhado de ritmos. Essa fusão consegue harmonizar a inovação revigorante com a nostalgia dos clássicos. O set também incorpora breakbeats clássicos e samples de dub, homenageando a revolucionária era dos samples e as ressonâncias dos sistemas de som jamaicanos. Portanto, prepare-se para uma experiência além do habitual, uma viagem inesquecível através das profundezas e fronteiras da dance music.</p>
+<p>Agradeço o espaço disponibilizado pela DSTRB e espero que gostem.</p>
+<p>@<a href="https://soundcloud.com/lucaoskaique">lucaoskaique</a><br>
+<a href="https://gate.sc/?url=http%3A%2F%2Finstagram.com%2Flucaoskaique&#x26;token=688d2a-1-1697143396480" title="http://instagram.com/lucaoskaique">instagram.com/lucaoskaique</a></p>
+<h2 id="user-content-tracklist"><a href="#tracklist">Tracklist</a></h2>
+<hr>
+<ol>
+<li>Merca Bae - WYLYL - Merca Bae</li>
+<li>la track 5 v2 - Teo Coelho</li>
+<li>Xnx Dmg (Nick León Jungle Edit) - Nick León &#x26; Future</li>
+<li>Freestyler - Bomfunk MCs</li>
+<li>love him - Two Shell</li>
+<li>Counting - Hamdi</li>
+<li>Satyr - O’Flynn Feat Frazer Ray</li>
+<li>V2 Little Things - Jorja Smith (bullet tooth Bootleg) - bullet tooth</li>
+<li>Outta Space - DJ Deekline presents Cut &#x26; Run</li>
+<li>Straight to the World (Baymont Bross Remix) - Beat Assassins</li>
+<li>HOJE (Bonus Track) - Sidoka</li>
+<li>Flashing Hype - Sam Interface</li>
+<li>Girl Riddim vs. Temperature - Murder He Wrote</li>
+<li>Fuego ft Baby Perigosa (Bitter Babe &#x26; Nick Leon Remix) - Florentino, Isabella Lovestory, MC Buzzz</li>
+<li>Groove Theory - Tell Me (Nora Zion Edit) - Nora Zion</li>
+<li>JETAIME - Isabella LoveStory</li>
+<li>CHIBI (Nick León Remix) - Esty</li>
+<li>4- Frida Kahlo by MJ Nebreda, Dj Babatr, Yung Iverson - MJ Nebreda, Dj Babatr, Yung Iverson</li>
+<li>La Murga (Michael's Midnight Mix) - Michael Bibi</li>
+<li>DANI GIRL PUMPING IT (Remastered) - MOOEY DECK</li>
+<li>Tell Me - Baltra</li>
+<li>Sticky (BAVR _Lady_ Flip) - BAVR</li>
+</ol>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/o-impacto-revolucionário-de-softwares-p-2-p-na-cena-musical</guid>
+      <title>O Impacto Revolucionário de Softwares P2P na Cena Musical</title>
+      <description>Este post explora o conceito de software P2P e seu profundo impacto na comunidade de DJs e música.</description>
+      <link>https://lucaskaique.com.br/o-impacto-revolucionário-de-softwares-p-2-p-na-cena-musical</link>
+      <pubDate>Fri, 30 Jun 2023 21:36:52 GMT</pubDate>
+      <content:encoded><![CDATA[<h2 id="user-content-índice"><a href="#%C3%ADndice">Índice</a></h2>
+<ol>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ol>
+<hr>
+<p></p>
+<h1 id="user-content-o-impacto-revolucionário-de-softwares-p2p-na-cena-musical"><a href="#o-impacto-revolucion%C3%A1rio-de-softwares-p2p-na-cena-musical">O Impacto Revolucionário de Softwares P2P na Cena Musical</a></h1>
+<p>No mundo da música em constante transformação, a tecnologia desempenhou um papel significativo na modelagem da indústria. Uma dessas inovações tecnológicas que revolucionou a cena musical é o software peer-to-peer (P2P), como Napster e Soulseek. Hoje vou falar um pouco e desmistificar o conceito de software P2P para iniciantes e por tabela explorar seu profundo impacto na comunidade de DJs e música.</p>
+<hr>
+<p></p>
+<h2 id="user-content-o-que-diabos-é-p2p"><a href="#o-que-diabos-%C3%A9-p2p">O que diabos é P2P?</a></h2>
+<p></p>
+<p>Imagine comigo, os softwares P2P como um grande feiras de troca de discos (pros mais saudosistas), onde cada computador é um estande. Em vez de ter uma loja central (servidor) onde todos precisam ir pra comprar seus discos (arquivos), cada pessoa pode ir diretamente ao estande (computador) de outra pessoa para pegar o que precisa; se hoje você conhece o que é torrent é basicamente o mesmo principio de compartilhamento. Isso transformou o mundo do compartilhamento de arquivos em um grande mercado aberto. É como se tivéssemos criado um enorme mercado bazar digital ou como dizem os gauchos brick digital!</p>
+<p>Então em sua essência, o software P2P permite que os usuários compartilhem e baixem arquivos diretamente dos computadores uns dos outros, eliminando a necessidade de um servidor central. Este modelo descentralizado de compartilhamento de arquivos foi um divisor de águas, democratizando o acesso à música e fomentando uma cultura de compartilhamento e descoberta.</p>
+<hr>
+<p></p>
+<h2 id="user-content-a-revolução-p2p-napster-e-soulseek"><a href="#a-revolu%C3%A7%C3%A3o-p2p-napster-e-soulseek">A Revolução P2P: Napster e Soulseek</a></h2>
+<p></p>
+<p>Napster foi lançado em 1999, sendo uma das primeiras plataformas P2P que ganhou destaque. Permitiu que os usuários compartilhassem e baixassem arquivos de música, interrompendo o modelo tradicional de distribuição de música.</p>
+<p></p>
+<p><a href="http://www.slsknet.org/news/node/1">Soulseek</a>, também lançado em 1999, seguiu um caminho semelhante, mas com foco em gêneros musicais de nicho e artistas independentes.</p>
+<hr>
+<p></p>
+<h2 id="user-content-o-impacto-na-comunidade-de-djs-e-música"><a href="#o-impacto-na-comunidade-de-djs-e-m%C3%BAsica">O Impacto na Comunidade de DJs e Música</a></h2>
+<p>O advento do software P2P teve um impacto profundo na comunidade de DJs e música. Democratizou o acesso a uma vasta gama de músicas, permitindo que os DJs descobrissem e compartilhassem faixas únicas de todo o mundo. Isso levou a uma cena musical mais diversificada e vibrante, com DJs capazes de experimentar diferentes gêneros e estilos.</p>
+<p>&#x3C;img src="<a href="https://i.imgur.com/ff5f3SP.jpg">https://i.imgur.com/ff5f3SP.jpg</a>" alt="Soulseek vs Spotify" style={{height: '200px', width:'200px'}}/></p>
+<p>Além disso, o software P2P forneceu uma plataforma para artistas independentes compartilharem sua música com um público global. Isso empoderou os artistas, dando-lhes controle sobre sua distribuição e permitindo que eles alcançassem os fãs diretamente.</p>
+<p>&#x3C;img src="<a href="https://img-9gag-fun.9cache.com/photo/aNpDYdr_460s.jpg">https://img-9gag-fun.9cache.com/photo/aNpDYdr_460s.jpg</a>" alt="meme about youtubeconvertermp3" style={{height: '300px', width:'300px'}}/></p>
+<p>Os softwares P2P revolucionaram a indústria da música, derrubando barreiras e fomentando uma cultura de compartilhamento e descoberta. Para a comunidade de DJs e música, abriu um mundo de possibilidades, permitindo a exploração de diversos gêneros musicais e empoderando artistas independentes. À medida que continuamos a navegar na era digital, a influência do software P2P na cena musical permanece tão relevante quanto sempre.</p>
+<hr>
+<p></p>
+<h2 id="user-content-tá-mas-e-hoje"><a href="#t%C3%A1-mas-e-hoje">Tá, mas e hoje?</a></h2>
+<p>Com o sucesso contínuo e o uso do <a href="http://www.slsknet.org/news/node/1">Soulseek</a> pela comunidade, percebeu-se a necessidade de desenvolver uma plataforma mais moderna,pois é bem conhecido que o <a href="http://www.slsknet.org/news/node/1">Soulseek</a>, embora ainda seja uma ferramenta mais conhecida atualmente, não recebeu atualizações em sua interface de usuário (UI - user interface) há algum tempo. Eu acho isso terrível, sem experiência do usuário adequada e pouco intuitiva, especialmente para quem trabalha com tecnologia é muito doloroso... E é aqui que o <a href="https://nicotine-plus.org">Nicotine+</a> entra em cena.</p>
+<p>O <a href="https://nicotine-plus.org">Nicotine+</a> é uma tentativa de trazer o <a href="http://www.slsknet.org/news/node/1">Soulseek</a> para o século 21, com uma interface de usuário atualizada e novos recursos que aprimoram a experiência de compartilhamento de arquivos. Ele mantém a essência do <a href="http://www.slsknet.org/news/node/1">Soulseek</a>, permitindo que os usuários compartilhem e baixem arquivos diretamente dos computadores uns dos outros, mas adiciona novas funcionalidades e uma interface mais moderna e fácil de usar. Além disso, o <a href="https://nicotine-plus.org">Nicotine+</a> é ativamente mantido e atualizado, o que significa que novos recursos e melhorias são adicionados regularmente.</p>
+<p>Além de uma interface de usuário melhorada, o <a href="https://nicotine-plus.org">Nicotine+</a> também oferece uma série de recursos avançados que não estão presentes no <a href="http://www.slsknet.org/news/node/1">Soulseek</a>. Por exemplo, uma melhor integração com sistemas operacionais modernos, suporte para listas de reprodução, melhor gerenciamento de downloads e uploads, e uma comunidade ativa de desenvolvedores trabalhando para melhorar continuamente o software.</p>
+<p><a href="https://github.com/nicotine-plus/nicotine-plus">Link para o repositório do Nicotine+ no Github</a></p>
+<p>Em resumo, o <a href="https://nicotine-plus.org">Nicotine+</a> é uma resposta à necessidade da comunidade de um software de compartilhamento de arquivos P2P mais moderno e atualizado, que mantém a essência do <a href="http://www.slsknet.org/news/node/1">Soulseek</a>, mas com melhorias significativas na interface do usuário e na funcionalidade.</p>
+<hr>
+<p></p>
+<h2 id="user-content-fim"><a href="#fim">Fim</a></h2>
+<p>Se você achou este post informativo e envolvente, não se esqueça de compartilhá-lo com seus amigos e seguidores. Fique ligado para mais post sobre interseção da música e tecnologia.</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://lucaskaique.com.br/uk-garage-em-2023</guid>
+      <title>UK Garage em 2023: Transformação Contínua e Reinvenção Vibrante</title>
+      <description>UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para conquistar novas gerações de amantes da música.</description>
+      <link>https://lucaskaique.com.br/uk-garage-em-2023</link>
+      <pubDate>Fri, 30 Jun 2023 17:36:52 GMT</pubDate>
+      <content:encoded><![CDATA[<p>Quando olhamos para trás na história da música eletrônica, um gênero se destaca por sua resiliência e adaptabilidade: o UK Garage. Agora, em 2023, podemos observar como o UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para conquistar novas gerações de amantes da música.</p>
+<p>Originado na década de 1990, o UK Garage é conhecido por suas batidas sincopadas, velocidades de 130 BPM, linhas de baixo proeminentes e vocais soulful. Rapidamente conquistou uma enorme base de fãs, não apenas no Reino Unido, mas também em todo o mundo.</p>
+<p>A década de 2020 viu uma nova onda de produtores inovadores do UK Garage, influenciados por uma variedade de gêneros - do grime ao dubstep, do house ao R&#x26;B - e combinando esses elementos de maneira criativa para produzir sons únicos. Essa infusão de influências garantiu que o gênero permanecesse fresco e excitante.</p>
+<p>Em 2023, a cena do UK Garage está mais vibrante do que nunca. Festivais e clubes em todo o mundo estão fervilhando com o som das novas tendências do UK Garage, enquanto os produtores continuam a inovar, elevando o gênero a novos patamares. A popularidade da música em plataformas de streaming e a crescente procura por vinis de Garage mostram que o apetite do público pelo gênero permanece insaciável.</p>
+<p>A inovação na cena do UK Garage em 2023 é alimentada por um elemento central: a comunidade. De DJs veteranos a produtores emergentes, todos estão unidos pelo amor ao UK Garage e pela dedicação em levar o gênero adiante. Este compromisso com a inovação e a experimentação é o que mantém o UK Garage na vanguarda da música eletrônica.</p>
+<p>Em suma, 2023 é um momento empolgante para ser fã de UK Garage. O gênero continua a evoluir e reinventar-se, mantendo-se sempre relevante no panorama musical. Com uma comunidade engajada, uma onda de talentos emergentes e uma sede insaciável por inovação, o futuro do UK Garage parece mais brilhante do que nunca.</p>
+]]></content:encoded>
+    </item>
+  
+      </channel>
+    </rss>
+  

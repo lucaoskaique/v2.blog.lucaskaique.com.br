@@ -26,6 +26,7 @@ interface TransformedPost {
   }
   date: string
   date_timestamp: number
+  [key: string]: unknown
 }
 
 function transformPostsToSearchObjects(posts: Post[]): TransformedPost[] {
