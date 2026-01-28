@@ -24,6 +24,10 @@ const originalImages: ImageInfo[] = [
     alt: "Photo 4"
   },
   {
+    src: "https://res.cloudinary.com/lucaos/image/upload/f_auto,q_auto,w_2048/7/IMG_9914.jpg",
+    alt: "Photo 9"
+  },
+  {
     src: "https://res.cloudinary.com/lucaos/image/upload/v1687836847/lucaoskaique/pysales_Carnaval_PLANO_2020_-_10_ftr1wh.jpg",
     alt: "Photo 5"
   },
@@ -32,8 +36,16 @@ const originalImages: ImageInfo[] = [
     alt: "Photo 6"
   },
   {
+    src: "https://res.cloudinary.com/lucaos/image/upload/f_auto,q_auto,w_2048/7/IMG_9917.jpg",
+    alt: "Photo 10"
+  },
+  {
     src: "https://res.cloudinary.com/lucaos/image/upload/v1687836847/lucaoskaique/Carnaval_PLANO_2020_-_1_t1u7zw.jpg",
     alt: "Photo 7"
+  },
+  {
+    src: "https://res.cloudinary.com/lucaos/image/upload/f_auto,q_auto,w_2048/7/IMG_9922.jpg",
+    alt: "Photo 8"
   }
 ]
 
