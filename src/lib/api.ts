@@ -55,6 +55,12 @@ export function getAllPosts(): Post[] {
 export async function getGitHubRepositories(
   username: string
 ): Promise<GitHubRepository[]> {
+  // Use mock data in development if GITHUB_TOKEN is not set
+  if (process.env.NODE_ENV === "development" && !process.env.GITHUB_TOKEN) {
+    console.log("Using mock GitHub repository data (no GITHUB_TOKEN set)")
+    return getMockRepositories()
+  }
+
   try {
     const repos: GitHubRepository[] = []
     let page = 1
@@ -111,4 +117,102 @@ export async function getGitHubRepositories(
     console.error("Error fetching GitHub repositories:", error)
     return []
   }
+}
+
+/**
+ * Returns mock repository data for development/testing
+ */
+function getMockRepositories(): GitHubRepository[] {
+  return [
+    {
+      id: 1,
+      name: "entregacao-app",
+      full_name: "lucaoskaique/entregacao-app",
+      description:
+        "Sistema Automatizado de Coletas e Entregas - Automated Collection and Delivery System",
+      html_url: "https://github.com/lucaoskaique/entregacao-app",
+      homepage: "https://entregacao.vercel.app",
+      stargazers_count: 7,
+      forks_count: 2,
+      topics: ["nextjs", "typescript", "tailwindcss", "delivery", "automation"],
+      fork: false,
+      updated_at: "2024-01-15T10:30:00Z",
+      language: "TypeScript"
+    },
+    {
+      id: 2,
+      name: "resgatemais",
+      full_name: "lucaoskaique/resgatemais",
+      description:
+        "Organização Audiovisual da Sociedade Civil - Civil Society Audiovisual Organization",
+      html_url: "https://github.com/lucaoskaique/resgatemais",
+      homepage: null,
+      stargazers_count: 5,
+      forks_count: 1,
+      topics: ["nextjs", "react", "social"],
+      fork: false,
+      updated_at: "2024-01-10T08:20:00Z",
+      language: "JavaScript"
+    },
+    {
+      id: 3,
+      name: "mp4-to-mp3-ffmpeg",
+      full_name: "lucaoskaique/mp4-to-mp3-ffmpeg",
+      description:
+        "Video to audio converter using FFmpeg - Simple and efficient media conversion tool",
+      html_url: "https://github.com/lucaoskaique/mp4-to-mp3-ffmpeg",
+      homepage: "",
+      stargazers_count: 4,
+      forks_count: 0,
+      topics: ["ffmpeg", "converter", "video", "audio", "python"],
+      fork: false,
+      updated_at: "2023-12-20T15:45:00Z",
+      language: "Python"
+    },
+    {
+      id: 4,
+      name: "portfolio-v2",
+      full_name: "lucaoskaique/portfolio-v2",
+      description:
+        "Personal portfolio website built with Next.js and modern web technologies",
+      html_url: "https://github.com/lucaoskaique/portfolio-v2",
+      homepage: "https://lucaskaique.com.br",
+      stargazers_count: 3,
+      forks_count: 1,
+      topics: ["portfolio", "nextjs", "react", "tailwindcss"],
+      fork: false,
+      updated_at: "2024-02-01T12:00:00Z",
+      language: "TypeScript"
+    },
+    {
+      id: 5,
+      name: "github-api-explorer",
+      full_name: "lucaoskaique/github-api-explorer",
+      description:
+        "A tool to explore GitHub repositories and user profiles with a clean interface",
+      html_url: "https://github.com/lucaoskaique/github-api-explorer",
+      homepage: null,
+      stargazers_count: 2,
+      forks_count: 0,
+      topics: ["github-api", "react", "typescript"],
+      fork: false,
+      updated_at: "2023-11-15T09:30:00Z",
+      language: "TypeScript"
+    },
+    {
+      id: 6,
+      name: "blog-cms",
+      full_name: "lucaoskaique/blog-cms",
+      description:
+        "Content Management System for blogs with markdown support",
+      html_url: "https://github.com/lucaoskaique/blog-cms",
+      homepage: "",
+      stargazers_count: 1,
+      forks_count: 0,
+      topics: ["cms", "markdown", "nodejs"],
+      fork: false,
+      updated_at: "2023-10-05T14:20:00Z",
+      language: "JavaScript"
+    }
+  ]
 }
