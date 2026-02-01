@@ -63,18 +63,21 @@ export async function getGitHubRepositories(
 
     // Fetch all pages of repositories
     while (hasMore) {
+      const headers: Record<string, string> = {
+        Accept: "application/vnd.github.v3+json"
+      }
+
+      // Add authorization if GITHUB_TOKEN is available
+      if (process.env.GITHUB_TOKEN) {
+        headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+      }
+
       const response = await fetch(
         `https://api.github.com/users/${username}/repos?per_page=${perPage}&page=${page}&sort=updated`,
         {
-          headers: {
-            Accept: "application/vnd.github.v3+json",
-            // Add authorization if GITHUB_TOKEN is available
-            ...(process.env.GITHUB_TOKEN && {
-              Authorization: `token ${process.env.GITHUB_TOKEN}`
-            })
-          },
-          // Cache for build time
-          next: { revalidate: 3600 } // Revalidate every hour
+          headers,
+          // Don't use Next.js caching, use standard fetch
+          cache: "no-store"
         }
       )
 
@@ -82,7 +85,8 @@ export async function getGitHubRepositories(
         console.error(
           `Failed to fetch GitHub repositories: ${response.status} ${response.statusText}`
         )
-        break
+        // Return empty array on error to allow build to continue
+        return []
       }
 
       const data = (await response.json()) as GitHubRepository[]

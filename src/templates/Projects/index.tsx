@@ -63,9 +63,9 @@ export default function Projects({ repositories }: ProjectsProps) {
             Open-source projects and contributions
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I've worked on various open-source projects over the years. These
-            are my public repositories on GitHub, sorted by popularity. If you
-            see something interesting, feel free to check out the code and
+            I&apos;ve worked on various open-source projects over the years.
+            These are my public repositories on GitHub, sorted by popularity. If
+            you see something interesting, feel free to check out the code and
             contribute if you have ideas for improvements.
           </p>
         </header>
