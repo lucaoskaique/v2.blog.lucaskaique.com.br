@@ -1,6 +1,5 @@
 "use client"
 
-import { type Metadata } from "next"
 import { ComponentPropsWithoutRef, useMemo, useState } from "react"
 
 import { Card } from "@/components/Card"
@@ -112,12 +111,12 @@ function categorizeRepository(repo: GitHubRepository): ProjectCategory {
     ["typescript", "javascript"].includes(language)
   const hasBackend =
     topics.some((t) => backendIndicators.includes(t)) ||
-    ["python", "go", "java", "ruby", "php", "c#"].includes(language)
+    ["python", "go", "java", "ruby", "php", "c#", "rust"].includes(language)
 
   if (hasFrontend && hasBackend) return "fullstack"
   if (hasFrontend) return "frontend"
   if (hasBackend) return "backend"
-  return "fullstack" // Default to fullstack if unclear
+  return "frontend" // Default to frontend for web-focused repos
 }
 
 /**
@@ -135,6 +134,11 @@ function calculateLanguageStats(
       total++
     }
   })
+
+  // Return empty array if no languages found
+  if (total === 0) {
+    return []
+  }
 
   const stats = Object.entries(languageCounts)
     .map(([language, count]) => ({
@@ -162,12 +166,6 @@ function calculateLanguageStats(
   }
 
   return mainLanguages
-}
-
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Open-source projects and repositories I've built and contributed to."
 }
 
 interface ProjectsProps {
@@ -358,7 +356,7 @@ export default function Projects({ repositories }: ProjectsProps) {
                           {repo.language && (
                             <div className="flex items-center">
                               <span
-                                className={`inline-block h-3 w-3 rounded-full mr-1 ${getLanguageColor(repo.language)}`}
+                                className={`mr-2 inline-block h-3 w-3 rounded-full ${getLanguageColor(repo.language)}`}
                               />
                               <span>{repo.language}</span>
                             </div>
