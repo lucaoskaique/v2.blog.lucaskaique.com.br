@@ -57,7 +57,7 @@ export async function getGitHubRepositories(
 ): Promise<GitHubRepository[]> {
   // Use mock data in development if GITHUB_TOKEN is not set
   if (process.env.NODE_ENV === "development" && !process.env.GITHUB_TOKEN) {
-    console.log("Using mock GitHub repository data (no GITHUB_TOKEN set)")
+    // Using mock data for development
     return getMockRepositories()
   }
 

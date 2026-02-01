@@ -44,6 +44,35 @@ function StarIcon(props: ComponentPropsWithoutRef<"svg">) {
   )
 }
 
+/**
+ * Returns a Tailwind color class based on the programming language
+ */
+function getLanguageColor(language: string): string {
+  const languageColors: Record<string, string> = {
+    TypeScript: "bg-blue-500",
+    JavaScript: "bg-yellow-400",
+    Python: "bg-green-500",
+    Java: "bg-orange-600",
+    Go: "bg-cyan-500",
+    Rust: "bg-orange-500",
+    Ruby: "bg-red-500",
+    PHP: "bg-purple-500",
+    Swift: "bg-orange-400",
+    Kotlin: "bg-purple-600",
+    Dart: "bg-blue-400",
+    C: "bg-gray-500",
+    "C++": "bg-pink-500",
+    "C#": "bg-purple-700",
+    HTML: "bg-orange-600",
+    CSS: "bg-blue-600",
+    Shell: "bg-green-600",
+    Vue: "bg-green-600",
+    React: "bg-blue-400"
+  }
+
+  return languageColors[language] || "bg-teal-500"
+}
+
 export const metadata: Metadata = {
   title: "Projects",
   description:
@@ -108,7 +137,9 @@ export default function Projects({ repositories }: ProjectsProps) {
                     )}
                     {repo.language && (
                       <div className="flex items-center">
-                        <span className="inline-block h-3 w-3 rounded-full bg-teal-500 mr-1" />
+                        <span
+                          className={`inline-block h-3 w-3 rounded-full mr-1 ${getLanguageColor(repo.language)}`}
+                        />
                         <span>{repo.language}</span>
                       </div>
                     )}
