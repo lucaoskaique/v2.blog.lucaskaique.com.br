@@ -18,9 +18,14 @@ export interface PostPreview {
 
 interface PostFrontmatter {
   title: string
-  "main-class": string
   description: string
   date: string
+  image?: string
+  layout?: string
+  "main-class"?: string
+  color?: string
+  tags?: string[]
+  categories?: string[]
   locale?: string
 }
 

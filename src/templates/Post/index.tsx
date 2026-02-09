@@ -58,8 +58,16 @@ const PostTemplate = ({ post }: { post: Post }) => {
                     </span>
                   </time>
                 </header>
-                <div className="mt-8">
-                  <div
+                {post.frontmatter.image && (
+                  <div className="mt-8">
+                    <img
+                      src={post.frontmatter.image}
+                      alt={post.frontmatter.title}
+                      className="w-full rounded-2xl object-cover"
+                    />
+                  </div>
+                )}
+                <div className="mt-8">\n                  <div
                     dangerouslySetInnerHTML={{ __html: post.content }}
                     className={styles.content}
                   />

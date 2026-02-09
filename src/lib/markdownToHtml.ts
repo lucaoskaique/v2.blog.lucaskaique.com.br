@@ -1,17 +1,17 @@
 import rehypePrism from "rehype-prism"
-import { remark } from "remark"
+import rehypeStringify from "rehype-stringify"
 import headings from "remark-autolink-headings"
 import remarkGfm from "remark-gfm"
-import html from "remark-html"
 import remarkOembed from "remark-oembed"
+import remarkParse from "remark-parse"
+import remarkRehype from "remark-rehype"
 import slug from "remark-slug"
+import { unified } from "unified"
 
 export default async function markdownToHtml(markdown: string) {
-  const result = await remark()
-    .use(html)
+  const result = await unified()
+    .use(remarkParse)
     .use(remarkGfm)
-    .use(rehypePrism, { plugins: ["line-numbers"] })
-    .use(remarkOembed as never)
     .use(slug as never)
     .use(headings as never, {
       behavior: "wrap",
@@ -19,7 +19,10 @@ export default async function markdownToHtml(markdown: string) {
         className: "anchor"
       }
     })
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypePrism, { plugins: ["line-numbers"] })
+    .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown)
 
-  return result.toString()
+  return String(result)
 }

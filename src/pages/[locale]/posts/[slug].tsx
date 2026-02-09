@@ -28,6 +28,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const content = await markdownToHtml(post.content || "")
 
+  console.log("\n=== SLUG.TSX getStaticProps ===")
+  console.log("Slug:", slug)
+  console.log("Locale:", locale)
+  console.log("post.content (before markdownToHtml):", post.content)
+  console.log("content (after markdownToHtml):", content)
+  console.log("content includes <img>?", content.includes("<img"))
+
   return {
     props: {
       post: {
