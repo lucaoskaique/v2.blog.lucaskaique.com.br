@@ -1,16 +1,16 @@
 ---
-layout: post
-date: 2024-09-13 05:05:00
-main-class: js
-color: '#D6BA32'
-tags:
-  - javascript
-  - wordpress
-  - graphql
-  - rest
-categories:
-  - Wordpress
 pt-BR:
+  layout: post
+  date: 2024-09-13 05:05:00
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - javascript
+    - wordpress
+    - graphql
+    - rest
+  categories:
+    - Wordpress
   title: >-
     Lidando com projetos WordPress quando você não é especialista: WPGraphQL ou
     REST API para Headless WordPress
@@ -19,8 +19,7 @@ pt-BR:
     mas você não trabalha com wordpress e ainda assim quer fechar o contrato, o
     que você faz? Bom, foi o que aconteceu comigo e pode acontecer com você,
     então nesse post vamos conversar um pouco sobre esse estudo de caso.
-  body: >
-
+  body: >-
     E aí, galera! Tô aqui pra contar uma parada bem louca que rolou comigo
     recentemente. Vocês não vão acreditar!
 
@@ -321,6 +320,17 @@ pt-BR:
     E aí, o que acharam dessa lourada? Já passaram por algo parecido? Conta aí
     nos comentários! Até a próxima, galera!
 en:
+  layout: post
+  date: 2024-09-13 05:05:00
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - javascript
+    - wordpress
+    - graphql
+    - rest
+  categories:
+    - Wordpress
   title: >-
     Dealing with WordPress Projects When You're Not an Expert: WPGraphQL or REST
     API for Headless WordPress

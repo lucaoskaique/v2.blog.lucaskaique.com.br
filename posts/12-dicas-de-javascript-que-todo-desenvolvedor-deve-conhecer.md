@@ -1,12 +1,12 @@
 ---
-layout: post
-date: 2024-02-23 07:53:08
-main-class: js
-color: '#D6BA32'
-tags:
-  - javascript
-  - development
 pt-BR:
+  layout: post
+  date: 2024-02-23 07:53:08
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - javascript
+    - development
   title: 12 Dicas de JavaScript que Todo Desenvolvedor Deve Conhecer
   description: >-
     Hoje e quero compartilhar com vocês 12 dicas super úteis que podem melhorar
@@ -196,6 +196,13 @@ pt-BR:
 
     Espero que essas dicas ajudem vocês!!! Até a mais!!!!
 en:
+  layout: post
+  date: 2024-02-23 07:53:08
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - javascript
+    - development
   title: 12 JavaScript Tips Every Developer Should Know
   description: >-
     Today I want to share with you 12 super useful tips that can significantly

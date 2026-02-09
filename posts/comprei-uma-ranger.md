@@ -6,9 +6,7 @@ pt-BR:
   body: >-
     Se tudo der errado pelo menos alguma coisa vamos ter o que fazer 🤣.
 
-
     Então vou deixar um material de conteúdo de possiveis problemas que achei numa revista da decada de 90.
-
 
     ![Revista da década de 90](/assets/img/comprei-uma-ranger/captura-de-tela-2026-02-09-003834.png "Revista da década de 90")
   date: 2026-02-09 01:42:00
@@ -26,9 +24,7 @@ en:
   body: >-
     If everything goes wrong, at least we'll have something to do 🤣.
 
-
     So I'll leave some content material about possible problems that I found in a magazine from the 90s.
-
 
     ![Magazine from the 90s](/assets/img/comprei-uma-ranger/captura-de-tela-2026-02-09-003834.png "Magazine from the 90s")
   date: 2026-02-09 01:42:00

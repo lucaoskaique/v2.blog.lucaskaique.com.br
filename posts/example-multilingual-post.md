@@ -1,16 +1,16 @@
 ---
-layout: post
-date: 2024-02-08 10:00:00
-image: /assets/img/example-post/cover.jpg
-main-class: dev
-color: "#637a91"
-tags:
-  - tutorial
-  - i18n
-  - multilingual
-categories:
-  - development
 pt-BR:
+  layout: post
+  date: 2024-02-08 10:00:00
+  image: /assets/img/example-post/cover.jpg
+  main-class: dev
+  color: "#637a91"
+  tags:
+    - tutorial
+    - i18n
+    - multilingual
+  categories:
+    - development
   title: "Exemplo de Post Multilíngue"
   description: "Este é um exemplo de como estruturar um post com suporte a múltiplos idiomas usando Decap CMS"
   body: |
@@ -50,6 +50,17 @@ pt-BR:
 
     Com esta estrutura, você pode facilmente criar conteúdo multilíngue para o seu blog!
 en:
+  layout: post
+  date: 2024-02-08 10:00:00
+  image: /assets/img/example-post/cover.jpg
+  main-class: dev
+  color: "#637a91"
+  tags:
+    - tutorial
+    - i18n
+    - multilingual
+  categories:
+    - development
   title: "Multilingual Post Example"
   description: "This is an example of how to structure a post with multi-language support using Decap CMS"
   body: |

@@ -1,22 +1,22 @@
 ---
-layout: post
-date: 2023-10-12 05:40:52
-image: /assets/img/364353936_198141723238398_4935006635811150078_n.jpg
-main-class: music
-color: '#6B4C9A'
-tags:
-  - eletronicmusic
-  - music
-  - dj
-  - sets
-twitter_text: 'Set gravado para Coletivo de música eletrônica de Floripa - SC, Brasil'
-introduction: >-
-  Lucaos Kaique, oriundo do interior de Goiás e atualmente estabelecido em
-  terras gaúchas, desempenha um duplo papel como engenheiro de software
-  profissional e dedicado produtor de eventos, propondo-se a criar atmosferas
-  musicais únicas e experiências sonoras marcantes em seu tempo livre.
-categories: []
 pt-BR:
+  layout: post
+  date: 2023-10-12 05:40:52
+  image: /assets/img/364353936_198141723238398_4935006635811150078_n.jpg
+  main-class: music
+  color: '#6B4C9A'
+  tags:
+    - eletronicmusic
+    - music
+    - dj
+    - sets
+  twitter_text: 'Set gravado para Coletivo de música eletrônica de Floripa - SC, Brasil'
+  introduction: >-
+    Lucaos Kaique, oriundo do interior de Goiás e atualmente estabelecido em
+    terras gaúchas, desempenha um duplo papel como engenheiro de software
+    profissional e dedicado produtor de eventos, propondo-se a criar atmosferas
+    musicais únicas e experiências sonoras marcantes em seu tempo livre.
+  categories: []
   title: 'DSTRB:0130 - Lucaos Kaique'
   description: 'Set gravado para Coletivo de música eletrônica de Floripa - SC, Brasil'
   body: >
@@ -140,6 +140,23 @@ pt-BR:
 
     22. Sticky (BAVR \_Lady\_ Flip) - BAVR
 en:
+  layout: post
+  date: 2023-10-12 05:40:52
+  image: /assets/img/364353936_198141723238398_4935006635811150078_n.jpg
+  main-class: music
+  color: '#6B4C9A'
+  tags:
+    - eletronicmusic
+    - music
+    - dj
+    - sets
+  twitter_text: 'Set gravado para Coletivo de música eletrônica de Floripa - SC, Brasil'
+  introduction: >-
+    Lucaos Kaique, oriundo do interior de Goiás e atualmente estabelecido em
+    terras gaúchas, desempenha um duplo papel como engenheiro de software
+    profissional e dedicado produtor de eventos, propondo-se a criar atmosferas
+    musicais únicas e experiências sonoras marcantes em seu tempo livre.
+  categories: []
   title: 'DSTRB:0130 - Lucaos Kaique'
   description: 'Set recorded for electronic music collective from Floripa - SC, Brazil'
   body: >

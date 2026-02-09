@@ -1,20 +1,20 @@
 ---
-layout: post
-date: 2023-06-30 17:36:52
-image: 'https://i.ytimg.com/vi/LxXDk61hrcY/hqdefault.jpg'
-main-class: music
-color: '#637a91'
-tags:
-  - eletronicmusic
-  - music
-twitter_text: >-
-  UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para
-  conquistar novas gerações de amantes da música.
-introduction: >-
-  UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para
-  conquistar novas gerações de amantes da música.
-categories: []
 pt-BR:
+  layout: post
+  date: 2023-06-30 17:36:52
+  image: 'https://i.ytimg.com/vi/LxXDk61hrcY/hqdefault.jpg'
+  main-class: music
+  color: '#637a91'
+  tags:
+    - eletronicmusic
+    - music
+  twitter_text: >-
+    UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para
+    conquistar novas gerações de amantes da música.
+  introduction: >-
+    UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para
+    conquistar novas gerações de amantes da música.
+  categories: []
   title: 'UK Garage em 2023: Transformação Contínua e Reinvenção Vibrante'
   description: >-
     UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para
@@ -61,6 +61,21 @@ pt-BR:
     sede insaciável por inovação, o futuro do UK Garage parece mais brilhante do
     que nunca.
 en:
+  layout: post
+  date: 2023-06-30 17:36:52
+  image: 'https://i.ytimg.com/vi/LxXDk61hrcY/hqdefault.jpg'
+  main-class: music
+  color: '#637a91'
+  tags:
+    - eletronicmusic
+    - music
+  twitter_text: >-
+    UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para
+    conquistar novas gerações de amantes da música.
+  introduction: >-
+    UK Garage manteve sua relevância, sempre evoluindo e reinventando-se para
+    conquistar novas gerações de amantes da música.
+  categories: []
   title: 'UK Garage in 2023: Continuous Transformation and Vibrant Reinvention'
   description: >-
     UK Garage has maintained its relevance, always evolving and reinventing

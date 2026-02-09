@@ -1,13 +1,13 @@
 ---
-layout: post
-date: 2024-09-24 04:30:00
-main-class: js
-color: '#D6BA32'
-tags:
-  - wordpress
-  - wpgraphql
-  - graphql
 pt-BR:
+  layout: post
+  date: 2024-09-24 04:30:00
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - wordpress
+    - wpgraphql
+    - graphql
   title: >-
     Descomplicando o GraphQL no WordPress: qual é o significado de "edges" e
     "node"?
@@ -19,6 +19,14 @@ pt-BR:
     possível se livrar deles para um retorno mais simples de dados??
   body: "\n## O que é GraphQL e por que está bombando?\n\nJá falei sobre no post anterior mas se você não leu imagina só: você tá num buffet self-service top da cidade (para quem é de Porto Alegre esses tão escassos hoje em dia). Em vez de pegar aquele prato feito que vem com um monte de coisa que você nem come (como acontece às vezes com APIs REST), você monta exatamente o que quer comer. Style, né? Pois é assim que funciona o GraphQL. Você pede só os dados que precisa, nada a mais, nada a menos. Resultado? Seu site fica mais rápido e você economiza dados. Todo mundo sai ganhando!\n\n## WPGraphQL: Quando o WordPress entra na dança\n\nAgora, pensa no seu site WordPress. Tem post, página, comentário, usuário... uma porrada de coisa. Já falamos também no outro artigo, que o WPGraphQL é um plugin que traz toda essa mágika \U0001FA84 do GraphQL pro WordPress.\n\n## Edges e Nodes: Os inseparáveis do GraphQL\n\nQuando a gente começa a brincar com WPGraphQL, logo esbarra em dois conceitos: edges e nodes. Parece complicado, mas é mais simples do que parece:\n\n- **Nodes**: São os dados mesmo. Um post, um comentário, um usuário. É a informação que você quer pegar.\n- **Edges**: É o caminho pra chegar nessa informação. Parece desnecessário, mas pelo visto não é pois::: paginação e metadados.\n\nÉ tipo uma árvore genealógica. Os nodes são as pessoas, e as edges são as linhas que conectam elas.\n\n## Na prática, como fica?\n\nVamos ver um exemplo rapidinho de como buscar posts no WPGraphQL:\n\n```graphql\nquery {\n  posts(first: 5) {\n    edges {\n      node {\n        title\n        excerpt\n      }\n    }\n  }\n}\n```\n\nAqui a gente tá pedindo os 5 primeiros posts, mas só o título e o resumo de cada um. Simples, né?\n\n## Quando usar cada coisa?\n\n- **Lista simples**: Quando você só quer uma lista rápida e direta, sem frescura.\n- **Só Nodes**: Útil pra quando você quer paginar, mas não precisa de informações extras sobre cada item.\n- **Edges e Nodes**: O pacote completo. Ideal pra quando você precisa de paginação avançada ou metadados sobre cada item da lista.\n\n# Descomplicando o GraphQL no WordPress: Minha Experiência com WPGraphQL\n\n[Conteúdo anterior permanece o mesmo...]\n\n## Quando usar cada coisa?\n\nGalera, vamos ver na prática quando usar cada tipo de estrutura. Colei aqui uns exemplos pra ficar mais fácil de entender:\n\n1. **Lista simples**: Quando você só quer uma lista rápida e direta, sem frescura.\n\nExemplo: Pegar o nome e o slug das 5 primeiras categorias.\n\n```graphql\nquery {\n  categories(first: 5) {\n    name\n    slug\n  }\n}\n```\n\nSacou? Direto ao ponto, sem edges nem nodes. Só o que a gente precisa.\n\n2. **Só Nodes**: Útil pra quando você quer paginar, mas não precisa de informações extras sobre cada item.\n\nExemplo: Buscar os 10 posts mais recentes, com opção de paginação.\n\n```graphql\nquery {\n  posts(first: 10) {\n    nodes {\n      title\n      date\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n```\n\nAqui a gente já tá usando paginação, mas ainda tá bem enxuto, sacou?\n\n3. **Edges e Nodes**: O pacote completo. Ideal pra quando você precisa de paginação avançada ou metadados sobre cada item da lista.\n\nExemplo: Pegar os 5 primeiros posts, incluindo informações sobre a posição de cada post na lista.\n\n```graphql\nquery {\n  posts(first: 5) {\n    edges {\n      node {\n        title\n        excerpt\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n```\n\nBem chic né?! Agora temos o 'cursor' pra cada post, que é aquela informação extra que falei. Dá pra fazer umas mágicas de paginação avançada com isso.\n\nNo WPGraphQL, você vai ver muito o uso de edges e nodes. Pode parecer exagero às vezes, mas essa padronização parece facilitar muito quando o projeto cresce.\n\n## Concluindo...\n\nGraphQL e WPGraphQL podem parecer um bicho de sete cabeças no começo, mas quando a ficha cai, você vê o tanto de possibilidades que se abrem. É uma ferramenta poderosa que dá mais controle e eficiência pro seu desenvolvimento.\n\nEscrevi esse artigo porque é algo que estava nas minhas anotações dessa seman e to tentando colocar mais ideias e pesquisas minhas aqui.\n\nTem alguma experiência pra compartilhar ou dúvida pra tirar? Comenta aí embaixo! Vamos trocar uma ideia e aprender juntos.\n\nFalou, jovens! Boa semana!\n"
 en:
+  layout: post
+  date: 2024-09-24 04:30:00
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - wordpress
+    - wpgraphql
+    - graphql
   title: 'Demystifying GraphQL in WordPress: What do "edges" and "node" mean?'
   description: >-
     You're consuming a GraphQL endpoint and the return has "edges" and "node".

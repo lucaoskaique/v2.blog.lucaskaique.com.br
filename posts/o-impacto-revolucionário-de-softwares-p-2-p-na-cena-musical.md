@@ -1,24 +1,24 @@
 ---
-layout: post
-date: 2023-06-30 21:36:52
-image: 'https://i.ytimg.com/vi/A5I605hVjGg/maxresdefault.jpg'
-main-class: music
-color: '#637a91'
-tags:
-  - eletronicmusic
-  - music
-  - soulseek
-  - nicotine
-  - napster
-  - P2P
-  - dj
-  - musictech
-twitter_text: >-
-  Este post explora o conceito de software P2P e seu profundo impacto na
-  comunidade de DJs e música.
-introduction: O Impacto Revolucionário de Softwares P2P na Cena Musical.
-categories: null
 pt-BR:
+  layout: post
+  date: 2023-06-30 21:36:52
+  image: 'https://i.ytimg.com/vi/A5I605hVjGg/maxresdefault.jpg'
+  main-class: music
+  color: '#637a91'
+  tags:
+    - eletronicmusic
+    - music
+    - soulseek
+    - nicotine
+    - napster
+    - P2P
+    - dj
+    - musictech
+  twitter_text: >-
+    Este post explora o conceito de software P2P e seu profundo impacto na
+    comunidade de DJs e música.
+  introduction: O Impacto Revolucionário de Softwares P2P na Cena Musical.
+  categories: null
   title: O Impacto Revolucionário de Softwares P2P na Cena Musical
   description: >-
     Este post explora o conceito de software P2P e seu profundo impacto na
@@ -236,6 +236,25 @@ pt-BR:
     compartilhá-lo com seus amigos e seguidores. Fique ligado para mais post
     sobre interseção da música e tecnologia.
 en:
+  layout: post
+  date: 2023-06-30 21:36:52
+  image: 'https://i.ytimg.com/vi/A5I605hVjGg/maxresdefault.jpg'
+  main-class: music
+  color: '#637a91'
+  tags:
+    - eletronicmusic
+    - music
+    - soulseek
+    - nicotine
+    - napster
+    - P2P
+    - dj
+    - musictech
+  twitter_text: >-
+    Este post explora o conceito de software P2P e seu profundo impacto na
+    comunidade de DJs e música.
+  introduction: O Impacto Revolucionário de Softwares P2P na Cena Musical.
+  categories: null
   title: The Revolutionary Impact of P2P Software on the Music Scene
   description: >-
     This post explores the P2P software concept and its profound impact on the

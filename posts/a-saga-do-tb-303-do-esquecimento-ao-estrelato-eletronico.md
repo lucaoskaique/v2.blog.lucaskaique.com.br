@@ -1,15 +1,15 @@
 ---
-layout: post
-date: 2024-03-03 09:55:52
-main-class: music
-color: '#6B4C9A'
-tags:
-  - music
-  - tb303
-  - 303day
-  - software
-  - development
 pt-BR:
+  layout: post
+  date: 2024-03-03 09:55:52
+  main-class: music
+  color: '#6B4C9A'
+  tags:
+    - music
+    - tb303
+    - 303day
+    - software
+    - development
   title: 'A Saga do TB-303: Do Esquecimento ao Estrelato Eletrônico'
   description: >-
     Em celebração ao 303 Day, vamos explorar a incrível jornada do TB-303, um
@@ -218,6 +218,16 @@ pt-BR:
 
     - <https://www.roland.com/uk/products/tb-03/>
 en:
+  layout: post
+  date: 2024-03-03 09:55:52
+  main-class: music
+  color: '#6B4C9A'
+  tags:
+    - music
+    - tb303
+    - 303day
+    - software
+    - development
   title: 'The TB-303 Saga: From Obscurity to Electronic Stardom'
   description: >-
     Celebrating 303 Day, let's explore the incredible journey of the TB-303, a
