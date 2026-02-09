@@ -1,13 +1,13 @@
 ---
-layout: post
-date: 2024-02-26 01:56:55
-main-class: js
-color: '#D6BA32'
-tags:
-  - javascript
-  - js
-  - development
 pt-BR:
+  layout: post
+  date: 2024-02-26 01:56:55
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - javascript
+    - js
+    - development
   title: "Dominando as malicias do JavaScript \U0001F608"
   description: >-
     Hoje, nosso foco está nos atalhos que gosto de chamar de "malicias" de
@@ -472,6 +472,14 @@ pt-BR:
 
     Até a proxima.
 en:
+  layout: post
+  date: 2024-02-26 01:56:55
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - javascript
+    - js
+    - development
   title: "Mastering JavaScript Shortcuts \U0001F608"
   description: >-
     Today, our focus is on shortcuts that I like to call JavaScript "tricks" -

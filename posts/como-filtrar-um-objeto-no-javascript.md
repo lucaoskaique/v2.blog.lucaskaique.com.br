@@ -1,17 +1,17 @@
 ---
-layout: post
-date: 2024-02-04 08:25:28
-image: /assets/img/imagem_2024-02-04_202622872.png
-main-class: js
-color: '#D6BA32'
-tags:
-  - programming
-  - javascript
-  - js
-  - dicas
-categories:
-  - javascript
 pt-BR:
+  layout: post
+  date: 2024-02-04 08:25:28
+  image: /assets/img/imagem_2024-02-04_202622872.png
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - programming
+    - javascript
+    - js
+    - dicas
+  categories:
+    - javascript
   title: Como Filtrar um Objeto no JavaScript
   description: >-
     Infelizmente, os objetos JavaScript não possuem uma função filter(). Mas
@@ -149,6 +149,18 @@ pt-BR:
 
     <https://www.freecodecamp.org/news/filter-arrays-in-javascript/>
 en:
+  layout: post
+  date: 2024-02-04 08:25:28
+  image: /assets/img/imagem_2024-02-04_202622872.png
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - programming
+    - javascript
+    - js
+    - dicas
+  categories:
+    - javascript
   title: How to Filter an Object in JavaScript
   description: >-
     Unfortunately, JavaScript objects don't have a filter() function. But that

@@ -1,11 +1,11 @@
 ---
-layout: post
-date: 2024-06-29 02:21:00
-main-class: js
-color: '#D6BA32'
-tags:
-  - git
 pt-BR:
+  layout: post
+  date: 2024-06-29 02:21:00
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - git
   title: My git cheatsheet
   description: My git cheatsheet
   body: >
@@ -457,6 +457,12 @@ pt-BR:
 
     ##### END
 en:
+  layout: post
+  date: 2024-06-29 02:21:00
+  main-class: js
+  color: '#D6BA32'
+  tags:
+    - git
   title: My Git Cheatsheet
   description: My personal Git cheatsheet with common commands and workflows
   body: >
