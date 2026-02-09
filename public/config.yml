@@ -207,7 +207,6 @@ collections:
           - { label: "Filter Label Text", name: "filterLabel", widget: "string", i18n: true, hint: '"Filter by category:" text' }
           - { label: "GitHub Button Label", name: "githubLabel", widget: "string", i18n: true }
           - { label: "Website Button Label", name: "websiteLabel", widget: "string", i18n: true }
-        i18n: true
         fields:
           - { label: "Title", name: "title", widget: "string", i18n: true }
           - { label: "Heading", name: "heading", widget: "text", i18n: true }
