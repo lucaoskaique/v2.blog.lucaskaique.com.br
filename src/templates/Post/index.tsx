@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { useRouter } from "next/router"
 import { NextSeo } from "next-seo"
 import { ComponentPropsWithoutRef } from "react"
@@ -60,7 +61,7 @@ const PostTemplate = ({ post }: { post: Post }) => {
                 </header>
                 {post.frontmatter.image && (
                   <div className="mt-8">
-                    <img
+                    <Image
                       src={post.frontmatter.image}
                       alt={post.frontmatter.title}
                       className="w-full rounded-2xl object-cover"
