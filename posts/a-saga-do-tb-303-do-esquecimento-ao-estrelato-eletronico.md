@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2024-03-03T09:55:52.000Z
+date: 2024-03-03 09:55:52
 main-class: music
 color: '#6B4C9A'
 tags:

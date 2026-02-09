@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2024-02-11T11:36:36.000Z
+date: 2024-02-11 11:36:36
 image: /assets/img/imagem_2024-02-04_202622872.png
 main-class: js
 color: '#D6BA32'

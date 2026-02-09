@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2024-09-13T05:05:00.000Z
+date: 2024-09-13 05:05:00
 main-class: js
 color: '#D6BA32'
 tags:

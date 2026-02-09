@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2023-10-12T05:40:52.000Z
+date: 2023-10-12 05:40:52
 image: /assets/img/364353936_198141723238398_4935006635811150078_n.jpg
 main-class: music
 color: '#6B4C9A'
