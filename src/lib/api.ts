@@ -47,28 +47,37 @@ export function getPostBySlug(
         ? (localeData as any).body || content
         : content
 
-    // Extract title - try locale first, then root, then use slug as fallback
-    const extractedTitle =
-      typeof localeData === "object" && "title" in localeData
-        ? (localeData as any).title
-        : postData.title || realSlug
+    // Helper to extract field from locale or root, returns undefined if not found
+    const extractField = (field: string) =>
+      typeof localeData === "object" && field in localeData
+        ? (localeData as any)[field]
+        : (postData as any)[field]
 
-    // Extract description - try locale first, then root, then empty string
-    const extractedDescription =
-      typeof localeData === "object" && "description" in localeData
-        ? (localeData as any).description
-        : postData.description || ""
+    // Extract all fields - try locale first, then root
+    const extractedTitle = extractField("title") || realSlug
+    const extractedDescription = extractField("description") || ""
+    const extractedImage = extractField("image") ?? null
+    const extractedMainClass = extractField("main-class") ?? null
+    const extractedColor = extractField("color") ?? null
+    const extractedTags = extractField("tags") ?? null
+    const extractedCategories = extractField("categories") ?? null
+    const extractedDate = extractField("date") || postData.date
 
     return {
       slug: realSlug,
-      date: new Date(postData.date).toString(),
+      date: new Date(extractedDate).toString(),
       locale,
       frontmatter: {
         ...postData,
-        date,
+        date: new Date(extractedDate).toString(),
         locale,
         title: extractedTitle,
         description: extractedDescription,
+        image: extractedImage,
+        "main-class": extractedMainClass,
+        color: extractedColor,
+        tags: extractedTags,
+        categories: extractedCategories,
       },
       content: localeContent
     }
@@ -96,28 +105,37 @@ export function getPostPreview(
     // Extract locale-specific content
     const localeData = postData[locale as keyof typeof postData] || postData
 
-    // Extract title - try locale first, then root, then use slug as fallback
-    const extractedTitle =
-      typeof localeData === "object" && "title" in localeData
-        ? (localeData as any).title
-        : postData.title || realSlug
+    // Helper to extract field from locale or root, returns undefined if not found
+    const extractField = (field: string) =>
+      typeof localeData === "object" && field in localeData
+        ? (localeData as any)[field]
+        : (postData as any)[field]
 
-    // Extract description - try locale first, then root, then empty string
-    const extractedDescription =
-      typeof localeData === "object" && "description" in localeData
-        ? (localeData as any).description
-        : postData.description || ""
+    // Extract all fields - try locale first, then root
+    const extractedTitle = extractField("title") || realSlug
+    const extractedDescription = extractField("description") || ""
+    const extractedImage = extractField("image") ?? null
+    const extractedMainClass = extractField("main-class") ?? null
+    const extractedColor = extractField("color") ?? null
+    const extractedTags = extractField("tags") ?? null
+    const extractedCategories = extractField("categories") ?? null
+    const extractedDate = extractField("date") || postData.date
 
     return {
       slug: realSlug,
-      date,
+      date: new Date(extractedDate).toString(),
       locale,
       frontmatter: {
         ...postData,
-        date,
+        date: new Date(extractedDate).toString(),
         locale,
         title: extractedTitle,
-        description: extractedDescription
+        description: extractedDescription,
+        image: extractedImage,
+        "main-class": extractedMainClass,
+        color: extractedColor,
+        tags: extractedTags,
+        categories: extractedCategories
       }
     }
   } catch (error) {
