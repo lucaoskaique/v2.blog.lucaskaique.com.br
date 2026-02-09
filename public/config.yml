@@ -165,6 +165,7 @@ collections:
   # Page content management with i18n
   - name: pages
     label: "Pages"
+    i18n: true
     files:
       - name: about
         label: "About Page"
