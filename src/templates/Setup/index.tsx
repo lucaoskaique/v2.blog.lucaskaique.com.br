@@ -31,7 +31,7 @@ function Tool({
       <Card.Title as="h3" href={href}>
         {title}
       </Card.Title>
-      <Card.Description>{children}</Card.Description>
+      <Card.Description as="div">{children}</Card.Description>
     </Card>
   )
 }
@@ -56,18 +56,19 @@ export default function Setup() {
           <div className="space-y-20">
             <ToolsSection title="Workstation">
               <Tool title="Desktop Custom">
-                <>
-                  <p>
-                    I’m a fan of pc builds since I was a kid, I had numerous
-                    builds, once you are into it, there’s no turning back.
+                <div>
+                  <p className="mb-3">
+                    I'm a fan of pc builds since I was a kid, I had numerous
+                    builds, once you are into it, there's no turning back.
                   </p>
-                  <br />
-                  <li>-AMD Ryzen 9 5900X</li>
-                  <li>-Radeon RX 570 Series</li>
-                  <li>-2x16GB de RAM DDR4</li>
-                  <li>-Microfone BM800</li>
-                  <li>-Edifier R980T</li>
-                </>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>AMD Ryzen 9 5900X</li>
+                    <li>Radeon RX 570 Series</li>
+                    <li>2x16GB de RAM DDR4</li>
+                    <li>Microfone BM800</li>
+                    <li>Edifier R980T</li>
+                  </ul>
+                </div>
               </Tool>
               <Tool title="2 x 27' superframe monitor">
                 The only display on the market if you want to invest too much

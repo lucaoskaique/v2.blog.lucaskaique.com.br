@@ -38,8 +38,6 @@ export function getPostBySlug(
 
     const postData = serializeDates(data) as Post["frontmatter"]
 
-    const date = new Date(postData.date).toString()
-
     // Extract locale-specific content
     const localeData = postData[locale as keyof typeof postData] || postData
     const localeContent =
@@ -48,10 +46,26 @@ export function getPostBySlug(
         : content
 
     // Helper to extract field from locale or root, returns undefined if not found
-    const extractField = (field: string) =>
-      typeof localeData === "object" && field in localeData
-        ? (localeData as any)[field]
-        : (postData as any)[field]
+    const extractField = (field: string) => {
+      // First try the current locale
+      if (typeof localeData === "object" && field in localeData) {
+        return (localeData as any)[field]
+      }
+      // Then try root level
+      if (field in postData) {
+        return (postData as any)[field]
+      }
+      // For date, also try other locales as fallback
+      if (field === "date") {
+        for (const key of ["pt-BR", "en"]) {
+          const altLocale = (postData as any)[key]
+          if (altLocale && typeof altLocale === "object" && "date" in altLocale) {
+            return altLocale.date
+          }
+        }
+      }
+      return undefined
+    }
 
     // Extract all fields - try locale first, then root
     const extractedTitle = extractField("title") || realSlug
@@ -61,7 +75,7 @@ export function getPostBySlug(
     const extractedColor = extractField("color") ?? null
     const extractedTags = extractField("tags") ?? null
     const extractedCategories = extractField("categories") ?? null
-    const extractedDate = extractField("date") || postData.date
+    const extractedDate = extractField("date") || new Date().toISOString()
 
     return {
       slug: realSlug,
@@ -100,16 +114,31 @@ export function getPostPreview(
     const { data } = matter(fileContents)
 
     const postData = serializeDates(data) as Post["frontmatter"]
-    const date = new Date(postData.date).toString()
 
     // Extract locale-specific content
     const localeData = postData[locale as keyof typeof postData] || postData
 
     // Helper to extract field from locale or root, returns undefined if not found
-    const extractField = (field: string) =>
-      typeof localeData === "object" && field in localeData
-        ? (localeData as any)[field]
-        : (postData as any)[field]
+    const extractField = (field: string) => {
+      // First try the current locale
+      if (typeof localeData === "object" && field in localeData) {
+        return (localeData as any)[field]
+      }
+      // Then try root level
+      if (field in postData) {
+        return (postData as any)[field]
+      }
+      // For date, also try other locales as fallback
+      if (field === "date") {
+        for (const key of ["pt-BR", "en"]) {
+          const altLocale = (postData as any)[key]
+          if (altLocale && typeof altLocale === "object" && "date" in altLocale) {
+            return altLocale.date
+          }
+        }
+      }
+      return undefined
+    }
 
     // Extract all fields - try locale first, then root
     const extractedTitle = extractField("title") || realSlug
@@ -119,7 +148,7 @@ export function getPostPreview(
     const extractedColor = extractField("color") ?? null
     const extractedTags = extractField("tags") ?? null
     const extractedCategories = extractField("categories") ?? null
-    const extractedDate = extractField("date") || postData.date
+    const extractedDate = extractField("date") || new Date().toISOString()
 
     return {
       slug: realSlug,
