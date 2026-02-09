@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2024-01-29T04:09:41.000Z
+date: 2024-01-29 04:09:41
 image: >-
   /assets/img/the-laptop-in-the-dark-is-illuminated-by-the-light-in-the-style-of-colorful-minimalism-post-processing-bold-chromaticity-kodak-aerochrome-melting-colourful-light-cyan-and-orange-.png
 main-class: js

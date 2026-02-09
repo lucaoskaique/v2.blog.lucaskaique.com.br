@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2023-06-30T17:36:52.000Z
+date: 2023-06-30 17:36:52
 image: 'https://i.ytimg.com/vi/LxXDk61hrcY/hqdefault.jpg'
 main-class: music
 color: '#637a91'
