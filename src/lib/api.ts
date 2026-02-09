@@ -6,7 +6,28 @@ import { GitHubRepository, Post, PostPreview } from "@/types"
 
 const postsDirectory = join(process.cwd(), "posts")
 
-export function getPostBySlug(slug: string, locale: string = 'pt-BR'): Post | null {
+// Helper function to convert all Date objects to strings in nested objects
+function serializeDates(obj: any): any {
+  if (obj instanceof Date) {
+    return obj.toString()
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(serializeDates)
+  }
+  if (obj !== null && typeof obj === "object") {
+    const serialized: any = {}
+    for (const key in obj) {
+      serialized[key] = serializeDates(obj[key])
+    }
+    return serialized
+  }
+  return obj
+}
+
+export function getPostBySlug(
+  slug: string,
+  locale: string = "pt-BR"
+): Post | null {
   if (!slug) return null
 
   try {
@@ -15,15 +36,28 @@ export function getPostBySlug(slug: string, locale: string = 'pt-BR'): Post | nu
     const fileContents = fs.readFileSync(fullPath, "utf8")
     const { data, content } = matter(fileContents)
 
-    const postData = data as Post["frontmatter"]
+    const postData = serializeDates(data) as Post["frontmatter"]
 
     const date = new Date(postData.date).toString()
 
     // Extract locale-specific content
     const localeData = postData[locale as keyof typeof postData] || postData
-    const localeContent = typeof localeData === 'object' && localeData !== null
-      ? (localeData as any).body || content
-      : content
+    const localeContent =
+      typeof localeData === "object" && localeData !== null
+        ? (localeData as any).body || content
+        : content
+
+    // Extract title - try locale first, then root, then use slug as fallback
+    const extractedTitle =
+      typeof localeData === "object" && "title" in localeData
+        ? (localeData as any).title
+        : postData.title || realSlug
+
+    // Extract description - try locale first, then root, then empty string
+    const extractedDescription =
+      typeof localeData === "object" && "description" in localeData
+        ? (localeData as any).description
+        : postData.description || ""
 
     return {
       slug: realSlug,
@@ -33,12 +67,8 @@ export function getPostBySlug(slug: string, locale: string = 'pt-BR'): Post | nu
         ...postData,
         date,
         locale,
-        title: typeof localeData === 'object' && 'title' in localeData
-          ? (localeData as any).title
-          : postData.title,
-        description: typeof localeData === 'object' && 'description' in localeData
-          ? (localeData as any).description
-          : postData.description,
+        title: extractedTitle,
+        description: extractedDescription,
       },
       content: localeContent
     }
@@ -48,7 +78,10 @@ export function getPostBySlug(slug: string, locale: string = 'pt-BR'): Post | nu
   }
 }
 
-export function getPostPreview(slug: string, locale: string = 'pt-BR'): PostPreview | null {
+export function getPostPreview(
+  slug: string,
+  locale: string = "pt-BR"
+): PostPreview | null {
   if (!slug) return null
 
   try {
@@ -57,11 +90,23 @@ export function getPostPreview(slug: string, locale: string = 'pt-BR'): PostPrev
     const fileContents = fs.readFileSync(fullPath, "utf8")
     const { data } = matter(fileContents)
 
-    const postData = data as Post["frontmatter"]
+    const postData = serializeDates(data) as Post["frontmatter"]
     const date = new Date(postData.date).toString()
 
     // Extract locale-specific content
     const localeData = postData[locale as keyof typeof postData] || postData
+
+    // Extract title - try locale first, then root, then use slug as fallback
+    const extractedTitle =
+      typeof localeData === "object" && "title" in localeData
+        ? (localeData as any).title
+        : postData.title || realSlug
+
+    // Extract description - try locale first, then root, then empty string
+    const extractedDescription =
+      typeof localeData === "object" && "description" in localeData
+        ? (localeData as any).description
+        : postData.description || ""
 
     return {
       slug: realSlug,
@@ -71,12 +116,8 @@ export function getPostPreview(slug: string, locale: string = 'pt-BR'): PostPrev
         ...postData,
         date,
         locale,
-        title: typeof localeData === 'object' && 'title' in localeData
-          ? (localeData as any).title
-          : postData.title,
-        description: typeof localeData === 'object' && 'description' in localeData
-          ? (localeData as any).description
-          : postData.description,
+        title: extractedTitle,
+        description: extractedDescription
       }
     }
   } catch (error) {
@@ -85,7 +126,7 @@ export function getPostPreview(slug: string, locale: string = 'pt-BR'): PostPrev
   }
 }
 
-export function getAllPosts(locale: string = 'pt-BR'): Post[] {
+export function getAllPosts(locale: string = "pt-BR"): Post[] {
   const slugs = fs.readdirSync(postsDirectory)
   const posts = slugs
     .map((slug) => getPostBySlug(slug.replace(/\.md$/, ""), locale))
@@ -97,7 +138,7 @@ export function getAllPosts(locale: string = 'pt-BR'): Post[] {
   return posts
 }
 
-export function getAllPostPreviews(locale: string = 'pt-BR'): PostPreview[] {
+export function getAllPostPreviews(locale: string = "pt-BR"): PostPreview[] {
   const slugs = fs.readdirSync(postsDirectory)
   const posts = slugs
     .map((slug) => getPostPreview(slug.replace(/\.md$/, ""), locale))
@@ -266,8 +307,7 @@ function getMockRepositories(): GitHubRepository[] {
       id: 6,
       name: "blog-cms",
       full_name: "lucaoskaique/blog-cms",
-      description:
-        "Content Management System for blogs with markdown support",
+      description: "Content Management System for blogs with markdown support",
       html_url: "https://github.com/lucaoskaique/blog-cms",
       homepage: "",
       stargazers_count: 1,
