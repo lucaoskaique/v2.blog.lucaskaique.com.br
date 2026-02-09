@@ -28,20 +28,12 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const content = await markdownToHtml(post.content || "")
 
-  // get prev/next posts
-  const allPosts = getAllPosts(locale)
-  const currentPostIndex = allPosts.findIndex((p) => p.slug === slug)
-  const nextPost = allPosts[currentPostIndex - 1] ?? null
-  const prevPost = allPosts[currentPostIndex + 1] ?? null
-
   return {
     props: {
       post: {
         ...post,
         content
-      },
-      prevPost,
-      nextPost
+      }
     }
   }
 }
