@@ -13,6 +13,7 @@ import {
   XIcon,
   YoutubeIcon
 } from "@/components/SocialIcons"
+import { AboutContent } from "@/types"
 
 import Base from "../Base"
 
@@ -69,7 +70,11 @@ function MailIcon(props: ComponentPropsWithoutRef<"svg">) {
   )
 }
 
-export default function About() {
+interface AboutProps {
+  content: AboutContent
+}
+
+export default function About({ content }: AboutProps) {
   return (
     <Base>
       <Container className="mt-16 sm:mt-32">
@@ -136,10 +141,10 @@ export default function About() {
                 ) : null
               })}
               <SocialLink
-                href="mailto:spencer@planetaria.tech"
+                href={`mailto:${content.email}`}
                 icon={MailIcon}
                 className="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-700/40">
-                me@lucaskaique.com.br
+                {content.email}
               </SocialLink>
             </ul>
           </div>

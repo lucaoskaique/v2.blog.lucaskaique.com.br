@@ -5,65 +5,288 @@ backend:
   base_url: https://lucaskaique.com.br/
   auth_endpoint: api/auth/
   commit_messages:
-  create: Create {{collection}} “{{slug}}”
-  update: Update {{collection}} “{{slug}}”
-  delete: Delete {{collection}} “{{slug}}”
-  uploadMedia: Upload “{{path}}”
-  deleteMedia: Delete “{{path}}”
-  openAuthoring: "{{message}}"
+    create: Create {{collection}} "{{slug}}"
+    update: Update {{collection}} "{{slug}}"
+    delete: Delete {{collection}} "{{slug}}"
+    uploadMedia: Upload "{{path}}"
+    deleteMedia: Delete "{{path}}"
+    openAuthoring: "{{message}}"
 
 media_folder: public/assets/img
 public_folder: /assets/img
 publish_mode: editorial_workflow
+
+# Site configuration
+site_url: https://lucaskaique.com.br
+display_url: https://lucaskaique.com.br
+locale: pt-BR
+
+# Slug configuration
 slug:
   encoding: "ascii"
   clean_accents: true
+  sanitize_replacement: "-"
+
+# Top level i18n configuration
+i18n:
+  structure: single_file
+  locales: [pt-BR, en]
+  default_locale: pt-BR
 
 collections:
   - name: posts
-    label: posts
+    label: "Blog Posts"
+    label_singular: "Post"
+    description: "Write and manage blog posts in multiple languages"
     folder: posts
     create: true
     slug: "{{slug}}"
+    preview_path: "posts/{{slug}}"
     media_folder: "../public/assets/img/{{slug}}"
     public_folder: "/assets/img/{{slug}}"
+    # Inherit i18n configuration from top level
+    i18n: true
+    # Customize list view
+    summary: "{{title}} - {{date | date('YYYY-MM-DD')}} - {{main-class}}"
+    # Enable sorting by these fields
+    sortable_fields: ["title", "date", "main-class", "commit_date"]
+    # Add view filters
+    view_filters:
+      - label: "JavaScript Posts"
+        field: main-class
+        pattern: "js"
+      - label: "Development Posts"
+        field: main-class
+        pattern: "dev"
+      - label: "Music Posts"
+        field: main-class
+        pattern: "music"
+      - label: "Recent Posts (2024+)"
+        field: date
+        pattern: "202[4-9]"
+    # Group posts by category
+    view_groups:
+      - label: "Category"
+        field: main-class
+      - label: "Year"
+        field: date
+        pattern: \d{4}
     fields:
       - { label: "Layout", name: "layout", widget: "hidden", default: "post" }
       - {
-          label: "Date",
+          label: "Publication Date",
           name: "date",
           widget: "datetime",
-          format: "YYYY-MM-DD hh:mm:ss"
-        }
-      - { label: "Post Image", name: "image", widget: "image", required: false }
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Description", name: "description", widget: "string" }
-      - {
-          label: "Main Class",
-          name: "main-class",
-          widget: "select",
-          options: ["css", "js", "html", "svg", "dev", "misc", "music"]
+          format: "YYYY-MM-DD hh:mm:ss",
+          date_format: "YYYY-MM-DD",
+          time_format: "HH:mm:ss",
+          i18n: "duplicate",
+          hint: "Date and time when this post will be published"
         }
       - {
-          label: "Color",
-          name: "color",
-          widget: "select",
-          options:
-            [
-              { label: "CSS", value: "#2DA0C3" },
-              { label: "JS", value: "#D6BA32" },
-              { label: "HTML", value: "#EB7728" },
-              { label: "SVG", value: "#7D669E" },
-              { label: "Dev", value: "#637a91" },
-              { label: "Misc", value: "#7AAB13" },
-              { label: "Music", value: "#6B4C9A" }
-            ]
+          label: "Featured Image",
+          name: "image",
+          widget: "image",
+          required: false,
+          i18n: "duplicate",
+          hint: "Optional cover image for the post (recommended: 1200x630px)"
         }
-      - { label: "Tags", name: "tags", widget: "list", default: [""] }
+      - {
+          label: "Title",
+          name: "title",
+          widget: "string",
+          i18n: true,
+          hint: "Post title (translatable)",
+          pattern: [".{10,}", "Title must have at least 10 characters"]
+        }
+      - {
+          label: "Description",
+          name: "description",
+          widget: "string",
+          i18n: true,
+          hint: "Brief summary for SEO and social sharing (translatable)",
+          pattern: [".{50,160}", "Description should be 50-160 characters for best SEO"]
+        }
       - {
           label: "Category",
+          name: "main-class",
+          widget: "select",
+          hint: "Primary category for this post",
+          options: [
+            { label: "CSS", value: "css" },
+            { label: "JavaScript", value: "js" },
+            { label: "HTML", value: "html" },
+            { label: "SVG", value: "svg" },
+            { label: "Development", value: "dev" },
+            { label: "Miscellaneous", value: "misc" },
+            { label: "Music", value: "music" }
+          ]
+        }
+      - {
+          label: "Theme Color",
+          name: "color",
+          widget: "select",
+          hint: "Color theme for the post header",
+          options:
+            [
+              { label: "CSS (Blue)", value: "#2DA0C3" },
+              { label: "JS (Yellow)", value: "#D6BA32" },
+              { label: "HTML (Orange)", value: "#EB7728" },
+              { label: "SVG (Purple)", value: "#7D669E" },
+              { label: "Dev (Gray)", value: "#637a91" },
+              { label: "Misc (Green)", value: "#7AAB13" },
+              { label: "Music (Dark Purple)", value: "#6B4C9A" }
+            ]
+        }
+      - {
+          label: "Tags",
+          name: "tags",
+          widget: "list",
+          default: [""],
+          hint: "Keywords for categorizing and searching this post",
+          allow_add: true
+        }
+      - {
+          label: "Categories",
           name: "categories",
           widget: "list",
-          required: false
+          required: false,
+          hint: "Additional categories (optional)",
+          allow_add: true
         }
-      - { label: "Body", name: "body", widget: "markdown" }
+      - {
+          label: "Content",
+          name: "body",
+          widget: "markdown",
+          i18n: true,
+          hint: "Main post content with markdown formatting (translatable)"
+        }
+
+  # Page content management with i18n
+  - name: pages
+    label: "Website Pages"
+    label_singular: "Page"
+    description: "Manage content for website pages in multiple languages"
+    files:
+      - name: about
+        label: "About Page"
+        file: content/about.yml
+        i18n: true
+        fields:
+          - { label: "Page Title", name: "title", widget: "string", i18n: true, hint: "SEO title for the About page" }
+          - { label: "Main Heading", name: "heading", widget: "text", i18n: true, hint: "Large heading displayed at the top" }
+          - { label: "Introduction", name: "intro", widget: "markdown", i18n: true, hint: "Opening paragraph with main bio" }
+          - {
+              label: "Additional Paragraphs",
+              name: "paragraphs",
+              widget: "list",
+              i18n: true,
+              hint: "Additional content paragraphs",
+              field: { label: "Paragraph", name: "paragraph", widget: "text" }
+            }
+          - { label: "Contact Email", name: "email", widget: "string", i18n: "duplicate", hint: "Email address (same for all languages)" }
+
+      - name: projects
+        label: "Projects Page"
+        file: content/projects.yml
+        i18n: true
+        fields:
+          - { label: "Page Title", name: "title", widget: "string", i18n: true }
+          - { label: "Main Heading", name: "heading", widget: "text", i18n: true }
+          - { label: "Introduction", name: "intro", widget: "text", i18n: true }
+          - label: "Category Filter Labels"
+            name: "categoryLabels"
+            widget: "object"
+            i18n: true
+            hint: "Labels for the project category filters"
+            fields:
+              - { label: "All Projects", name: "all", widget: "string", i18n: true }
+              - { label: "Frontend", name: "frontend", widget: "string", i18n: true }
+              - { label: "Backend", name: "backend", widget: "string", i18n: true }
+              - { label: "Full Stack", name: "fullstack", widget: "string", i18n: true }
+          - { label: "Filter Label Text", name: "filterLabel", widget: "string", i18n: true, hint: '"Filter by category:" text' }
+          - { label: "GitHub Button Label", name: "githubLabel", widget: "string", i18n: true }
+          - { label: "Website Button Label", name: "websiteLabel", widget: "string", i18n: true }
+        i18n: true
+        fields:
+          - { label: "Title", name: "title", widget: "string", i18n: true }
+          - { label: "Heading", name: "heading", widget: "text", i18n: true }
+          - { label: "Introduction", name: "intro", widget: "text", i18n: true }
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            i18n: true
+            fields:
+              - { label: "Category", name: "category", widget: "string", i18n: true }
+              - label: "Items"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Name", name: "name", widget: "string", i18n: true }
+                  - { label: "Description", name: "description", widget: "text", i18n: true }
+
+      - name: speaking
+        label: "Speaking Page"
+        file: content/speaking.yml
+        i18n: true
+        fields:
+          - { label: "Title", name: "title", widget: "string", i18n: true }
+          - { label: "Heading", name: "heading", widget: "text", i18n: true }
+          - { label: "Introduction", name: "intro", widget: "text", i18n: true }
+          - { label: "Upcoming Title", name: "upcomingTitle", widget: "string", i18n: true }
+          - { label: "Past Title", name: "pastTitle", widget: "string", i18n: true }
+          - { label: "No Upcoming Message", name: "noUpcoming", widget: "string", i18n: true }
+          - label: "Talks"
+            name: "talks"
+            widget: "list"
+            i18n: true
+            fields:
+              - { label: "Title", name: "title", widget: "string", i18n: true }
+              - { label: "Event", name: "event", widget: "string", i18n: true }
+              - { label: "Date", name: "date", widget: "date", i18n: "duplicate" }
+              - { label: "Description", name: "description", widget: "text", i18n: true }
+              - { label: "Slides URL", name: "slides", widget: "string", required: false, i18n: "duplicate" }
+              - { label: "Video URL", name: "video", widget: "string", required: false, i18n: "duplicate" }
+
+      - name: site
+        label: "Site Settings"
+        file: content/site.yml
+        i18n: true
+        fields:
+          - { label: "Site Name", name: "siteName", widget: "string", i18n: true }
+          - { label: "Site Description", name: "siteDescription", widget: "text", i18n: true }
+          - label: "Navigation"
+            name: "navigation"
+            widget: "object"
+            i18n: true
+            fields:
+              - { label: "Home", name: "home", widget: "string", i18n: true }
+              - { label: "About", name: "about", widget: "string", i18n: true }
+              - { label: "Posts", name: "posts", widget: "string", i18n: true }
+              - { label: "Projects", name: "projects", widget: "string", i18n: true }
+              - { label: "Speaking", name: "speaking", widget: "string", i18n: true }
+              - { label: "Setup", name: "setup", widget: "string", i18n: true }
+          - label: "Footer"
+            name: "footer"
+            widget: "object"
+            i18n: true
+            fields:
+              - { label: "Rights", name: "rights", widget: "string", i18n: true }
+              - { label: "Built With", name: "builtWith", widget: "string", i18n: true }
+
+      - name: resume
+        label: "Resume / Work Experience"
+        file: content/resume.yml
+        i18n: true
+        fields:
+          - label: "Work Roles"
+            name: "roles"
+            widget: "list"
+            i18n: true
+            hint: "List of professional roles/positions in chronological order"
+            fields:
+              - { label: "Company", name: "company", widget: "string", i18n: "duplicate", hint: "Company name (same for all languages)" }
+              - { label: "Job Title", name: "title", widget: "string", i18n: true, hint: "Job position title (translatable)" }
+              - { label: "Logo URL", name: "logo", widget: "string", i18n: "duplicate", hint: "Company logo URL (same for all languages)" }
+              - { label: "Start Year", name: "start", widget: "string", i18n: true, hint: "Year started (or 'YYYY-MM-DD' for specific date)" }
+              - { label: "End Year", name: "end", widget: "string", i18n: true, hint: "Year ended or 'now'/'agora' for current position" }

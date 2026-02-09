@@ -1,0 +1,20 @@
+pt-BR:
+  title: "Sobre mim"
+  heading: "Eu sou Lucas Kaique. Sou de Goiás e moro em Porto Alegre, onde desenvolvo o futuro."
+  intro: |
+    Olá, sou Engenheiro de Software Sênior e estou programando desde os 14 anos, onde minha paixão por resolver problemas e projetar soluções elegantes ganha vida. Especializado em tecnologias back-end como NodeJS, C# e Go, também sou capaz de criar experiências front-end bonitas e envolventes com React e Next.js.
+  paragraphs:
+    - "Nos últimos anos, tive a oportunidade de trabalhar em diversos projetos desafiadores, desde aplicações web complexas até sistemas distribuídos em larga escala."
+    - "Além da programação, sou apaixonado por música eletrônica e tecnologia. Adoro explorar novas ferramentas e frameworks, sempre buscando aprender e melhorar minhas habilidades."
+    - "Atualmente, trabalho como desenvolvedor remoto, contribuindo para projetos que impactam milhares de usuários. Também dedico tempo compartilhando conhecimento através do meu blog e palestras."
+  email: "lucaoskaique@gmail.com"
+en:
+  title: "About me"
+  heading: "I'm Lucas Kaique. I'm from Goiás and I live in Porto Alegre, where I develop the future."
+  intro: |
+    Hi, I'm a Senior Software Engineer and I've been coding since I was 14 years old, where my passion for solving problems and designing elegant solutions comes to life. Specializing in back-end technologies like NodeJS, C#, and Go, I am also able to create beautiful and engaging front-end experiences with React and Next.js.
+  paragraphs:
+    - "In recent years, I've had the opportunity to work on various challenging projects, from complex web applications to large-scale distributed systems."
+    - "Besides programming, I'm passionate about electronic music and technology. I love exploring new tools and frameworks, always seeking to learn and improve my skills."
+    - "Currently, I work as a remote developer, contributing to projects that impact thousands of users. I also dedicate time to sharing knowledge through my blog and talks."
+  email: "lucaoskaique@gmail.com"

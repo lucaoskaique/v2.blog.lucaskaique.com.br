@@ -1,0 +1,26 @@
+pt-BR:
+  siteName: "Lucas Kaique - Blog"
+  siteDescription: "Blog pessoal sobre desenvolvimento de software, tecnologia e música eletrônica."
+  navigation:
+    home: "Início"
+    about: "Sobre"
+    posts: "Posts"
+    projects: "Projetos"
+    speaking: "Palestras"
+    setup: "Setup"
+  footer:
+    rights: "Todos os direitos reservados."
+    builtWith: "Feito com Next.js e Tailwind CSS"
+en:
+  siteName: "Lucas Kaique - Blog"
+  siteDescription: "Personal blog about software development, technology, and electronic music."
+  navigation:
+    home: "Home"
+    about: "About"
+    posts: "Posts"
+    projects: "Projects"
+    speaking: "Speaking"
+    setup: "Setup"
+  footer:
+    rights: "All rights reserved."
+    builtWith: "Built with Next.js and Tailwind CSS"

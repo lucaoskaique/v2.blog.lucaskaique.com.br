@@ -6,90 +6,12 @@ import { Card } from "@/components/Card"
 import { Container } from "@/components/Container"
 import Hero from "@/components/Hero"
 import { Photos } from "@/components/Photos"
-import { Post } from "@/types"
+import { useTranslation } from "@/hooks/useTranslation"
+import { getLocalizedPath } from "@/lib/locale"
+import { PostPreview, Role, RoleProps } from "@/types"
 import { formatDate } from "@/utils/formatDate"
 
 import Base from "../Base"
-
-const resume: Array<RoleProps> = [
-    {
-    company: "AngelQ",
-    title: "Senior FullStack Engineer (contractor)",
-    logo: "https://www.angelq.ai/hubfs/Untitled%20design%20(5).png",
-    start: "2024",
-    end: "now"
-  },
-  {
-    company: "ScaleIP",
-    title: "Senior FullStack Engineer (contractor)",
-    logo: "https://cdn.prod.website-files.com/6799214c33dc1c6865edd51a/67fd2a19cb1c6bb46bf8b7db_favicon-outlined.png",
-    start: "2024",
-    end: "2024"
-  },
-  {
-    company: "Dev em Dobro",
-    title: "Senior Software Engineer and Educator",
-    logo: "https://www.devemdobro.com/wp-content/uploads/2025/06/FAVICON-150x150.png",
-    start: "2023",
-    end: "2024"
-  },
-  {
-    company: "Tech4Humans",
-    title: "Senior Backend Software Engineer",
-    logo: "https://cdn.prod.website-files.com/65155fabb679475d43638cde/653ba727faf096baab78c334_favicon.png",
-    start: "2022",
-    end: "2023"
-  },
-  {
-    company: "Duo Studio Interativo",
-    title: "Tech Lead, Senior Software Engineer",
-    logo: "https://duo.studio/wp-content/uploads/2025/07/favicon.png",
-    start: "2021",
-    end: "2023"
-  },
-  {
-    company: "Stefanini Brasil",
-    title: "Full-Stack Software Engineer",
-    logo: "https://stefanini.com.br/favicon.ico",
-    start: "2021",
-    end: "2021"
-  },
-  {
-    company: "Banrisul",
-    title: "Full-Stack Software Engineer",
-    logo: "https://banrisul.com.br/favicon.ico",
-    start: "2019",
-    end: "2021"
-  },
-  {
-    company: "UERGS",
-    title: "IT Support Intern",
-    logo: "https://uergs.edu.br/themes/uergs/ico/favicon.ico",
-    start: "2018",
-    end: "2019"
-  },
-  {
-    company: "Instituto Federal de Gois (IFG)",
-    title: "Calculus Professor Assistent, University",
-    logo: "http://www.ifg.edu.br/templates/padraogoverno01/favicon.ico",
-    start: "2015",
-    end: "2016"
-  },
-  {
-    company: "Instituto Mix",
-    title: "Developer and IT Instructor",
-    logo: "https://institutomix.com.br/favicon.webp",
-    start: "2014",
-    end: "2016"
-  },
-  {
-    company: "MMtec",
-    title: "Industrial Engineering Technician",
-    logo: "https://www.mmtec.com.br/wp-content/uploads/2016/07/mmtec-faviconmodelo.jpg",
-    start: "2013",
-    end: "2014"
-  }
-]
 
 function MailIcon(props: ComponentPropsWithoutRef<"svg">) {
   return (
@@ -176,15 +98,7 @@ function Newsletter() {
   )
 }
 
-interface RoleProps {
-  company: string
-  title: string
-  logo: string
-  start: string | { label: string; dateTime: string }
-  end: string | { label: string; dateTime: string }
-}
-
-function Role({ role }: { role: RoleProps }) {
+function RoleItem({ role }: { role: RoleProps }) {
   const startLabel =
     typeof role.start === "string" ? role.start : role.start.label
   const startDate =
@@ -227,7 +141,7 @@ function Role({ role }: { role: RoleProps }) {
   )
 }
 
-function Resume() {
+function Resume({ roles }: { roles: Role[] }) {
   return (
     <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
       <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -235,8 +149,8 @@ function Resume() {
         <span className="ml-3">Work</span>
       </h2>
       <ol className="mt-6 space-y-4">
-        {resume.map((role, roleIndex) => (
-          <Role key={roleIndex} role={role} />
+        {roles.map((role, roleIndex) => (
+          <RoleItem key={roleIndex} role={role} />
         ))}
       </ol>
       <Button
@@ -250,7 +164,9 @@ function Resume() {
   )
 }
 
-const Home = ({ posts }: { posts: Post[] }) => {
+const Home = ({ posts, resume }: { posts: PostPreview[]; resume: Role[] }) => {
+  const { locale } = useTranslation()
+
   return (
     <Base>
       <Container className="mt-9">
@@ -263,7 +179,7 @@ const Home = ({ posts }: { posts: Post[] }) => {
             {posts.slice(0, 5).map((post) => (
               <div key={post.slug}>
                 <Card as="article">
-                  <Card.Title href={`/posts/${post.slug}`}>
+                  <Card.Title href={getLocalizedPath(`/posts/${post.slug}`, locale)}>
                     {post.frontmatter.title}
                   </Card.Title>
                   <Card.Eyebrow
@@ -282,7 +198,7 @@ const Home = ({ posts }: { posts: Post[] }) => {
           </div>
           <div className="space-y-10 lg:pl-16 xl:pl-24">
             <Newsletter />
-            <Resume />
+            <Resume roles={resume} />
           </div>
         </div>
       </Container>
