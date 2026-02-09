@@ -1,7 +1,6 @@
 import { useRouter } from "next/router"
 import { NextSeo } from "next-seo"
-import Prism from "prismjs"
-import { ComponentPropsWithoutRef, useEffect } from "react"
+import { ComponentPropsWithoutRef } from "react"
 
 import Comments from "@/components/Comments"
 import { Container } from "@/components/Container"
@@ -12,9 +11,6 @@ import styles from "./post-body.module.css"
 import Base from "../Base"
 
 const PostTemplate = ({ post }: { post: Post }) => {
-  useEffect(() => {
-    Prism.highlightAll()
-  }, [post])
   const router = useRouter()
   // const { previousPathname } = useContext(AppContext)
   return (

@@ -1,5 +1,6 @@
-import { NextPage } from "next"
+import { GetStaticPaths , NextPage } from "next"
 
+import { locales } from "@/lib/i18n"
 import Base from "@/templates/Base"
 
 const PrivacyPolicy: NextPage = () => {
@@ -18,3 +19,20 @@ const PrivacyPolicy: NextPage = () => {
 }
 
 export default PrivacyPolicy
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths = locales.map((locale) => ({
+    params: { locale }
+  }))
+
+  return {
+    paths,
+    fallback: false
+  }
+}
+
+export async function getStaticProps() {
+  return {
+    props: {}
+  }
+}

@@ -22,6 +22,9 @@ import {
 } from "react"
 
 import { Container } from "@/components/Container"
+import LanguageSwitcher from "@/components/LanguageSwitcher"
+import { useTranslation } from "@/hooks/useTranslation"
+import { getLocalizedPath, removeLocaleFromPathname } from "@/lib/locale"
 
 const avatarImage = "/images/card.webp"
 
@@ -102,6 +105,8 @@ function MobileNavItem({
 }
 
 function MobileNavigation(props: ComponentPropsWithoutRef<typeof Popover>) {
+  const { locale } = useTranslation()
+
   return (
     <Popover {...props}>
       <PopoverButton className="group flex items-center rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10 dark:hover:ring-white/20">
@@ -126,10 +131,10 @@ function MobileNavigation(props: ComponentPropsWithoutRef<typeof Popover>) {
         </div>
         <nav className="mt-6">
           <ul className="-my-2 divide-y divide-zinc-100 text-base text-zinc-800 dark:divide-zinc-100/5 dark:text-zinc-300">
-            <MobileNavItem href="/about">About</MobileNavItem>
-            <MobileNavItem href="/posts">Articles</MobileNavItem>
-            <MobileNavItem href="/projects">Projects</MobileNavItem>
-            <MobileNavItem href="/setup">Setup</MobileNavItem>
+            <MobileNavItem href={getLocalizedPath("/about", locale)}>About</MobileNavItem>
+            <MobileNavItem href={getLocalizedPath("/posts", locale)}>Articles</MobileNavItem>
+            <MobileNavItem href={getLocalizedPath("/projects", locale)}>Projects</MobileNavItem>
+            <MobileNavItem href={getLocalizedPath("/setup", locale)}>Setup</MobileNavItem>
           </ul>
         </nav>
       </PopoverPanel>
@@ -138,7 +143,8 @@ function MobileNavigation(props: ComponentPropsWithoutRef<typeof Popover>) {
 }
 
 function NavItem({ href, children }: { href: string; children: ReactNode }) {
-  const isActive = usePathname() === href
+  const pathname = usePathname()
+  const isActive = pathname === href
 
   return (
     <li>
@@ -160,13 +166,15 @@ function NavItem({ href, children }: { href: string; children: ReactNode }) {
 }
 
 function DesktopNavigation(props: ComponentPropsWithoutRef<"nav">) {
+  const { locale } = useTranslation()
+
   return (
     <nav {...props}>
       <ul className="flex rounded-full bg-white/90 px-3 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10">
-        <NavItem href="/about">About</NavItem>
-        <NavItem href="/posts">Articles</NavItem>
-        <NavItem href="/projects">Projects</NavItem>
-        <NavItem href="/setup">Setup</NavItem>
+        <NavItem href={getLocalizedPath("/about", locale)}>About</NavItem>
+        <NavItem href={getLocalizedPath("/posts", locale)}>Articles</NavItem>
+        <NavItem href={getLocalizedPath("/projects", locale)}>Projects</NavItem>
+        <NavItem href={getLocalizedPath("/setup", locale)}>Setup</NavItem>
       </ul>
     </nav>
   )
@@ -221,11 +229,13 @@ function Avatar({
 }: Omit<ComponentPropsWithoutRef<typeof Link>, "href"> & {
   large?: boolean
 }) {
+  const { locale } = useTranslation()
+
   return (
     <Link
-      href="/"
+      href={getLocalizedPath("/", locale)}
       aria-label="Home"
-      className={clsx(className, "pointer-events-auto")}
+      className={clsx(className, "pointer-events-auto relative")}
       {...props}>
       <Image
         src={avatarImage}
@@ -243,11 +253,18 @@ function Avatar({
 }
 
 export function Header() {
-  const isHomePage = usePathname() === "/"
+  const pathname = usePathname()
+  const pathWithoutLocale = removeLocaleFromPathname(pathname)
+  const [isHomePage, setIsHomePage] = useState(false)
 
   const headerRef = useRef<ElementRef<"div">>(null)
   const avatarRef = useRef<ElementRef<"div">>(null)
   const isInitial = useRef(true)
+
+  // Update isHomePage after hydration to prevent mismatch
+  useEffect(() => {
+    setIsHomePage(pathWithoutLocale === "/" || pathWithoutLocale === "")
+  }, [pathWithoutLocale])
 
   useEffect(() => {
     const downDelay = avatarRef.current?.offsetTop ?? 0
@@ -417,7 +434,8 @@ export function Header() {
                 <DesktopNavigation className="pointer-events-auto hidden md:block" />
               </div>
               <div className="flex justify-end md:flex-1">
-                <div className="pointer-events-auto">
+                <div className="pointer-events-auto flex items-center gap-4">
+                  <LanguageSwitcher />
                   <ThemeToggle />
                 </div>
               </div>

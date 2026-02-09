@@ -1,0 +1,13 @@
+{
+  "name": "i18n-posts-converter",
+  "version": "1.0.0",
+  "description": "Convert blog posts to i18n format with Portuguese and English",
+  "type": "module",
+  "scripts": {
+    "convert": "node convert-posts.js"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "@anthropic-ai/sdk": "^0.32.1"
+  }
+}

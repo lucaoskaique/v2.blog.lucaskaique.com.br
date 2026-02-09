@@ -1,13 +1,17 @@
-import { Post } from "@/types"
+import { useTranslation } from "@/hooks/useTranslation"
+import { getLocalizedPath } from "@/lib/locale"
+import { PostPreview } from "@/types"
 import { formatDate } from "@/utils/formatDate"
 
 import { Card } from "../Card"
 
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({ post }: { post: PostPreview }) {
+  const { locale } = useTranslation()
+
   return (
     <article className="md:grid md:grid-cols-4 md:items-baseline">
       <Card className="md:col-span-3">
-        <Card.Title href={`/posts/${post.slug}`}>
+        <Card.Title href={getLocalizedPath(`/posts/${post.slug}`, locale)}>
           {post.frontmatter.title}
         </Card.Title>
         <Card.Eyebrow

@@ -2,11 +2,11 @@ import fs from "fs"
 import matter from "gray-matter"
 import { join } from "path"
 
-import { GitHubRepository, Post } from "@/types"
+import { GitHubRepository, Post, PostPreview } from "@/types"
 
 const postsDirectory = join(process.cwd(), "posts")
 
-export function getPostBySlug(slug: string): Post | null {
+export function getPostBySlug(slug: string, locale: string = 'pt-BR'): Post | null {
   if (!slug) return null
 
   try {
@@ -19,14 +19,28 @@ export function getPostBySlug(slug: string): Post | null {
 
     const date = new Date(postData.date).toString()
 
+    // Extract locale-specific content
+    const localeData = postData[locale as keyof typeof postData] || postData
+    const localeContent = typeof localeData === 'object' && localeData !== null
+      ? (localeData as any).body || content
+      : content
+
     return {
       slug: realSlug,
       date: new Date(postData.date).toString(),
+      locale,
       frontmatter: {
         ...postData,
-        date
+        date,
+        locale,
+        title: typeof localeData === 'object' && 'title' in localeData
+          ? (localeData as any).title
+          : postData.title,
+        description: typeof localeData === 'object' && 'description' in localeData
+          ? (localeData as any).description
+          : postData.description,
       },
-      content
+      content: localeContent
     }
   } catch (error) {
     console.error("Error reading the file:", error)
@@ -34,11 +48,60 @@ export function getPostBySlug(slug: string): Post | null {
   }
 }
 
-export function getAllPosts(): Post[] {
+export function getPostPreview(slug: string, locale: string = 'pt-BR'): PostPreview | null {
+  if (!slug) return null
+
+  try {
+    const realSlug = slug.replace(/\.md$/, "")
+    const fullPath = join(postsDirectory, `${realSlug}.md`)
+    const fileContents = fs.readFileSync(fullPath, "utf8")
+    const { data } = matter(fileContents)
+
+    const postData = data as Post["frontmatter"]
+    const date = new Date(postData.date).toString()
+
+    // Extract locale-specific content
+    const localeData = postData[locale as keyof typeof postData] || postData
+
+    return {
+      slug: realSlug,
+      date,
+      locale,
+      frontmatter: {
+        ...postData,
+        date,
+        locale,
+        title: typeof localeData === 'object' && 'title' in localeData
+          ? (localeData as any).title
+          : postData.title,
+        description: typeof localeData === 'object' && 'description' in localeData
+          ? (localeData as any).description
+          : postData.description,
+      }
+    }
+  } catch (error) {
+    console.error("Error reading the file:", error)
+    return null
+  }
+}
+
+export function getAllPosts(locale: string = 'pt-BR'): Post[] {
   const slugs = fs.readdirSync(postsDirectory)
   const posts = slugs
-    .map((slug) => getPostBySlug(slug.replace(/\.md$/, "")))
+    .map((slug) => getPostBySlug(slug.replace(/\.md$/, ""), locale))
     .filter((post): post is Post => post !== null)
+    .sort((post1, post2) =>
+      new Date(post2.date) > new Date(post1.date) ? 1 : -1
+    )
+
+  return posts
+}
+
+export function getAllPostPreviews(locale: string = 'pt-BR'): PostPreview[] {
+  const slugs = fs.readdirSync(postsDirectory)
+  const posts = slugs
+    .map((slug) => getPostPreview(slug.replace(/\.md$/, ""), locale))
+    .filter((post): post is PostPreview => post !== null)
     .sort((post1, post2) =>
       new Date(post2.date) > new Date(post1.date) ? 1 : -1
     )

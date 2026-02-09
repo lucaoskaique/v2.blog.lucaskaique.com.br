@@ -1,19 +1,16 @@
-import { getAllPosts } from "@/lib/api"
-import PostsTemplate from "@/templates/Posts"
-import { Post } from "@/types"
+import { GetServerSideProps } from 'next'
 
-const PostsPage = ({ posts }: { posts: Post[] }) => {
-  return <PostsTemplate posts={posts} />
+import { defaultLocale } from '@/lib/i18n'
+
+export default function PostsRedirect() {
+  return null
 }
 
-export default PostsPage
-
-export async function getStaticProps() {
-  const posts = getAllPosts()
-
+export const getServerSideProps: GetServerSideProps = async ({ resolvedUrl }) => {
   return {
-    props: {
-      posts
-    }
+    redirect: {
+      destination: `/${defaultLocale}${resolvedUrl}`,
+      permanent: false,
+    },
   }
 }

@@ -1,10 +1,10 @@
 import { Container } from "@/components/Container"
 import PostCard from "@/components/PostCard"
-import { Post } from "@/types"
+import { PostPreview } from "@/types"
 
 import Base from "../Base"
 
-const PostsTemplate = ({ posts }: { posts: Post[] }) => {
+const PostsTemplate = ({ posts }: { posts: PostPreview[] }) => {
   return (
     <Base>
       <Container className="mt-16 sm:mt-32">

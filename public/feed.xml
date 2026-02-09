@@ -1467,6 +1467,45 @@ function FriendListItem(props) {
     </item>
   
     <item>
+      <guid>https://lucaskaique.com.br/example-multilingual-post</guid>
+      <title>Exemplo de Post Multilíngue</title>
+      <description>Este é um exemplo de como estruturar um post com suporte a múltiplos idiomas usando Decap CMS</description>
+      <link>https://lucaskaique.com.br/example-multilingual-post</link>
+      <pubDate>Thu, 08 Feb 2024 10:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[<h1 id="user-content-bem-vindo-ao-post-multilíngue"><a href="#bem-vindo-ao-post-multil%C3%ADngue">Bem-vindo ao Post Multilíngue</a></h1>
+<p>Este é um exemplo de post que demonstra como o sistema de i18n funciona.</p>
+<h2 id="user-content-características"><a href="#caracter%C3%ADsticas">Características</a></h2>
+<ul>
+<li>Suporte a múltiplos idiomas</li>
+<li>Estrutura simples de arquivo único</li>
+<li>Fácil de gerenciar no CMS</li>
+</ul>
+<h2 id="user-content-como-funciona"><a href="#como-funciona">Como funciona</a></h2>
+<p>Quando você cria um post no Decap CMS, você verá abas para cada idioma configurado.
+Você pode alternar entre as abas e preencher o conteúdo em cada idioma.</p>
+<h3 id="user-content-campos-traduzíveis"><a href="#campos-traduz%C3%ADveis">Campos traduzíveis</a></h3>
+<p>Os seguintes campos podem ser traduzidos:</p>
+<ul>
+<li>Título</li>
+<li>Descrição</li>
+<li>Corpo (conteúdo principal)</li>
+</ul>
+<h3 id="user-content-campos-compartilhados"><a href="#campos-compartilhados">Campos compartilhados</a></h3>
+<p>Os seguintes campos são compartilhados entre todos os idiomas:</p>
+<ul>
+<li>Data de publicação</li>
+<li>Imagem</li>
+<li>Tags</li>
+<li>Categorias</li>
+<li>Classe principal</li>
+<li>Cor</li>
+</ul>
+<h2 id="user-content-conclusão"><a href="#conclus%C3%A3o">Conclusão</a></h2>
+<p>Com esta estrutura, você pode facilmente criar conteúdo multilíngue para o seu blog!</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
       <guid>https://lucaskaique.com.br/como-filtrar-um-objeto-no-javascript</guid>
       <title>Como Filtrar um Objeto no JavaScript</title>
       <description>Infelizmente, os objetos JavaScript não possuem uma função filter(). Mas isso não significa que você não pode usar filter() para filtrar objetos, você só precisa ser capaz de iterar sobre um objeto e convertê-lo em um array usando Object.entries().</description>

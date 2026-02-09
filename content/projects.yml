@@ -1,0 +1,26 @@
+pt-BR:
+  title: "Projetos"
+  heading: "Coisas que construí tentando deixar minha marca no universo."
+  intro: "Ao longo dos anos, trabalhei em vários projetos, desde pequenas aplicações até sistemas complexos. Aqui estão alguns dos meus trabalhos que me orgulho de compartilhar."
+  categoryLabels:
+    all: "Todos"
+    frontend: "Frontend"
+    backend: "Backend"
+    fullstack: "Full Stack"
+  filterLabel: "Filtrar por categoria:"
+  githubLabel: "Código no GitHub"
+  websiteLabel: "Visitar site"
+  starsLabel: "estrelas"
+en:
+  title: "Projects"
+  heading: "Things I've built trying to put my dent in the universe."
+  intro: "Over the years, I've worked on various projects, from small applications to complex systems. Here are some of my works that I'm proud to share."
+  categoryLabels:
+    all: "All"
+    frontend: "Frontend"
+    backend: "Backend"
+    fullstack: "Full Stack"
+  filterLabel: "Filter by category:"
+  githubLabel: "Code on GitHub"
+  websiteLabel: "Visit website"
+  starsLabel: "stars"
