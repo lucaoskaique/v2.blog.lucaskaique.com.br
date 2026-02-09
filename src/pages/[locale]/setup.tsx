@@ -1,10 +1,16 @@
-import { GetStaticPaths } from "next"
+import { GetStaticPaths, GetStaticProps } from "next"
 
-import { locales } from "@/lib/i18n"
+import { getSetupContent } from "@/lib/content"
+import { Locale, locales } from "@/lib/i18n"
 import Setup from "@/templates/Setup"
+import { SetupContent } from "@/types"
 
-export default function SetupPage() {
-  return <Setup />
+interface SetupPageProps {
+  content: SetupContent
+}
+
+export default function SetupPage({ content }: SetupPageProps) {
+  return <Setup content={content} />
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -18,8 +24,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const locale = (params?.locale as Locale) || "pt-BR"
+  const content = getSetupContent(locale)
+
   return {
-    props: {}
+    props: {
+      content
+    }
   }
 }

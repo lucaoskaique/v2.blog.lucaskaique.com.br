@@ -3,6 +3,7 @@ import { ComponentPropsWithoutRef, ReactNode } from "react"
 import { Card } from "@/components/Card"
 import { Container } from "@/components/Container"
 import { Section } from "@/components/Section"
+import { SetupContent } from "@/types"
 
 import Base from "../Base"
 
@@ -36,69 +37,34 @@ function Tool({
   )
 }
 
-export default function Setup() {
+interface SetupProps {
+  content: SetupContent
+}
+
+export default function Setup({ content }: SetupProps) {
   return (
     <Base>
       <Container className="mt-16 sm:mt-32">
         <header className="max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Software I use, gadgets I love, and other things I recommend.
+            {content.heading}
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I get asked a lot about the things I use to build software, stay
-            productive, or buy to fool myself into thinking I’m being productive
-            when I’m really just procrastinating. Here’s a big list of all of my
-            favorite stuff.
+            {content.intro}
           </p>
         </header>
 
         <div className="mt-16 sm:mt-20">
           <div className="space-y-20">
-            <ToolsSection title="Workstation">
-              <Tool title="Desktop Custom">
-                <div>
-                  <p className="mb-3">
-                    I'm a fan of pc builds since I was a kid, I had numerous
-                    builds, once you are into it, there's no turning back.
-                  </p>
-                  <ul className="list-disc pl-5 space-y-1">
-                    <li>AMD Ryzen 9 5900X</li>
-                    <li>Radeon RX 570 Series</li>
-                    <li>2x16GB de RAM DDR4</li>
-                    <li>Microfone BM800</li>
-                    <li>Edifier R980T</li>
-                  </ul>
-                </div>
-              </Tool>
-              <Tool title="2 x 27' superframe monitor">
-                The only display on the market if you want to invest too much
-                and doesn’t care about colours and stuff.
-              </Tool>
-            </ToolsSection>
-            <ToolsSection title="Development tools">
-              <Tool title="VS code">
-                I don’t care if it’s missing all of the fancy IDE features
-                everyone else relies on I just wanna code alone.
-              </Tool>
-              <Tool title="WSL">
-                Using WSL for development changed my life as a developer, much
-                better now.
-              </Tool>
-            </ToolsSection>
-            <ToolsSection title="Design">
-              <Tool title="Figma">
-                We started using Figma as just a design tool but now it’s become
-                our virtual whiteboard for the entire company. Never would have
-                expected the collaboration features to be the real hook.
-              </Tool>
-            </ToolsSection>
-            <ToolsSection title="Productivity">
-              <Tool title="Obsidian">
-                It’s not the newest kid on the block but it’s still the fastest
-                and no polution like notion that you get lost with so many
-                things created.
-              </Tool>
-            </ToolsSection>
+            {content.sections.map((section) => (
+              <ToolsSection key={section.category} title={section.category}>
+                {section.items.map((item) => (
+                  <Tool key={item.name} title={item.name}>
+                    {item.description}
+                  </Tool>
+                ))}
+              </ToolsSection>
+            ))}
           </div>
         </div>
       </Container>
