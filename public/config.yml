@@ -162,130 +162,133 @@ collections:
           hint: "Main post content with markdown formatting (translatable)"
         }
 
-# Page content management with i18n
-  - name: about
-    label: "About Page"
-    file: content/about.yml
-    i18n: true
-    fields:
-      - { label: "Page Title", name: "title", widget: "string", i18n: true, hint: "SEO title for the About page" }
-      - { label: "Main Heading", name: "heading", widget: "text", i18n: true, hint: "Large heading displayed at the top" }
-      - { label: "Introduction", name: "intro", widget: "markdown", i18n: true, hint: "Opening paragraph with main bio" }
-      - {
-          label: "Additional Paragraphs",
-          name: "paragraphs",
-          widget: "list",
-          i18n: true,
-          hint: "Additional content paragraphs",
-          field: { label: "Paragraph", name: "paragraph", widget: "text" }
-        }
-      - { label: "Contact Email", name: "email", widget: "string", i18n: "duplicate", hint: "Email address (same for all languages)" }
-
-  - name: projects
-    label: "Projects Page"
-    file: content/projects.yml
-    i18n: true
-    fields:
-      - { label: "Page Title", name: "title", widget: "string", i18n: true }
-      - { label: "Main Heading", name: "heading", widget: "text", i18n: true }
-      - { label: "Introduction", name: "intro", widget: "text", i18n: true }
-      - label: "Category Filter Labels"
-        name: "categoryLabels"
-        widget: "object"
-        i18n: true
-        hint: "Labels for the project category filters"
-        fields:
-          - { label: "All Projects", name: "all", widget: "string", i18n: true }
-          - { label: "Frontend", name: "frontend", widget: "string", i18n: true }
-          - { label: "Backend", name: "backend", widget: "string", i18n: true }
-          - { label: "Full Stack", name: "fullstack", widget: "string", i18n: true }
-      - { label: "Filter Label Text", name: "filterLabel", widget: "string", i18n: true, hint: '"Filter by category:" text' }
-      - { label: "GitHub Button Label", name: "githubLabel", widget: "string", i18n: true }
-      - { label: "Website Button Label", name: "websiteLabel", widget: "string", i18n: true }
-
-  - name: setup
-    label: "Setup Page"
-    file: content/setup.yml
-    i18n: true
-    fields:
-      - { label: "Title", name: "title", widget: "string", i18n: true }
-      - { label: "Heading", name: "heading", widget: "text", i18n: true }
-      - { label: "Introduction", name: "intro", widget: "text", i18n: true }
-      - label: "Sections"
-        name: "sections"
-        widget: "list"
+  # Page content management with i18n
+  - name: pages
+    label: "Pages"
+    files:
+      - name: about
+        label: "About Page"
+        file: content/about.yml
         i18n: true
         fields:
-          - { label: "Category", name: "category", widget: "string", i18n: true }
-          - label: "Items"
-            name: "items"
-            widget: "list"
+          - { label: "Page Title", name: "title", widget: "string", i18n: true, hint: "SEO title for the About page" }
+          - { label: "Main Heading", name: "heading", widget: "text", i18n: true, hint: "Large heading displayed at the top" }
+          - { label: "Introduction", name: "intro", widget: "markdown", i18n: true, hint: "Opening paragraph with main bio" }
+          - {
+              label: "Additional Paragraphs",
+              name: "paragraphs",
+              widget: "list",
+              i18n: true,
+              hint: "Additional content paragraphs",
+              field: { label: "Paragraph", name: "paragraph", widget: "text" }
+            }
+          - { label: "Contact Email", name: "email", widget: "string", i18n: "duplicate", hint: "Email address (same for all languages)" }
+
+      - name: projects
+        label: "Projects Page"
+        file: content/projects.yml
+        i18n: true
+        fields:
+          - { label: "Page Title", name: "title", widget: "string", i18n: true }
+          - { label: "Main Heading", name: "heading", widget: "text", i18n: true }
+          - { label: "Introduction", name: "intro", widget: "text", i18n: true }
+          - label: "Category Filter Labels"
+            name: "categoryLabels"
+            widget: "object"
+            i18n: true
+            hint: "Labels for the project category filters"
             fields:
-              - { label: "Name", name: "name", widget: "string", i18n: true }
-              - { label: "Description", name: "description", widget: "text", i18n: true }
+              - { label: "All Projects", name: "all", widget: "string", i18n: true }
+              - { label: "Frontend", name: "frontend", widget: "string", i18n: true }
+              - { label: "Backend", name: "backend", widget: "string", i18n: true }
+              - { label: "Full Stack", name: "fullstack", widget: "string", i18n: true }
+          - { label: "Filter Label Text", name: "filterLabel", widget: "string", i18n: true, hint: '"Filter by category:" text' }
+          - { label: "GitHub Button Label", name: "githubLabel", widget: "string", i18n: true }
+          - { label: "Website Button Label", name: "websiteLabel", widget: "string", i18n: true }
 
-  - name: speaking
-    label: "Speaking Page"
-    file: content/speaking.yml
-    i18n: true
-    fields:
-      - { label: "Title", name: "title", widget: "string", i18n: true }
-      - { label: "Heading", name: "heading", widget: "text", i18n: true }
-      - { label: "Introduction", name: "intro", widget: "text", i18n: true }
-      - { label: "Upcoming Title", name: "upcomingTitle", widget: "string", i18n: true }
-      - { label: "Past Title", name: "pastTitle", widget: "string", i18n: true }
-      - { label: "No Upcoming Message", name: "noUpcoming", widget: "string", i18n: true }
-      - label: "Talks"
-        name: "talks"
-        widget: "list"
+      - name: setup
+        label: "Setup Page"
+        file: content/setup.yml
         i18n: true
         fields:
           - { label: "Title", name: "title", widget: "string", i18n: true }
-          - { label: "Event", name: "event", widget: "string", i18n: true }
-          - { label: "Date", name: "date", widget: "date", i18n: "duplicate" }
-          - { label: "Description", name: "description", widget: "text", i18n: true }
-          - { label: "Slides URL", name: "slides", widget: "string", required: false, i18n: "duplicate" }
-          - { label: "Video URL", name: "video", widget: "string", required: false, i18n: "duplicate" }
+          - { label: "Heading", name: "heading", widget: "text", i18n: true }
+          - { label: "Introduction", name: "intro", widget: "text", i18n: true }
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            i18n: true
+            fields:
+              - { label: "Category", name: "category", widget: "string", i18n: true }
+              - label: "Items"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Name", name: "name", widget: "string", i18n: true }
+                  - { label: "Description", name: "description", widget: "text", i18n: true }
 
-  - name: site
-    label: "Site Settings"
-    file: content/site.yml
-    i18n: true
-    fields:
-      - { label: "Site Name", name: "siteName", widget: "string", i18n: true }
-      - { label: "Site Description", name: "siteDescription", widget: "text", i18n: true }
-      - label: "Navigation"
-        name: "navigation"
-        widget: "object"
+      - name: speaking
+        label: "Speaking Page"
+        file: content/speaking.yml
         i18n: true
         fields:
-          - { label: "Home", name: "home", widget: "string", i18n: true }
-          - { label: "About", name: "about", widget: "string", i18n: true }
-          - { label: "Posts", name: "posts", widget: "string", i18n: true }
-          - { label: "Projects", name: "projects", widget: "string", i18n: true }
-          - { label: "Speaking", name: "speaking", widget: "string", i18n: true }
-          - { label: "Setup", name: "setup", widget: "string", i18n: true }
-      - label: "Footer"
-        name: "footer"
-        widget: "object"
-        i18n: true
-        fields:
-          - { label: "Rights", name: "rights", widget: "string", i18n: true }
-          - { label: "Built With", name: "builtWith", widget: "string", i18n: true }
+          - { label: "Title", name: "title", widget: "string", i18n: true }
+          - { label: "Heading", name: "heading", widget: "text", i18n: true }
+          - { label: "Introduction", name: "intro", widget: "text", i18n: true }
+          - { label: "Upcoming Title", name: "upcomingTitle", widget: "string", i18n: true }
+          - { label: "Past Title", name: "pastTitle", widget: "string", i18n: true }
+          - { label: "No Upcoming Message", name: "noUpcoming", widget: "string", i18n: true }
+          - label: "Talks"
+            name: "talks"
+            widget: "list"
+            i18n: true
+            fields:
+              - { label: "Title", name: "title", widget: "string", i18n: true }
+              - { label: "Event", name: "event", widget: "string", i18n: true }
+              - { label: "Date", name: "date", widget: "date", i18n: "duplicate" }
+              - { label: "Description", name: "description", widget: "text", i18n: true }
+              - { label: "Slides URL", name: "slides", widget: "string", required: false, i18n: "duplicate" }
+              - { label: "Video URL", name: "video", widget: "string", required: false, i18n: "duplicate" }
 
-  - name: resume
-    label: "Resume / Work Experience"
-    file: content/resume.yml
-    i18n: true
-    fields:
-      - label: "Work Roles"
-        name: "roles"
-        widget: "list"
+      - name: site
+        label: "Site Settings"
+        file: content/site.yml
         i18n: true
-        hint: "List of professional roles/positions in chronological order"
         fields:
-          - { label: "Company", name: "company", widget: "string", i18n: "duplicate", hint: "Company name (same for all languages)" }
-          - { label: "Job Title", name: "title", widget: "string", i18n: true, hint: "Job position title (translatable)" }
-          - { label: "Logo URL", name: "logo", widget: "string", i18n: "duplicate", hint: "Company logo URL (same for all languages)" }
-          - { label: "Start Year", name: "start", widget: "string", i18n: true, hint: "Year started (or 'YYYY-MM-DD' for specific date)" }
-          - { label: "End Year", name: "end", widget: "string", i18n: true, hint: "Year ended or 'now'/'agora' for current position" }
+          - { label: "Site Name", name: "siteName", widget: "string", i18n: true }
+          - { label: "Site Description", name: "siteDescription", widget: "text", i18n: true }
+          - label: "Navigation"
+            name: "navigation"
+            widget: "object"
+            i18n: true
+            fields:
+              - { label: "Home", name: "home", widget: "string", i18n: true }
+              - { label: "About", name: "about", widget: "string", i18n: true }
+              - { label: "Posts", name: "posts", widget: "string", i18n: true }
+              - { label: "Projects", name: "projects", widget: "string", i18n: true }
+              - { label: "Speaking", name: "speaking", widget: "string", i18n: true }
+              - { label: "Setup", name: "setup", widget: "string", i18n: true }
+          - label: "Footer"
+            name: "footer"
+            widget: "object"
+            i18n: true
+            fields:
+              - { label: "Rights", name: "rights", widget: "string", i18n: true }
+              - { label: "Built With", name: "builtWith", widget: "string", i18n: true }
+
+      - name: resume
+        label: "Resume / Work Experience"
+        file: content/resume.yml
+        i18n: true
+        fields:
+          - label: "Work Roles"
+            name: "roles"
+            widget: "list"
+            i18n: true
+            hint: "List of professional roles/positions in chronological order"
+            fields:
+              - { label: "Company", name: "company", widget: "string", i18n: "duplicate", hint: "Company name (same for all languages)" }
+              - { label: "Job Title", name: "title", widget: "string", i18n: true, hint: "Job position title (translatable)" }
+              - { label: "Logo URL", name: "logo", widget: "string", i18n: "duplicate", hint: "Company logo URL (same for all languages)" }
+              - { label: "Start Year", name: "start", widget: "string", i18n: true, hint: "Year started (or 'YYYY-MM-DD' for specific date)" }
+              - { label: "End Year", name: "end", widget: "string", i18n: true, hint: "Year ended or 'now'/'agora' for current position" }
