@@ -215,7 +215,7 @@ function AvatarContainer({
     <div
       className={clsx(
         className,
-        "h-10 w-10 rounded-full bg-white/90 p-0.5 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:ring-white/10"
+        "h-10 w-10 overflow-hidden rounded-full bg-white/90 p-0.5 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:ring-white/10"
       )}
       {...props}
     />
@@ -230,22 +230,20 @@ function Avatar({
   large?: boolean
 }) {
   const { locale } = useTranslation()
+  const size = large ? 64 : 36
 
   return (
     <Link
       href={getLocalizedPath("/", locale)}
       aria-label="Home"
-      className={clsx(className, "pointer-events-auto relative")}
+      className={clsx(className, "pointer-events-auto block")}
       {...props}>
       <Image
         src={avatarImage}
         alt=""
-        fill
-        sizes={large ? "4rem" : "2.25rem"}
-        className={clsx(
-          "rounded-full bg-zinc-100 object-cover dark:bg-zinc-800",
-          large ? "h-16 w-16" : "h-9 w-9"
-        )}
+        width={size}
+        height={size}
+        className="h-full w-full rounded-full bg-zinc-100 object-cover dark:bg-zinc-800"
         priority
       />
     </Link>
