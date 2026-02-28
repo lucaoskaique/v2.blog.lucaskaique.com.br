@@ -95,6 +95,7 @@ jobs:
             printf '%s\n' "pt-BR:"
             printf '%s\n' "  layout: post"
             printf '%s\n' "  date: $DATETIME"
+            printf '%s\n' "  image: /images/ESSA-SEMANA-COM-RUST-FINAL.png"
             printf '%s\n' "  main-class: rust"
             printf '%s\n' "  color: '#CE422B'"
             printf '%s\n' "  tags:"
