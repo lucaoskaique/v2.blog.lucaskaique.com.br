@@ -98,6 +98,8 @@ jobs:
           echo "Slug: $SLUG"
 
       - name: Translate with GitHub Copilot
+        env:
+          GITHUB_TOKEN: ${{ secrets.CLI_GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
