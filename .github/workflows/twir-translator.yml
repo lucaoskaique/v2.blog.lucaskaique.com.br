@@ -27,6 +27,13 @@ jobs:
           version: 'latest'
           token: ${{ secrets.COPILOT_GITHUB_TOKEN }}
 
+      - name: Run Copilot CLI
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          copilot -p "say hello"
+
       - name: Install Python dependencies
         run: pip install feedparser
 
