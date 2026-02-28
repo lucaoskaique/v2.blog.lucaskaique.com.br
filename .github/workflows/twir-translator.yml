@@ -34,12 +34,11 @@ jobs:
 
           curl -s https://this-week-in-rust.org/rss.xml > /tmp/twir-rss.xml
 
-          TITLE=$(awk '/<item>/,/<\/item>/' /tmp/twir-rss.xml | grep '<title>' | head -1 | sed 's/<[^>]*>//g' | xargs)
-          LINK=$(awk '/<item>/,/<\/item>/' /tmp/twir-rss.xml | grep '<link>' | head -1 | sed 's/<[^>]*>//g' | xargs)
+          awk '/<item>/,/<\/item>/' /tmp/twir-rss.xml | head -n 50 > /tmp/first-item.xml
 
-          CONTENT=$(awk '/<item>/,/<\/item>/' /tmp/twir-rss.xml \
-            | sed -n 's/.*<description><!\[CDATA\[\(.*\)\]\]><\/description>.*/\1/p' \
-            | head -1)
+          TITLE=$(grep -oP '<title>\K[^<]+' /tmp/first-item.xml | head -1)
+          LINK=$(grep -oP '<link>\K[^<]+' /tmp/first-item.xml | head -1)
+          CONTENT=$(grep -oP '<description><!\[CDATA\[\K.*?(?=\]\]></description>)' /tmp/first-item.xml | head -1)
 
           echo "$CONTENT" > /tmp/twir-content.txt
 
@@ -60,25 +59,31 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Create the translation prompt
-          PROMPT="Translate the following This Week in Rust newsletter content from English to Brazilian Portuguese (pt-BR).
-
-          IMPORTANT RULES:
-          - Maintain ALL markdown formatting exactly as is
-          - Keep ALL code blocks unchanged
-          - Keep ALL URLs and links unchanged
-          - Keep technical terms in English when appropriate (Rust, crate, trait, RFC, etc.)
-          - Use natural Brazilian Portuguese
-          - Do NOT add any extra commentary or explanations
-          - Output ONLY the translated content
-
-          Content to translate:
-          $(cat /tmp/twir-content.txt)"
-
-          # Use GitHub Copilot CLI
-          echo "$PROMPT" | copilot -i > /tmp/translated-content.txt 2>&1
+          TITLE="${{ steps.fetch_twir.outputs.title }}"
+          LINK="${{ steps.fetch_twir.outputs.link }}"
           SLUG="${{ steps.fetch_twir.outputs.slug }}"
           DATETIME="${{ steps.fetch_twir.outputs.datetime }}"
+
+          cat > /tmp/translation-prompt.txt << 'PROMPT_EOF'
+            Translate the following This Week in Rust newsletter content from English to Brazilian Portuguese (pt-BR).
+
+            IMPORTANT RULES:
+            - Maintain ALL markdown formatting exactly as is
+            - Keep ALL code blocks unchanged
+            - Keep ALL URLs and links unchanged
+            - Keep technical terms in English when appropriate (Rust, crate, trait, RFC, etc.)
+            - Use natural Brazilian Portuguese
+            - Do NOT add any extra commentary or explanations
+            - Output ONLY the translated content
+
+            Content to translate:
+          PROMPT_EOF
+
+          cat /tmp/twir-content.txt >> /tmp/translation-prompt.txt
+
+          copilot -i "$(cat /tmp/translation-prompt.txt)" > /tmp/translated-content.txt 2>&1
+
+          echo "Traducao concluida"
 
           TRANSLATED=$(cat /tmp/translated-content.txt)
 
@@ -127,7 +132,7 @@ jobs:
         if: steps.check_changes.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'feat: add This Week in Rust translation (Portuguese)'
           title: 'This Week in Rust - Traducao em Portugues'
           body: |
