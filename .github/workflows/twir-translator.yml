@@ -2,9 +2,8 @@ name: This Week in Rust - Portuguese Translation
 
 on:
   schedule:
-    # Runs every Wednesday at 12:00 UTC (This Week in Rust usually publishes on Tuesdays)
     - cron: '0 12 * * 3'
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,42 +19,113 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install
+          node-version: '22'
 
       - name: Install GitHub Copilot CLI
-        run: npm install -g @github/copilot
+        run: npm i -g @github/copilot-cli
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Python dependencies
+      - name: Fetch latest This Week in Rust
+        id: fetch_twir
         run: |
-          pip install requests beautifulsoup4 feedparser python-slugify pyyaml
+          set -euo pipefail
 
-      - name: Fetch and translate This Week in Rust
+          curl -s https://this-week-in-rust.org/rss.xml > /tmp/twir-rss.xml
+
+          TITLE=$(awk '/<item>/,/<\/item>/' /tmp/twir-rss.xml | grep '<title>' | head -1 | sed 's/<[^>]*>//g' | xargs)
+          LINK=$(awk '/<item>/,/<\/item>/' /tmp/twir-rss.xml | grep '<link>' | head -1 | sed 's/<[^>]*>//g' | xargs)
+
+          CONTENT=$(awk '/<item>/,/<\/item>/' /tmp/twir-rss.xml \
+            | sed -n 's/.*<description><!\[CDATA\[\(.*\)\]\]><\/description>.*/\1/p' \
+            | head -1)
+
+          echo "$CONTENT" > /tmp/twir-content.txt
+
+          SLUG=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-')
+          DATE=$(date +%Y-%m-%d)
+          DATETIME=$(date +"%Y-%m-%d %H:%M:%S")
+
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+          echo "link=$LINK" >> "$GITHUB_OUTPUT"
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "datetime=$DATETIME" >> "$GITHUB_OUTPUT"
+
+          echo "Encontrado: $TITLE"
+          echo "Link: $LINK"
+
+      - name: Translate with GitHub Copilot CLI
         env:
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
-          python .github/scripts/translate-twir.py
+          set -euo pipefail
+
+          cat > /tmp/prompt.txt << 'PROMPT_EOF'
+          Translate the following This Week in Rust newsletter content from English to Brazilian Portuguese (pt-BR).
+
+          IMPORTANT RULES:
+          - Maintain ALL markdown formatting exactly as is
+          - Keep ALL code blocks unchanged
+          - Keep ALL URLs and links unchanged
+          - Keep technical terms in English when appropriate (Rust, crate, trait, RFC, etc.)
+          - Use natural Brazilian Portuguese
+          - Do NOT add any extra commentary or explanations
+          - Output ONLY the translated content
+          - Save the translation to /tmp/translated-content.txt
+
+          Content to translate:
+          PROMPT_EOF
+
+          cat /tmp/twir-content.txt >> /tmp/prompt.txt
+
+          github-copilot-cli suggest < /tmp/prompt.txt
+
+          echo "Traducao concluida"
+
+          TITLE="${{ steps.fetch_twir.outputs.title }}"
+          LINK="${{ steps.fetch_twir.outputs.link }}"
+          SLUG="${{ steps.fetch_twir.outputs.slug }}"
+          DATETIME="${{ steps.fetch_twir.outputs.datetime }}"
+
+          TRANSLATED=$(cat /tmp/translated-content.txt)
+
+          mkdir -p posts
+
+          {
+            printf '%s\n' "---"
+            printf '%s\n' "pt-BR:"
+            printf '%s\n' "  layout: post"
+            printf '%s\n' "  date: $DATETIME"
+            printf '%s\n' "  main-class: rust"
+            printf '%s\n' "  color: '#CE422B'"
+            printf '%s\n' "  tags:"
+            printf '%s\n' "    - rust"
+            printf '%s\n' "    - newsletter"
+            printf '%s\n' "    - this-week-in-rust"
+            printf '%s\n' "    - traducao"
+            printf "  title: '%s'\n" "$TITLE"
+            printf '%s\n' "  description: Traducao em portugues da newsletter This Week in Rust"
+            printf '%s\n' "  body: |"
+            echo "$TRANSLATED" | sed 's/^/    /'
+            printf '%s\n' "    "
+            printf '%s\n' "    ---"
+            printf '%s\n' "    "
+            printf "    *Artigo original: [%s](%s)*\n" "$TITLE" "$LINK"
+            printf '%s\n' "    "
+            printf '%s\n' "    *Traduzido automaticamente com GitHub Copilot. Para sugestoes de melhorias na traducao, abra uma issue.*"
+            printf '%s\n' "---"
+          } > "posts/${SLUG}.md"
+
+          echo "Post criado: posts/${SLUG}.md"
 
       - name: Check if new post was created
         id: check_changes
         run: |
           if [ -n "$(git status --porcelain posts/)" ]; then
-            echo "changes=true" >> $GITHUB_OUTPUT
-            NEW_POST=$(git status --porcelain posts/ | grep '^??' | head -1 | awk '{print $2}')
-            echo "new_post=$NEW_POST" >> $GITHUB_OUTPUT
+            echo "changes=true" >> "$GITHUB_OUTPUT"
+            NEW_POST=$(git status --porcelain posts/ | head -1 | awk '{print $2}')
+            echo "new_post=$NEW_POST" >> "$GITHUB_OUTPUT"
           else
-            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "changes=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create Pull Request
@@ -64,22 +134,22 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'feat: add This Week in Rust translation (Portuguese)'
-          title: '📰 This Week in Rust - Tradução em Português'
+          title: 'This Week in Rust - Traducao em Portugues'
           body: |
-            ## 🦀 Nova tradução This Week in Rust
+            ## Nova traducao This Week in Rust
 
-            Esta PR adiciona automaticamente a tradução em português da última edição do This Week in Rust.
+            Esta PR adiciona automaticamente a traducao em portugues da ultima edicao do This Week in Rust.
 
             **Arquivo criado:** `${{ steps.check_changes.outputs.new_post }}`
 
-            ### ⚠️ Revisão necessária
-            - [ ] Verificar qualidade da tradução
-            - [ ] Revisar formatação do markdown
+            ### Revisao necessaria
+            - [ ] Verificar qualidade da traducao
+            - [ ] Revisar formatacao do markdown
             - [ ] Confirmar metadados (tags, categorias)
-            - [ ] Verificar links e referências
+            - [ ] Verificar links e referencias
 
             ---
-            *Esta PR foi gerada automaticamente pelo workflow `twir-translator`*
+            *Esta PR foi gerada automaticamente pelo workflow twir-translator*
           branch: twir-translation-${{ github.run_number }}
           delete-branch: true
           labels: |
