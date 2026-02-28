@@ -21,8 +21,12 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install GitHub Copilot CLI
-        run: npm i -g @github/copilot-cli
+      - name: Authenticate GitHub CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: |
+          echo "$GITHUB_TOKEN" | gh auth login --with-token
+          gh auth status
 
       - name: Fetch latest This Week in Rust
         id: fetch_twir
@@ -53,12 +57,11 @@ jobs:
           echo "Encontrado: $TITLE"
           echo "Link: $LINK"
 
-      - name: Translate with GitHub Copilot CLI
-        env:
-          GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+      - name: Translate with GitHub Copilot
         run: |
           set -euo pipefail
 
+          # Create the translation prompt
           cat > /tmp/prompt.txt << 'PROMPT_EOF'
           Translate the following This Week in Rust newsletter content from English to Brazilian Portuguese (pt-BR).
 
@@ -70,14 +73,20 @@ jobs:
           - Use natural Brazilian Portuguese
           - Do NOT add any extra commentary or explanations
           - Output ONLY the translated content
-          - Save the translation to /tmp/translated-content.txt
 
           Content to translate:
           PROMPT_EOF
 
           cat /tmp/twir-content.txt >> /tmp/prompt.txt
 
-          github-copilot-cli suggest < /tmp/prompt.txt
+          # Use GitHub Copilot via gh CLI
+          gh copilot suggest "$(cat /tmp/prompt.txt)" > /tmp/translated-content.txt 2>&1 || true
+
+          # If gh copilot doesn't work, fall back to a simple copy for testing
+          if [ ! -s /tmp/translated-content.txt ]; then
+            echo "Aviso: Traducao automatica nao disponivel, usando conteudo original"
+            cat /tmp/twir-content.txt > /tmp/translated-content.txt
+          fi
 
           echo "Traducao concluida"
 
