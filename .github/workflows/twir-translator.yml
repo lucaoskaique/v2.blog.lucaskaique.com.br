@@ -21,12 +21,11 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Authenticate GitHub CLI
-        env:
-          GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-        run: |
-          echo "$GITHUB_TOKEN" | gh auth login --with-token
-          gh auth status
+      - name: Setup GitHub Copilot CLI
+        uses: mvkaran/setup-copilot-cli@v1
+        with:
+          version: 'latest'
+          token: ${{ secrets.CLI_GITHUB_TOKEN }}
 
       - name: Fetch latest This Week in Rust
         id: fetch_twir
@@ -62,8 +61,7 @@ jobs:
           set -euo pipefail
 
           # Create the translation prompt
-          cat > /tmp/prompt.txt << 'PROMPT_EOF'
-          Translate the following This Week in Rust newsletter content from English to Brazilian Portuguese (pt-BR).
+          PROMPT="Translate the following This Week in Rust newsletter content from English to Brazilian Portuguese (pt-BR).
 
           IMPORTANT RULES:
           - Maintain ALL markdown formatting exactly as is
@@ -75,23 +73,10 @@ jobs:
           - Output ONLY the translated content
 
           Content to translate:
-          PROMPT_EOF
+          $(cat /tmp/twir-content.txt)"
 
-          cat /tmp/twir-content.txt >> /tmp/prompt.txt
-
-          # Use GitHub Copilot via gh CLI
-          gh copilot suggest "$(cat /tmp/prompt.txt)" > /tmp/translated-content.txt 2>&1 || true
-
-          # If gh copilot doesn't work, fall back to a simple copy for testing
-          if [ ! -s /tmp/translated-content.txt ]; then
-            echo "Aviso: Traducao automatica nao disponivel, usando conteudo original"
-            cat /tmp/twir-content.txt > /tmp/translated-content.txt
-          fi
-
-          echo "Traducao concluida"
-
-          TITLE="${{ steps.fetch_twir.outputs.title }}"
-          LINK="${{ steps.fetch_twir.outputs.link }}"
+          # Use GitHub Copilot CLI
+          echo "$PROMPT" | copilot -i > /tmp/translated-content.txt 2>&1
           SLUG="${{ steps.fetch_twir.outputs.slug }}"
           DATETIME="${{ steps.fetch_twir.outputs.datetime }}"
 
