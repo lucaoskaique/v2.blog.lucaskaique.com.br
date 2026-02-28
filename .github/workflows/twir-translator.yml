@@ -21,25 +21,8 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Setup GitHub CLI
-        run: |
-          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          sudo apt update
-          sudo apt install gh -y
-
-      - name: Authenticate GitHub CLI
-        run: |
-          echo "${{ secrets.COPILOT_GITHUB_TOKEN }}" | gh auth login --with-token
-          gh auth setup-git
-
-      - name: Install GitHub Copilot CLI extension
-        run: gh extension install github/gh-copilot
-
-      - name: Test Copilot
-        run: gh copilot suggest "translate text to portuguese"
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
 
       - name: Install Python dependencies
         run: pip install feedparser
@@ -112,6 +95,8 @@ jobs:
           echo "Slug: $SLUG"
 
       - name: Translate with GitHub Copilot
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
@@ -151,7 +136,7 @@ jobs:
           cat /tmp/twir-content.txt >> /tmp/translation-prompt.txt
 
           echo "Starting translation with GitHub Copilot..."
-          if ! gh copilot suggest "$(cat /tmp/translation-prompt.txt)" > /tmp/translated-content.txt 2>&1; then
+          if ! copilot -p "$(cat /tmp/translation-prompt.txt)" > /tmp/translated-content.txt 2>&1; then
             echo "ERROR: Copilot translation failed"
             echo "Output:"
             cat /tmp/translated-content.txt
