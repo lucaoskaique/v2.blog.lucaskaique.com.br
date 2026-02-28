@@ -32,17 +32,21 @@ jobs:
         run: |
           set -euo pipefail
 
-          curl -s https://this-week-in-rust.org/rss.xml > /tmp/twir-rss.xml
+          # Make script executable
+          chmod +x .github/scripts/fetch_twir.py
 
-          awk '/<item>/,/<\/item>/' /tmp/twir-rss.xml | head -n 50 > /tmp/first-item.xml
+          # Run Python script to fetch and parse RSS
+          python3 .github/scripts/fetch_twir.py > /tmp/twir-output.txt
 
-          TITLE=$(grep -oP '<title>\K[^<]+' /tmp/first-item.xml | head -1)
-          LINK=$(grep -oP '<link>\K[^<]+' /tmp/first-item.xml | head -1)
-          CONTENT=$(grep -oP '<description><!\[CDATA\[\K.*?(?=\]\]></description>)' /tmp/first-item.xml | head -1)
+          # Parse the output
+          TITLE=$(grep -m 1 "^TITLE=" /tmp/twir-output.txt | sed 's/^TITLE=//')
+          LINK=$(grep -m 1 "^LINK=" /tmp/twir-output.txt | sed 's/^LINK=//')
+          SLUG=$(grep -m 1 "^SLUG=" /tmp/twir-output.txt | sed 's/^SLUG=//')
 
-          echo "$CONTENT" > /tmp/twir-content.txt
+          # Extract content between markers
+          sed -n '/--- CONTENT START ---/,/--- CONTENT END ---/p' /tmp/twir-output.txt | \
+            sed '1d;$d' > /tmp/twir-content.txt
 
-          SLUG=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-')
           DATE=$(date +%Y-%m-%d)
           DATETIME=$(date +"%Y-%m-%d %H:%M:%S")
 
@@ -54,6 +58,7 @@ jobs:
 
           echo "Encontrado: $TITLE"
           echo "Link: $LINK"
+          echo "Slug: $SLUG"
 
       - name: Translate with GitHub Copilot
         run: |
