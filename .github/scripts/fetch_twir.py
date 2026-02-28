@@ -3,46 +3,42 @@
 Fetch and parse the latest This Week in Rust newsletter from RSS feed.
 """
 import sys
-import xml.etree.ElementTree as ET
-import urllib.request
-import html
 import re
+
+try:
+    import feedparser
+except ImportError:
+    print("Error: feedparser library not found. Install with: pip install feedparser", file=sys.stderr)
+    sys.exit(1)
 
 def fetch_latest_twir():
     """Fetch the latest This Week in Rust entry from RSS feed."""
     rss_url = "https://this-week-in-rust.org/rss.xml"
 
     try:
-        # Fetch RSS feed
-        with urllib.request.urlopen(rss_url) as response:
-            rss_content = response.read()
+        # Fetch and parse RSS feed
+        feed = feedparser.parse(rss_url)
 
-        # Parse XML
-        root = ET.fromstring(rss_content)
+        # Check if feed was fetched successfully
+        if feed.bozo:
+            print(f"Warning: Feed had parsing issues: {feed.bozo_exception}", file=sys.stderr)
 
-        # Find first item
-        item = root.find('.//item')
-        if not item:
-            print("Error: No items found in RSS feed", file=sys.stderr)
+        # Check if we have entries
+        if not feed.entries:
+            print("Error: No entries found in RSS feed", file=sys.stderr)
             sys.exit(1)
+
+        # Get the first (latest) entry
+        entry = feed.entries[0]
 
         # Extract data
-        title_elem = item.find('title')
-        link_elem = item.find('link')
-        description_elem = item.find('description')
+        title = entry.get('title', '').strip()
+        link = entry.get('link', '').strip()
+        description = entry.get('description', '') or entry.get('summary', '')
 
-        if not all([title_elem, link_elem, description_elem]):
-            print("Error: Missing required fields in RSS item", file=sys.stderr)
+        if not title or not link or not description:
+            print(f"Error: Missing required fields - title={bool(title)}, link={bool(link)}, desc={bool(description)}", file=sys.stderr)
             sys.exit(1)
-
-        title = title_elem.text.strip()
-        link = link_elem.text.strip()
-
-        # Get description content (already contains the full HTML)
-        description = description_elem.text or ""
-
-        # Unescape HTML entities
-        description = html.unescape(description)
 
         # Create slug from title
         slug = create_slug(title)
