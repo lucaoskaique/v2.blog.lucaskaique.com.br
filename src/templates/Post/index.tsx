@@ -14,6 +14,15 @@ import Base from "../Base"
 const PostTemplate = ({ post }: { post: Post }) => {
   const router = useRouter()
   // const { previousPathname } = useContext(AppContext)
+
+  // Check if post has "this-week-in-rust" tag
+  const isThisWeekInRust = post.frontmatter.tags?.includes("this-week-in-rust")
+  const ogImage = isThisWeekInRust
+    ? "https://lucaskaique.com.br/images/ESSA-SEMANA-COM-RUST-FINAL.png"
+    : `https://og-image-service.lucaskaique.com.br/api/param?title=${encodeURIComponent(
+        post.frontmatter.title
+      )}`
+
   return (
     <>
       <NextSeo
@@ -25,9 +34,7 @@ const PostTemplate = ({ post }: { post: Post }) => {
           description: post.frontmatter.description,
           images: [
             {
-              url: `https://og-image-service.lucaskaique.com.br/api/param?title=${encodeURIComponent(
-                post.frontmatter.title
-              )}`,
+              url: ogImage,
               alt: `${post.frontmatter.title}`
             }
           ]
