@@ -25,7 +25,7 @@ jobs:
         uses: mvkaran/setup-copilot-cli@v1
         with:
           version: 'latest'
-          token: ${{ secrets.CLI_GITHUB_TOKEN }}
+          token: ${{ secrets.COPILOT_GITHUB_TOKEN }}
 
       - name: Install Python dependencies
         run: pip install feedparser
@@ -99,7 +99,7 @@ jobs:
 
       - name: Translate with GitHub Copilot
         env:
-          GITHUB_TOKEN: ${{ secrets.CLI_GITHUB_TOKEN }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
