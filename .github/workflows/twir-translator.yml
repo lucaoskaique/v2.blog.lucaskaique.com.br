@@ -1,0 +1,89 @@
+name: This Week in Rust - Portuguese Translation
+
+on:
+  schedule:
+    # Runs every Wednesday at 12:00 UTC (This Week in Rust usually publishes on Tuesdays)
+    - cron: '0 12 * * 3'
+  workflow_dispatch: # Allows manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  translate-twir:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install GitHub Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          pip install requests beautifulsoup4 feedparser python-slugify pyyaml
+
+      - name: Fetch and translate This Week in Rust
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python .github/scripts/translate-twir.py
+
+      - name: Check if new post was created
+        id: check_changes
+        run: |
+          if [ -n "$(git status --porcelain posts/)" ]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+            NEW_POST=$(git status --porcelain posts/ | grep '^??' | head -1 | awk '{print $2}')
+            echo "new_post=$NEW_POST" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.check_changes.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'feat: add This Week in Rust translation (Portuguese)'
+          title: '📰 This Week in Rust - Tradução em Português'
+          body: |
+            ## 🦀 Nova tradução This Week in Rust
+
+            Esta PR adiciona automaticamente a tradução em português da última edição do This Week in Rust.
+
+            **Arquivo criado:** `${{ steps.check_changes.outputs.new_post }}`
+
+            ### ⚠️ Revisão necessária
+            - [ ] Verificar qualidade da tradução
+            - [ ] Revisar formatação do markdown
+            - [ ] Confirmar metadados (tags, categorias)
+            - [ ] Verificar links e referências
+
+            ---
+            *Esta PR foi gerada automaticamente pelo workflow `twir-translator`*
+          branch: twir-translation-${{ github.run_number }}
+          delete-branch: true
+          labels: |
+            automated
+            content
+            translation
