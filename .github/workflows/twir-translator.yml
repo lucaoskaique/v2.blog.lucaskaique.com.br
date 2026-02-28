@@ -27,12 +27,11 @@ jobs:
           version: 'latest'
           token: ${{ secrets.COPILOT_GITHUB_TOKEN }}
 
-      - name: Run Copilot CLI
-        env:
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-        run: |
-          TODAY=$(date +%Y-%m-%d)
-          copilot -p "say hello"
+      - name: Check Copilot CLI version
+        run: copilot --version
+
+      - name: Ask Copilot for help
+        run: copilot -i "hi how are u?"
 
       - name: Install Python dependencies
         run: pip install feedparser
