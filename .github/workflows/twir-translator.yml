@@ -39,16 +39,50 @@ jobs:
           chmod +x .github/scripts/fetch_twir.py
 
           # Run Python script to fetch and parse RSS
-          python3 .github/scripts/fetch_twir.py > /tmp/twir-output.txt
+          echo "Fetching This Week in Rust from RSS feed..."
+          if ! python3 .github/scripts/fetch_twir.py > /tmp/twir-output.txt 2>&1; then
+            echo "ERROR: Failed to fetch TWIR content"
+            cat /tmp/twir-output.txt
+            exit 1
+          fi
+
+          echo "RSS feed fetched successfully"
+
+          # Verify the output file exists and has content
+          if [ ! -s /tmp/twir-output.txt ]; then
+            echo "ERROR: Output file is empty or does not exist"
+            exit 1
+          fi
 
           # Parse the output
-          TITLE=$(grep -m 1 "^TITLE=" /tmp/twir-output.txt | sed 's/^TITLE=//')
-          LINK=$(grep -m 1 "^LINK=" /tmp/twir-output.txt | sed 's/^LINK=//')
-          SLUG=$(grep -m 1 "^SLUG=" /tmp/twir-output.txt | sed 's/^SLUG=//')
+          TITLE=$(grep -m 1 "^TITLE=" /tmp/twir-output.txt | sed 's/^TITLE=//' || echo "")
+          LINK=$(grep -m 1 "^LINK=" /tmp/twir-output.txt | sed 's/^LINK=//' || echo "")
+          SLUG=$(grep -m 1 "^SLUG=" /tmp/twir-output.txt | sed 's/^SLUG=//' || echo "")
+
+          # Verify we got the variables
+          if [ -z "$TITLE" ] || [ -z "$LINK" ] || [ -z "$SLUG" ]; then
+            echo "ERROR: Failed to parse metadata from output"
+            echo "TITLE: $TITLE"
+            echo "LINK: $LINK"
+            echo "SLUG: $SLUG"
+            echo "Output file content:"
+            cat /tmp/twir-output.txt
+            exit 1
+          fi
 
           # Extract content between markers
           sed -n '/--- CONTENT START ---/,/--- CONTENT END ---/p' /tmp/twir-output.txt | \
             sed '1d;$d' > /tmp/twir-content.txt
+
+          # Verify content file was created and has content
+          if [ ! -s /tmp/twir-content.txt ]; then
+            echo "ERROR: Content file is empty or was not created"
+            echo "Output file content:"
+            cat /tmp/twir-output.txt
+            exit 1
+          fi
+
+          echo "Content extracted successfully ($(wc -l < /tmp/twir-content.txt) lines)"
 
           DATE=$(date +%Y-%m-%d)
           DATETIME=$(date +"%Y-%m-%d %H:%M:%S")
@@ -72,6 +106,19 @@ jobs:
           SLUG="${{ steps.fetch_twir.outputs.slug }}"
           DATETIME="${{ steps.fetch_twir.outputs.datetime }}"
 
+          echo "Translation parameters:"
+          echo "  Title: $TITLE"
+          echo "  Slug: $SLUG"
+
+          # Verify content file exists
+          if [ ! -f /tmp/twir-content.txt ]; then
+            echo "ERROR: /tmp/twir-content.txt does not exist!"
+            echo "This means the previous step failed to create the content file."
+            exit 1
+          fi
+
+          echo "  Content size: $(wc -c < /tmp/twir-content.txt) bytes"
+
           cat > /tmp/translation-prompt.txt << 'PROMPT_EOF'
             Translate the following This Week in Rust newsletter content from English to Brazilian Portuguese (pt-BR).
 
@@ -89,7 +136,13 @@ jobs:
 
           cat /tmp/twir-content.txt >> /tmp/translation-prompt.txt
 
-          copilot -i "$(cat /tmp/translation-prompt.txt)" > /tmp/translated-content.txt 2>&1
+          echo "Starting translation with GitHub Copilot..."
+          if ! copilot -i "$(cat /tmp/translation-prompt.txt)" > /tmp/translated-content.txt 2>&1; then
+            echo "ERROR: Copilot translation failed"
+            echo "Output:"
+            cat /tmp/translated-content.txt
+            exit 1
+          fi
 
           echo "Traducao concluida"
 
