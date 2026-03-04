@@ -16,23 +16,23 @@ pt-BR:
     <p>Quer o TWIR na sua caixa de entrada? <a href="https://this-week-in-rust.us11.list-manage.com/subscribe?u=fd84c1c757e02889a9b08d289&id=0ed8b72485">Assine aqui</a>.</p>
     <h2 id="updates-from-rust-community"><a class="toclink" href="#updates-from-rust-community">Atualizações da Comunidade Rust</a></h2>
     <!--
-    
+
     Dear community contributors:
     Please read README.md for guidance on submissions.
     Each submitted link should be of the form:
-    
+
     * [Title of the linked Page](https://example.com/my_article)
-    
+
     If you add a link to a non-text content please prefix it with `[video]` or `[audio]`:
-    
+
     * [video] [Title of the linked video](https://example.com/my_video_article)
     * [audio] [Title of the linked audio file](https://example.com/my_podcast)
-    
+
     If you don't know which category to use, feel free to submit a PR anyway
     and just ask the editors to select the category.
-    
+
     -->
-    
+
     <h3 id="official"><a class="toclink" href="#official">Oficial</a></h3>
     <ul>
     <li><a href="https://blog.rust-lang.org/2026/02/19/Rust-participates-in-GSoC-2026/">Rust participa do Google Summer of Code 2026</a></li>
@@ -107,7 +107,7 @@ pt-BR:
     </ul>
     <!-- CFPs go here, use this format: * [**event name**](URL to CFP)| Date CFP closes in YYYY-MM-DD | city,state,country | Date of event in YYYY-MM-DD -->
     <!-- or if none - *No Calls for papers or presentations were submitted this week.* -->
-    
+
     <p>Se você é organizador de eventos e espera ampliar o alcance do seu evento, por favor envie um link para o site por meio de um <a href="https://github.com/rust-lang/this-week-in-rust">PR para o TWiR</a> ou entrando em contato no <a href="https://bsky.app/profile/thisweekinrust.bsky.social">Bluesky</a> ou <a href="https://mastodon.social/@thisweekinrust">Mastodon</a>!</p>
     <h2 id="updates-from-the-rust-project"><a class="toclink" href="#updates-from-the-rust-project">Atualizações do Projeto Rust</a></h2>
     <p>450 pull requests foram <a href="https://github.com/search?q=is%3Apr+org%3Arust-lang+is%3Amerged+merged%3A2026-02-17..2026-02-24">mesclados na última semana</a></p>
@@ -454,11 +454,11 @@ pt-BR:
     </ul>
     <p><em>A hospedagem da lista de e-mails é patrocinada por <a href="https://foundation.rust-lang.org/">The Rust Foundation</a></em></p>
     <p><small><a href="https://www.reddit.com/r/rust/comments/1rftaij/this_week_in_rust_640/">Discussão no r/rust</a></small></p>
-    
+
     ---
-    
+
     *Artigo original: [https://this-week-in-rust.org/blog/2026/02/25/this-week-in-rust-640/](https://this-week-in-rust.org/blog/2026/02/25/this-week-in-rust-640/)*
-    
+
     *Traduzido automaticamente por IA. Para sugestoes de melhorias, abra uma issue no repositorio.*
   date: 2026-02-25 02:00:00
   image: /images/ESSA-SEMANA-COM-RUST-FINAL.png
@@ -472,6 +472,16 @@ pt-BR:
 en:
   title: "This Week in Rust 640"
   description: "Original newsletter link"
+  image: /images/ESSA-SEMANA-COM-RUST-FINAL.png
   body: >-
     *Original post: [https://this-week-in-rust.org/blog/2026/02/25/this-week-in-rust-640/](https://this-week-in-rust.org/blog/2026/02/25/this-week-in-rust-640/)*
+    date: 2026-02-25 02:00:00
+  image: /images/ESSA-SEMANA-COM-RUST-FINAL.png
+  main-class: rust
+  color: "#CE422B"
+  tags:
+    - rust
+    - newsletter
+    - this-week-in-rust
+    - traducao
 ---
