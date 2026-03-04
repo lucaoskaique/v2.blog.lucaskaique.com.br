@@ -25,15 +25,15 @@ export default function LanguageSwitcher() {
   return (
     <div className="relative inline-block">
       <div className="flex items-center gap-2">
-        <Globe className="h-5 w-5" />
+        <Globe className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
         <select
           value={currentLocale}
           onChange={(e) => handleLocaleChange(e.target.value as Locale)}
-          className="bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+          className="bg-transparent border border-zinc-300 dark:border-zinc-600 rounded-md px-2 py-1 text-sm text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 cursor-pointer"
           aria-label="Select language"
         >
           {locales.map((locale) => (
-            <option key={locale} value={locale} className="bg-white dark:bg-gray-800">
+            <option key={locale} value={locale} className="bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
               {localeNames[locale]}
             </option>
           ))}
