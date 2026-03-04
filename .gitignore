@@ -36,5 +36,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# TWIR CLI daemon files
+.twir-daemon.pid
+.twir-daemon.state
+
 codealike.json
 *storybook.log
