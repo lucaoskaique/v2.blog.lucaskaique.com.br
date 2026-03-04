@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import Image from "next/image"
 import Link from "next/link"
+import { NextSeo } from "next-seo"
 import { ComponentPropsWithoutRef, ComponentType, ReactNode } from "react"
 
 import { Container } from "@/components/Container"
@@ -76,8 +77,13 @@ interface AboutProps {
 
 export default function About({ content }: AboutProps) {
   return (
-    <Base>
-      <Container className="mt-16 sm:mt-32">
+    <>
+      <NextSeo
+        title={content.title}
+        description={content.intro}
+      />
+      <Base>
+        <Container className="mt-16 sm:mt-32">
         <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
           <div className="lg:pl-20">
             <div className="max-w-xs px-2.5 lg:max-w-none">
@@ -93,36 +99,13 @@ export default function About({ content }: AboutProps) {
           </div>
           <div className="lg:order-first lg:row-span-2">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              I’m Lucas Kaique. I’m from Goiás and I live in Porto Alegre, where
-              I develop the future.
+              {content.heading}
             </h1>
             <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
-              <p>
-                Hi, I’m a Senior Software Engineer and I’ve been coding since I
-                was 14 years old, where my passion for solving problems and
-                designing elegant solutions comes to life. Specializing in
-                back-end technologies like NodeJS, C#, and Go, I am also able to
-                create beautiful and engaging front-end experiences with React
-                and Next.js.
-              </p>
-              <p>
-                My focus is on creating robust, efficient and user-friendly
-                applications that enhance user interaction and deliver value. In
-                addition to the world of programming, I have a vibrant career as
-                a DJ and event producer.
-              </p>
-              <p>
-                These roles have highlighted my creative streak, giving me the
-                opportunity to orchestrate memorable experiences through music
-                and events. This combination of analytical programming and
-                artistic production skills shapes my unique approach to work,
-                allowing me to bring fresh, innovative ideas to the table.
-              </p>
-              <p>
-                Whether you’re looking for a sophisticated software solution or
-                an unforgettable event, I’m your go-to professional. I look
-                forward to using my specific skills to deliver unique results.
-              </p>
+              <p>{content.intro}</p>
+              {content.paragraphs.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
             </div>
           </div>
           <div className="lg:pl-20">
@@ -151,5 +134,6 @@ export default function About({ content }: AboutProps) {
         </div>
       </Container>
     </Base>
+    </>
   )
 }
