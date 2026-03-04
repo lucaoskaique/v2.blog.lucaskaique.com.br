@@ -1,0 +1,422 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if git -C "${PWD}" rev-parse --show-toplevel >/dev/null 2>&1; then
+  REPO_ROOT="$(git -C "${PWD}" rev-parse --show-toplevel)"
+elif git -C "${SCRIPT_DIR}" rev-parse --show-toplevel >/dev/null 2>&1; then
+  REPO_ROOT="$(git -C "${SCRIPT_DIR}" rev-parse --show-toplevel)"
+else
+  REPO_ROOT="${SCRIPT_DIR}"
+fi
+
+POSTS_DIR="${REPO_ROOT}/posts"
+
+usage() {
+  cat <<'EOF'
+Usage: twir <command> [options]
+
+Commands:
+  check            Check if there is a new Rust newsletter available
+  translate        Translate the latest newsletter and create a blog post
+  pr               Create a pull request with the translated post
+
+Options:
+  check:
+    -v, --verbose  Show content preview
+
+  translate:
+    -f, --force        Force translation even if post exists
+    --skip-check       Skip the "check" step
+
+  pr:
+    -t, --title <t>     Custom PR title
+    -b, --branch <b>    Custom branch name
+EOF
+}
+
+require_cmd() {
+  local cmd="$1"
+  if ! command -v "${cmd}" >/dev/null 2>&1; then
+    echo "Error: '${cmd}' is required but not installed or not in PATH." >&2
+    exit 1
+  fi
+}
+
+fetch_latest() {
+  require_cmd python3
+  python3 - <<'PY'
+import sys
+import re
+import html
+import urllib.request
+import xml.etree.ElementTree as ET
+from datetime import datetime
+from email.utils import parsedate_to_datetime
+
+RSS_URL = "https://this-week-in-rust.org/rss.xml"
+
+def create_slug(title: str) -> str:
+    slug = title.lower().strip()
+    slug = re.sub(r"\s+", "-", slug)
+    slug = re.sub(r"[^a-z0-9-]", "", slug)
+    slug = re.sub(r"-+", "-", slug)
+    slug = re.sub(r"^-+|-+$", "", slug)
+    return slug
+
+try:
+    data = urllib.request.urlopen(RSS_URL, timeout=30).read()
+    root = ET.fromstring(data)
+    item = root.find("./channel/item")
+    if item is None:
+        print("Error: No items found in RSS feed", file=sys.stderr)
+        sys.exit(1)
+
+    def get_text(tag: str) -> str:
+        el = item.find(tag)
+        return el.text.strip() if el is not None and el.text else ""
+
+    title = get_text("title")
+    link = get_text("link")
+    description = get_text("description")
+    if not description:
+        description = get_text("{http://purl.org/rss/1.0/modules/content/}encoded")
+
+    pub_date = get_text("pubDate")
+    if pub_date:
+        try:
+            dt = parsedate_to_datetime(pub_date)
+            if dt.tzinfo:
+                dt = dt.astimezone().replace(tzinfo=None)
+            published = dt.strftime("%Y-%m-%d %H:%M:%S")
+        except Exception:
+            published = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        published = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if not title or not link or not description:
+        print("Error: Missing required fields from RSS entry", file=sys.stderr)
+        sys.exit(1)
+
+    description = html.unescape(description)
+    slug = create_slug(title)
+
+    print(f"TITLE={title}")
+    print(f"LINK={link}")
+    print(f"SLUG={slug}")
+    print(f"PUBLISHED={published}")
+    print("--- CONTENT START ---")
+    print(description)
+    print("--- CONTENT END ---")
+except Exception as exc:
+    print(f"Error fetching RSS: {exc}", file=sys.stderr)
+    sys.exit(1)
+PY
+}
+
+parse_latest() {
+  local tmp_file="$1"
+  TITLE="$(sed -n 's/^TITLE=//p' "$tmp_file" | head -n 1)"
+  LINK="$(sed -n 's/^LINK=//p' "$tmp_file" | head -n 1)"
+  SLUG="$(sed -n 's/^SLUG=//p' "$tmp_file" | head -n 1)"
+  PUBLISHED="$(sed -n 's/^PUBLISHED=//p' "$tmp_file" | head -n 1)"
+  CONTENT="$(sed -n '/--- CONTENT START ---/,/--- CONTENT END ---/p' "$tmp_file" | sed '1d;$d')"
+}
+
+cmd_check() {
+  local verbose=false
+  if [[ "${1:-}" == "-v" || "${1:-}" == "--verbose" ]]; then
+    verbose=true
+  fi
+
+  local tmp_file
+  tmp_file="$(mktemp)"
+  fetch_latest > "$tmp_file"
+  parse_latest "$tmp_file"
+  rm -f "$tmp_file"
+
+  mkdir -p "$POSTS_DIR"
+  local post_path="${POSTS_DIR}/${SLUG}.md"
+
+  echo "Newsletter found!"
+  echo ""
+  echo "Latest Newsletter:"
+  echo "--------------------------------------------------"
+  echo "Title: ${TITLE}"
+  echo "Link:  ${LINK}"
+  echo "Slug:  ${SLUG}"
+  echo "Published: ${PUBLISHED}"
+  if [[ -f "$post_path" ]]; then
+    echo "Status: Already exists"
+  else
+    echo "Status: New"
+  fi
+  echo "--------------------------------------------------"
+
+  if [[ "$verbose" == "true" ]]; then
+    echo ""
+    echo "Content Preview:"
+    echo "${CONTENT:0:300}..."
+  fi
+
+  if [[ -f "$post_path" ]]; then
+    echo ""
+    echo "This newsletter has already been translated."
+    echo "Use --force with translate to override."
+    return 1
+  fi
+
+  echo ""
+  echo "New newsletter available for translation."
+}
+
+cmd_translate() {
+  local force=false
+  local skip_check=false
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -f|--force)
+        force=true
+        shift
+        ;;
+      --skip-check)
+        skip_check=true
+        shift
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        exit 1
+        ;;
+    esac
+  done
+
+  local tmp_file
+  tmp_file="$(mktemp)"
+  fetch_latest > "$tmp_file"
+  parse_latest "$tmp_file"
+  rm -f "$tmp_file"
+
+  mkdir -p "$POSTS_DIR"
+  local post_path="${POSTS_DIR}/${SLUG}.md"
+
+  if [[ "$skip_check" == "false" && -f "$post_path" && "$force" == "false" ]]; then
+    echo "Post already exists: ${post_path}"
+    echo "Use --force to override."
+    exit 1
+  fi
+
+  require_cmd opencode
+
+  echo "Starting translation with opencode..."
+
+  local prompt_file translated_file
+  prompt_file="$(mktemp)"
+  translated_file="$(mktemp)"
+
+  {
+    printf '%s\n' "Translate the following \"This Week in Rust\" newsletter content from English to Brazilian Portuguese."
+    printf '%s\n' ""
+    printf '%s\n' "IMPORTANT RULES:"
+    printf '%s\n' "- Keep all links unchanged"
+    printf '%s\n' "- Keep all markdown formatting (headings, lists, code blocks, etc)"
+    printf '%s\n' "- Keep project names, libraries, and technical terms in English"
+    printf '%s\n' "- Translate only descriptive and explanatory text"
+    printf '%s\n' "- Preserve the document structure"
+    printf '%s\n' "- Output only the translation, no labels or preamble"
+    printf '%s\n' ""
+    printf '%s\n' "Newsletter title (do not include in output): ${TITLE}"
+    printf '%s\n' ""
+    printf '%s\n' "Content:"
+    printf '%s\n' "${CONTENT}"
+  } > "$prompt_file"
+
+  if ! opencode run "$(cat "$prompt_file")" > "$translated_file"; then
+    rm -f "$prompt_file" "$translated_file"
+    echo "Translation failed." >&2
+    exit 1
+  fi
+
+  rm -f "$prompt_file"
+
+  if [[ ! -s "$translated_file" ]]; then
+    rm -f "$translated_file"
+    echo "Translation output is empty." >&2
+    exit 1
+  fi
+
+  local translated_content
+  translated_content="$(cat "$translated_file")"
+  rm -f "$translated_file"
+
+  translated_content="${translated_content}
+
+---
+
+*Artigo original: [${LINK}](${LINK})*
+
+*Traduzido automaticamente por IA. Para sugestoes de melhorias, abra uma issue no repositorio.*"
+
+  local safe_title safe_desc
+  safe_title="${TITLE//\"/\\\"}"
+  safe_desc="Traducao em portugues da newsletter ${TITLE}"
+  safe_desc="${safe_desc//\"/\\\"}"
+
+  {
+    printf '%s\n' "---"
+    printf '%s\n' "pt-BR:"
+    printf '  title: "%s"\n' "${safe_title}"
+    printf '  description: "%s"\n' "${safe_desc}"
+    printf '%s\n' "  body: >-"
+    printf '%s\n' "${translated_content}" | sed 's/^/    /'
+    printf '%s\n' "  date: ${PUBLISHED}"
+    printf '%s\n' "  image: /images/ESSA-SEMANA-COM-RUST-FINAL.png"
+    printf '%s\n' "  main-class: rust"
+    printf '%s\n' "  color: \"#CE422B\""
+    printf '%s\n' "  tags:"
+    printf '%s\n' "    - rust"
+    printf '%s\n' "    - newsletter"
+    printf '%s\n' "    - this-week-in-rust"
+    printf '%s\n' "    - traducao"
+    printf '%s\n' "en:"
+    printf '  title: "%s"\n' "${safe_title}"
+    printf '%s\n' "  description: \"Original newsletter link\""
+    printf '%s\n' "  body: >-"
+    printf '    *Original post: [%s](%s)*\n' "${LINK}" "${LINK}"
+    printf '%s\n' "---"
+  } > "$post_path"
+
+  echo ""
+  echo "Success!"
+  echo "Post: ${TITLE}"
+  echo "Path: ${post_path}"
+  echo ""
+  echo "Next steps:"
+  echo "  1. Review the translation"
+  echo "  2. Run: twir pr"
+}
+
+cmd_pr() {
+  local pr_title=""
+  local pr_branch=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--title)
+        pr_title="$2"
+        shift 2
+        ;;
+      -b|--branch)
+        pr_branch="$2"
+        shift 2
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        exit 1
+        ;;
+    esac
+  done
+
+  require_cmd git
+  require_cmd gh
+
+  git -C "$REPO_ROOT" rev-parse --git-dir >/dev/null 2>&1 || {
+    echo "Error: Not a git repository." >&2
+    exit 1
+  }
+
+  local status_output
+  status_output="$(git -C "$REPO_ROOT" status --porcelain posts/)"
+
+  if [[ -z "$status_output" ]]; then
+    echo "No changes found in posts directory."
+    echo "Run: twir translate"
+    return 1
+  fi
+
+  local new_post
+  new_post="$(echo "$status_output" | head -n 1 | awk '{print $2}')"
+
+  if [[ -z "$new_post" ]]; then
+    echo "Could not determine post file." >&2
+    exit 1
+  fi
+
+  local post_title
+  post_title="$(sed -n 's/^  title: "\(.*\)"/\1/p' "$REPO_ROOT/$new_post" | head -n 1)"
+  if [[ -z "$post_title" ]]; then
+    post_title="${new_post##*/}"
+    post_title="${post_title%.md}"
+  fi
+
+  local slug
+  slug="${new_post##*/}"
+  slug="${slug%.md}"
+
+  local branch_name
+  branch_name="${pr_branch:-twir/${slug}}"
+
+  local commit_title
+  commit_title="${pr_title:-feat: add ${post_title} translation}"
+
+  local base_branch
+  base_branch="$(git -C "$REPO_ROOT" branch --show-current)"
+
+  if ! git -C "$REPO_ROOT" checkout -b "$branch_name" >/dev/null 2>&1; then
+    git -C "$REPO_ROOT" checkout "$branch_name" >/dev/null 2>&1
+  fi
+
+  git -C "$REPO_ROOT" add "$new_post"
+  git -C "$REPO_ROOT" commit -m "$commit_title"
+  git -C "$REPO_ROOT" push -u origin "$branch_name"
+
+  local pr_body
+  pr_body=$(cat <<EOF
+## New translation: This Week in Rust
+
+This PR adds the Brazilian Portuguese translation for **${post_title}**.
+
+### Checklist
+- [x] Content translated automatically
+- [ ] Manual review pending
+- [ ] Links verified
+- [ ] Markdown formatting verified
+
+### File
+- \\`$new_post\\`
+
+---
+*This PR was created automatically by the twir bash CLI.*
+EOF
+)
+
+  gh pr create --title "$commit_title" --body "$pr_body" --base "$base_branch"
+}
+
+main() {
+  local cmd="${1:-}"
+  shift || true
+
+  case "$cmd" in
+    check)
+      cmd_check "$@"
+      ;;
+    translate)
+      cmd_translate "$@"
+      ;;
+    pr)
+      cmd_pr "$@"
+      ;;
+    -h|--help|help|"" )
+      usage
+      ;;
+    *)
+      echo "Unknown command: $cmd" >&2
+      usage
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"
