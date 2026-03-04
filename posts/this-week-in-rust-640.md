@@ -472,10 +472,9 @@ pt-BR:
 en:
   title: "This Week in Rust 640"
   description: "Original newsletter link"
-  image: /images/ESSA-SEMANA-COM-RUST-FINAL.png
   body: >-
     *Original post: [https://this-week-in-rust.org/blog/2026/02/25/this-week-in-rust-640/](https://this-week-in-rust.org/blog/2026/02/25/this-week-in-rust-640/)*
-    date: 2026-02-25 02:00:00
+  date: 2026-02-25 02:00:00
   image: /images/ESSA-SEMANA-COM-RUST-FINAL.png
   main-class: rust
   color: "#CE422B"
