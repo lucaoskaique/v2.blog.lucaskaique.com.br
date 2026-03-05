@@ -49,7 +49,7 @@ pt-BR:
   color: "#CE422B"
   main-class: rust
   date: 2026-02-25 02:00:00
-  title: This Week in Rust 640
+  title: Essa semana com Rust 640
   tags:
     - rust
     - newsletter
