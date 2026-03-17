@@ -73,10 +73,79 @@ Você tem várias opções de serviços de tradução:
 ```
 .github/
 ├── workflows/
-│   └── twir-translator.yml    # Workflow principal
+│   └── twir-translator.yml    # Workflow principal (CI/CD automation)
 └── scripts/
-    ├── translate-twir.py      # Script de tradução
+    ├── translate-twir.py      # Script de tradução Python (legacy)
     └── README.md              # Esta documentação
+
+# Rust CLI (recomendado para uso local)
+twir                          # Shell script (legacy)
+src/                          # Código Rust
+├── main.rs                   # Entry point
+├── rss.rs                    # RSS fetching
+├── translator.rs             # Async translation
+├── post.rs                   # Post generation
+└── git.rs                    # Git/GitHub operations
+Cargo.toml                    # Dependências Rust
+install-twir.sh               # Script de instalação
+```
+
+## 🦀 TWIR Rust CLI (Novo!)
+
+Uma versão **assíncrona** e **muito mais rápida** do script bash original, escrita em Rust.
+
+### Benefícios:
+- ⚡ **Async/parallel**: Operações de rede assíncronas
+- 🚀 **Mais rápido**: Compilado com otimizações de release
+- 💪 **Type-safe**: Erro detectados em tempo de compilação
+- 🌊 **Streaming**: Mostra progresso da tradução em tempo real
+- 📦 **Single binary**: Sem dependências externas
+
+### Instalação:
+
+```bash
+# Build e instalação
+./install-twir.sh
+
+# Ou manualmente:
+cargo build --release
+sudo cp target/release/twir /usr/local/bin/
+```
+
+### Uso:
+
+```bash
+# Verificar nova newsletter
+twir check
+
+# Ver preview do conteúdo
+twir check --verbose
+
+# Traduzir
+twir translate
+
+# Forçar tradução (sobrescrever post existente)
+twir translate --force
+
+# Criar pull request
+twir pr
+
+# PR com título e branch customizados
+twir pr --title "feat: add TWIR 642" --branch "twir/custom-branch"
+```
+
+### Comparação Bash vs Rust:
+
+| Feature | Bash | Rust |
+|---------|------|------|
+| Velocidade | Síncrono | **Async/Parallel** |
+| Tipo seguro | ❌ | ✅ |
+| Streaming | ❌ | ✅ |
+| Error handling | Básico | **Robusto** |
+| Cross-platform | Limitado | ✅ |
+| Dependencies | Python, opencode, gh, git | **Compilado (nenhuma)** |
+| Binary size | N/A | ~8MB |
+
 ```
 
 ## 🎯 Formato do Post

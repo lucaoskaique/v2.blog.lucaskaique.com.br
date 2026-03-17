@@ -40,5 +40,9 @@ next-env.d.ts
 .twir-daemon.pid
 .twir-daemon.state
 
+# Rust
+/target/
+Cargo.lock
+
 codealike.json
 *storybook.log
