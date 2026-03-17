@@ -1,0 +1,11 @@
+[build]
+# Enable all CPU features for maximum performance
+rustflags = ["-C", "target-cpu=native"]
+
+[profile.release]
+# Maximum optimization
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
