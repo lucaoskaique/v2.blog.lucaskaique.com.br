@@ -155,7 +155,7 @@ function Resume({ roles }: { roles: Role[] }) {
       </ol>
       <Button
         variant="secondary"
-        href="/path-to-your-cv.pdf"
+        href="/resume"
         className="group mt-6 w-full">
         Download CV
         <ArrowDownIcon className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
