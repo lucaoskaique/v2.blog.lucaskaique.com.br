@@ -26,7 +26,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env
 .env*.local
 
 # vercel
@@ -40,5 +39,10 @@ next-env.d.ts
 .twir-daemon.pid
 .twir-daemon.state
 
+# Rust
+/target/
+Cargo.lock
+
 codealike.json
 *storybook.log
+
