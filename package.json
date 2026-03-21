@@ -9,12 +9,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
-    "generate": "pnpm plop --plopfile generators/plopfile.js",
+    "generate": "npm run plop --plopfile generators/plopfile.js",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "linkedin:publish": "node scripts/publish-to-linkedin.js"
   },
   "engines": {
     "node": ">=24.2.0"
@@ -100,6 +101,7 @@
     "lint-staged": "^15.2.7",
     "plop": "^4.0.1",
     "postcss": "^8",
+    "playwright": "^1.48.2",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "storybook": "^8.5.3",
