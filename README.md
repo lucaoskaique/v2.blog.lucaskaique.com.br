@@ -5,7 +5,7 @@ Este é um projeto [Next.js](https://nextjs.org/) iniciado com [`create-next-app
 Primeiro, execute o servidor de desenvolvimento:
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
@@ -16,7 +16,7 @@ Rotas de API podem ser acessadas em [http://localhost:3000/api/hello](http://loc
 
 ## Bibliotecas Utilizadas
 
-Este projeto requer Node versão superior a 20 e utiliza exclusivamente o gerenciador de pacotes `pnpm` para instalação de dependências. As seguintes bibliotecas são utilizadas:
+Este projeto requer Node versão superior a 20 e utiliza o gerenciador de pacotes `npm` para instalação de dependências. As seguintes bibliotecas são utilizadas:
 
 - **next**: Framework para React que permite funcionalidades como SSR (Server Side Rendering) e SSG (Static Site Generation).
 - **react**: Biblioteca JavaScript para criar interfaces de usuário.
@@ -55,7 +55,7 @@ Confira nossa [documentação de deploy do Next.js](https://nextjs.org/docs/depl
 Para criar um novo componente, execute o comando:
 
 ```bash
-pnpm generate <nome-do-componente>
+npm run generate <nome-do-componente>
 ```
 
 Ele irá criar um novo componente na pasta `components` com o nome especificado com três arquivos: `index.tsx`, `.<nome-do-componente>.stories.tsx` e `<nome-do-componente>.test.tsx`.
@@ -67,7 +67,7 @@ Então assim você pode começar a desenvolver o seu novo componente.
 Quando você commitar o código, o Husky irá rodar o Lint-Staged que irá rodar o ESLint e o Prettier para verificar se o código está correto e formatado corretamente. Então você precisa garantir que o código está correto e formatado corretamente antes de commitar. Caso esteja em duvida rode o comando:
 
 ```bash
-pnpm lint
+npm run lint
 ```
 
 Ele irá rodar o ESLint e o Prettier para verificar se o código está correto e formatado corretamente, resolva os problemas que aparecerem e então commitar o código.
@@ -87,7 +87,7 @@ Vitest é um framework de teste que também pode ser usado em projetos JavaScrip
 Para rodar os testes, execute o comando:
 
 ```bash
-pnpm test
+npm run test
 ```
 
 Ele irá rodar os testes e mostrar o resultado no terminal.
@@ -97,7 +97,7 @@ Ele irá rodar os testes e mostrar o resultado no terminal.
 Para rodar os testes com coverage, execute o comando:
 
 ```bash
-pnpm test:coverage
+npm run test:coverage
 ```
 
 Ele irá rodar os testes com coverage e mostrar o resultado no terminal.
@@ -113,7 +113,7 @@ Vamos utiliza-lo porquê ele nos permite visualizar os componentes de forma isol
 Para rodar o storybook, execute o comando:
 
 ```bash
-pnpm storybook
+npm run storybook
 ```
 
 Ele irá rodar o storybook e abrir no navegador.
@@ -123,7 +123,7 @@ Ele irá rodar o storybook e abrir no navegador.
 Para fazer o build do projeto, execute o comando:
 
 ```bash
-pnpm build
+npm run build
 ```
 
 Ele irá fazer o build do projeto e gerar a pasta `build`.
@@ -133,7 +133,7 @@ Ele irá fazer o build do projeto e gerar a pasta `build`.
 Para rodar o projeto em produção, execute o comando:
 
 ```bash
-pnpm start
+npm run start
 ```
 
 Ele irá rodar o projeto em produção.
@@ -164,8 +164,18 @@ Para adicionar novos posts ao blog utilizando Markdown, siga os passos abaixo:
 
 Agora você pode adicionar novos posts ao seu blog utilizando Markdown de forma simples e rápida.
 
-```
+## Como atualizar o currículo (Resume)
 
-### Explicação Adicionada:
-- **Como adicionar posts com Markdown**: Esta seção explica como criar e adicionar novos posts ao blog utilizando arquivos Markdown, incluindo a estrutura básica do arquivo e onde salvá-lo.
-```
+O projeto possui uma rota `/resume` que redireciona automaticamente para o PDF do currículo. Para atualizar o currículo:
+
+1. **Substitua o arquivo PDF**: Coloque o novo arquivo PDF em `public/assets/lucas-kaique-resume.pdf`.
+
+2. **Ou renomeie seu arquivo**: Se preferir usar um nome diferente, atualize o caminho de destino nos seguintes arquivos:
+   - `src/pages/resume.tsx`
+   - `src/pages/[locale]/resume.tsx`
+
+3. **Acesse o currículo**: 
+   - Rota amigável: `/resume` (recomendado para compartilhamento)
+   - Rota direta: `/assets/lucas-kaique-resume.pdf`
+
+O PDF será exibido diretamente no navegador em dispositivos modernos.
