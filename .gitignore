@@ -26,7 +26,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env
 .env*.local
 
 # linkedin publisher
@@ -49,3 +48,4 @@ Cargo.lock
 
 codealike.json
 *storybook.log
+
