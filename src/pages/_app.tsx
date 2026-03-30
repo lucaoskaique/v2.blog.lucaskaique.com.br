@@ -1,5 +1,6 @@
 import "@/styles/globals.css"
 import type { AppProps } from "next/app"
+import { useRouter } from "next/router"
 import Script from "next/script"
 import { DefaultSeo } from "next-seo"
 import { ThemeProvider } from "next-themes"
@@ -8,18 +9,23 @@ import { useEffect } from "react"
 import SEO from "../../next-seo.config"
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter()
+
   useEffect(() => {
-    // Initialize highlight.js when scripts are loaded
+    // Initialize highlight.js when scripts are loaded and route changes
     const initHighlight = () => {
       if (typeof window !== "undefined" && (window as any).hljs) {
-        ;(window as any).hljs.highlightAll()
+        // Re-highlight all code blocks
+        document.querySelectorAll("pre code").forEach((block) => {
+          ;(window as any).hljs.highlightElement(block)
+        })
       }
     }
 
-    // Run after a short delay to ensure scripts are loaded
-    const timer = setTimeout(initHighlight, 100)
+    // Run after a short delay to ensure scripts and DOM are ready
+    const timer = setTimeout(initHighlight, 200)
     return () => clearTimeout(timer)
-  }, [])
+  }, [router.asPath]) // Re-run when route changes
 
   return (
     <ThemeProvider
@@ -38,6 +44,10 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <Script
           src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"
+          strategy="afterInteractive"
+        />
+        <Script
+          src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/toml.min.js"
           strategy="afterInteractive"
         />
         <Script
