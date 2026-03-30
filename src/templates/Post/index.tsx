@@ -57,7 +57,7 @@ const PostTemplate = ({ post }: { post: Post }) => {
       <Base>
         <Container className="mt-16 lg:mt-32">
           <div className="xl:relative">
-            <div className="mx-auto max-w-2xl">
+            <div className="mx-auto max-w-3xl">
               <button
                 type="button"
                 onClick={() => router.back()}
