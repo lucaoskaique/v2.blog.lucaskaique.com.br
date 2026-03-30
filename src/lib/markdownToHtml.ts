@@ -1,4 +1,4 @@
-import rehypePrism from "rehype-prism"
+import rehypeHighlight from "rehype-highlight"
 import rehypeStringify from "rehype-stringify"
 import headings from "remark-autolink-headings"
 import remarkGfm from "remark-gfm"
@@ -19,7 +19,7 @@ export default async function markdownToHtml(markdown: string) {
       }
     })
     .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypePrism, { plugins: ["line-numbers"] })
+    .use(rehypeHighlight)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown)
 
