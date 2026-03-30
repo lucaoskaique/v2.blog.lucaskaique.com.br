@@ -15,9 +15,9 @@ const PostTemplate = ({ post }: { post: Post }) => {
   const router = useRouter()
   // const { previousPathname } = useContext(AppContext)
 
-  // Check if post has "this-week-in-rust" tag
-  const isThisWeekInRust = post.frontmatter.tags?.includes("this-week-in-rust")
-  const ogImage = isThisWeekInRust
+  // Check if post has "rust" tag
+  const isRustPost = post.frontmatter.tags?.includes("rust")
+  const ogImage = isRustPost
     ? `https://og-image-service.lucaskaique.com.br/api/newsletter?image=${encodeURIComponent(
         "https://lucaskaique.com.br/images/ESSA-SEMANA-COM-RUST-FINAL.png"
       )}`
