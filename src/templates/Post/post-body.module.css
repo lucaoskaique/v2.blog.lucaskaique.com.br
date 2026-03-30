@@ -48,47 +48,74 @@
 }
 
 .content pre {
-  @apply my-6 overflow-x-auto rounded-lg bg-gray-900 p-4 shadow-lg;
-  box-shadow:
-    0 0 10px rgba(0, 255, 255, 0.2),
-    0 0 20px rgba(0, 255, 255, 0.1);
-  background-image: linear-gradient(
-    to bottom,
-    transparent 50%,
-    rgba(0, 255, 255, 0.03) 50%
-  );
-  background-size: 100% 4px;
-  background-repeat: repeat-y;
+  @apply my-6 rounded-xl bg-[#1e1e1e] shadow-lg;
+  position: relative;
+  font-family: "SF Mono", Monaco, "Inconsolata", "Roboto Mono", Consolas,
+    "Courier New", monospace !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .content code {
-  @apply rounded bg-gray-800 px-1.5 py-0.5 font-mono text-sm;
-  color: #00ffff;
-  text-shadow: 0 0 3px rgba(0, 255, 255, 0.5);
+  @apply rounded bg-blue-50 px-2 py-0.5 font-mono text-sm;
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  font-size: 0.875em;
 }
 
 .content pre code {
-  @apply block bg-transparent p-0 text-sm leading-relaxed;
-  color: #f0f0f0;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+  @apply block bg-transparent text-sm leading-relaxed;
+  color: #d4d4d4;
+  padding: 1.25rem !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  border: none;
+  display: block;
+  white-space: pre;
+  word-wrap: normal;
+  overflow-wrap: normal;
 }
 
-.content pre code::after {
-  content: "|";
-  animation: cursor-blink 1s infinite;
-  opacity: 0;
-  color: #00ffff;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+/* Custom scrollbar for code blocks */
+.content pre::-webkit-scrollbar {
+  height: 8px;
 }
 
-@keyframes cursor-blink {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
+.content pre::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0 0 0.75rem 0.75rem;
+}
+
+.content pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.content pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Firefox scrollbar */
+.content pre {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+}
+
+/* Dark mode adjustments */
+:global(.dark) .content code {
+  @apply bg-blue-900/20;
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+:global(.dark) .content pre {
+  border-color: rgba(148, 163, 184, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .content figcaption {
@@ -115,28 +142,4 @@
   @apply mx-auto h-auto w-full max-w-full;
 }
 
-/* Syntax highlighting for code blocks */
-.content pre code .keyword {
-  color: #ff00ff;
-  text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
-}
-.content pre code .string {
-  color: #00ff00;
-  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-}
-.content pre code .comment {
-  color: #888;
-  text-shadow: none;
-}
-.content pre code .number {
-  color: #ff9900;
-  text-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
-}
-.content pre code .operator {
-  color: #00ffff;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-}
-.content pre code .function {
-  color: #ff6600;
-  text-shadow: 0 0 5px rgba(255, 102, 0, 0.5);
-}
+/* Syntax highlighting - removed in favor of highlight.js */
