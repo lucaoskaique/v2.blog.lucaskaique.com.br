@@ -18,7 +18,9 @@ const PostTemplate = ({ post }: { post: Post }) => {
   // Check if post has "this-week-in-rust" tag
   const isThisWeekInRust = post.frontmatter.tags?.includes("this-week-in-rust")
   const ogImage = isThisWeekInRust
-    ? "https://lucaskaique.com.br/images/ESSA-SEMANA-COM-RUST-FINAL.png"
+    ? `https://og-image-service.lucaskaique.com.br/api/newsletter?title=${encodeURIComponent(
+        post.frontmatter.title
+      )}`
     : `https://og-image-service.lucaskaique.com.br/api/param?title=${encodeURIComponent(
         post.frontmatter.title
       )}`
