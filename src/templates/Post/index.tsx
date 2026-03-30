@@ -15,15 +15,27 @@ const PostTemplate = ({ post }: { post: Post }) => {
   const router = useRouter()
   // const { previousPathname } = useContext(AppContext)
 
-  // Check if post has "rust" tag
+  // Check if post is a Rust newsletter translation or a general Rust post
   const isRustPost = post.frontmatter.tags?.includes("rust")
-  const ogImage = isRustPost
-    ? `https://og-image-service.lucaskaique.com.br/api/newsletter?image=${encodeURIComponent(
-        "https://lucaskaique.com.br/images/ESSA-SEMANA-COM-RUST-FINAL.png"
-      )}`
-    : `https://og-image-service.lucaskaique.com.br/api/param?title=${encodeURIComponent(
-        post.frontmatter.title
-      )}`
+  const isNewsletterPost = post.frontmatter.title.includes("This Week in Rust")
+
+  let ogImage: string
+  if (isNewsletterPost) {
+    // Newsletter posts use the extended version
+    ogImage = `https://og-image-service.lucaskaique.com.br/api/newsletter?image=${encodeURIComponent(
+      "https://lucaskaique.com.br/images/ESSA-SEMANA-COM-RUST-FINAL-EXTENDED.png"
+    )}`
+  } else if (isRustPost) {
+    // General Rust posts use the extended simple version
+    ogImage = `https://og-image-service.lucaskaique.com.br/api/newsletter?image=${encodeURIComponent(
+      "https://lucaskaique.com.br/images/ESSA-SEMANA-COM-RUST-FINA-EXTENDED-SIMPLE.png"
+    )}`
+  } else {
+    // Other posts use dynamic title generation
+    ogImage = `https://og-image-service.lucaskaique.com.br/api/param?title=${encodeURIComponent(
+      post.frontmatter.title
+    )}`
+  }
 
   return (
     <>
