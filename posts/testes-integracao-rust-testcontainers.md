@@ -12,7 +12,7 @@ pt-BR:
     - redis
   title: Como Escrever Testes de Integração para APIs Rust com Testcontainers
   description: Aprenda a escrever testes de integração confiáveis para APIs Rust usando Testcontainers, PostgreSQL e Redis com isolamento completo
-  body: >
+  body: |
 
     Testes unitários verificam código isoladamente, mas testes de integração
     verificam se seu código funciona com dependências reais. Testcontainers
