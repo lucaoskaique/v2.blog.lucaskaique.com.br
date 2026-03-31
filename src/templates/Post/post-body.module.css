@@ -142,4 +142,64 @@
   @apply mx-auto h-auto w-full max-w-full;
 }
 
+/* Table styling */
+.content table {
+  @apply my-8 w-full border-collapse overflow-hidden rounded-lg;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.content thead {
+  @apply bg-gradient-to-r from-blue-600 to-blue-700;
+}
+
+.content thead th {
+  @apply px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider text-white;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.content tbody tr {
+  @apply transition-colors duration-150;
+  background-color: rgba(30, 41, 59, 0.5);
+}
+
+.content tbody tr:nth-child(even) {
+  background-color: rgba(30, 41, 59, 0.7);
+}
+
+.content tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.content tbody td {
+  @apply px-6 py-4 text-sm text-gray-200;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.content tbody td:first-child {
+  @apply font-medium text-blue-400;
+}
+
+/* Dark mode table adjustments */
+:global(.dark) .content table {
+  border-color: rgba(148, 163, 184, 0.15);
+}
+
+:global(.dark) .content tbody tr {
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+:global(.dark) .content tbody tr:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.7);
+}
+
+:global(.dark) .content tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+:global(.dark) .content tbody td {
+  @apply text-gray-300;
+  border-color: rgba(148, 163, 184, 0.08);
+}
+
 /* Syntax highlighting - removed in favor of highlight.js */
