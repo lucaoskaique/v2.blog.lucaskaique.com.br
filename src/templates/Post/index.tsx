@@ -21,15 +21,11 @@ const PostTemplate = ({ post }: { post: Post }) => {
 
   let ogImage: string
   if (isNewsletterPost) {
-    // Newsletter posts use the optimized OG image
-    ogImage = `https://og-image-service.lucaskaique.com.br/api/newsletter?image=${encodeURIComponent(
-      "https://lucaskaique.com.br/images/og-rust-newsletter.png"
-    )}`
+    // Newsletter posts use direct optimized OG image (no service overhead)
+    ogImage = "https://lucaskaique.com.br/images/og-rust-newsletter.png"
   } else if (isRustPost) {
-    // General Rust posts use the optimized OG image
-    ogImage = `https://og-image-service.lucaskaique.com.br/api/newsletter?image=${encodeURIComponent(
-      "https://lucaskaique.com.br/images/og-rust-simple.png"
-    )}`
+    // General Rust posts use direct optimized OG image (no service overhead)
+    ogImage = "https://lucaskaique.com.br/images/og-rust-simple.png"
   } else {
     // Other posts use dynamic title generation
     ogImage = `https://og-image-service.lucaskaique.com.br/api/param?title=${encodeURIComponent(
