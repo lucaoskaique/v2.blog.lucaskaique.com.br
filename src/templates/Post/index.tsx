@@ -21,14 +21,14 @@ const PostTemplate = ({ post }: { post: Post }) => {
 
   let ogImage: string
   if (isNewsletterPost) {
-    // Newsletter posts use the extended version
+    // Newsletter posts use the optimized OG image
     ogImage = `https://og-image-service.lucaskaique.com.br/api/newsletter?image=${encodeURIComponent(
-      "https://lucaskaique.com.br/images/ESSA-SEMANA-COM-RUST-FINAL-EXTENDED.png"
+      "https://lucaskaique.com.br/images/og-rust-newsletter.png"
     )}`
   } else if (isRustPost) {
-    // General Rust posts use the extended simple version
+    // General Rust posts use the optimized OG image
     ogImage = `https://og-image-service.lucaskaique.com.br/api/newsletter?image=${encodeURIComponent(
-      "https://lucaskaique.com.br/images/ESSA-SEMANA-COM-RUST-FINA-EXTENDED-SIMPLE.png"
+      "https://lucaskaique.com.br/images/og-rust-simple.png"
     )}`
   } else {
     // Other posts use dynamic title generation
@@ -49,7 +49,10 @@ const PostTemplate = ({ post }: { post: Post }) => {
           images: [
             {
               url: ogImage,
-              alt: `${post.frontmatter.title}`
+              alt: `${post.frontmatter.title}`,
+              width: 1200,
+              height: 630,
+              type: "image/png"
             }
           ]
         }}
