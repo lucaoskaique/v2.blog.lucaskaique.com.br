@@ -20,12 +20,16 @@ const PostTemplate = ({ post }: { post: Post }) => {
   const isNewsletterPost = post.frontmatter.title.includes("This Week in Rust")
 
   let ogImage: string
+  let ogImageType = "image/png"
+
   if (isNewsletterPost) {
     // Newsletter posts use direct optimized OG image (no service overhead)
-    ogImage = "https://lucaskaique.com.br/images/og-rust-newsletter.png"
+    ogImage = "https://lucaskaique.com.br/images/og-rust-newsletter.jpg"
+    ogImageType = "image/jpeg"
   } else if (isRustPost) {
     // General Rust posts use direct optimized OG image (no service overhead)
-    ogImage = "https://lucaskaique.com.br/images/og-rust-simple.png"
+    ogImage = "https://lucaskaique.com.br/images/og-rust-simple.jpg"
+    ogImageType = "image/jpeg"
   } else {
     // Other posts use dynamic title generation
     ogImage = `https://og-image-service.lucaskaique.com.br/api/param?title=${encodeURIComponent(
@@ -48,7 +52,7 @@ const PostTemplate = ({ post }: { post: Post }) => {
               alt: `${post.frontmatter.title}`,
               width: 1200,
               height: 630,
-              type: "image/png"
+              type: ogImageType
             }
           ]
         }}
