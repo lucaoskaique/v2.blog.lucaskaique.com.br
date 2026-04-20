@@ -1,8 +1,8 @@
 import "@/styles/globals.css"
-import type { AppProps } from "next/app"
 import { GoogleTagManager } from "@next/third-parties/google"
 import { DefaultSeo } from "next-seo"
 import { ThemeProvider } from "next-themes"
+import type { AppProps } from "next/app"
 
 import SEO from "../../next-seo.config"
 
