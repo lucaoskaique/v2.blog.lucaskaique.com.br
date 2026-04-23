@@ -5,7 +5,7 @@ const links = [
   },
   {
     label: "X",
-    url: "https://x.com/lucaoskaique"
+    url: "https://x.com/"
   },
   {
     label: "Youtube",
