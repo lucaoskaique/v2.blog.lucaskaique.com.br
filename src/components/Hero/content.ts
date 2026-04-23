@@ -13,7 +13,7 @@ const links = [
   },
   {
     label: "Instagram",
-    url: "https://www.instagram.com/lucaoskaique/"
+    url: "https://www.instagram.com/"
   },
   {
     label: "SoundCloud",
