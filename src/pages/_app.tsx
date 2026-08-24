@@ -1,8 +1,10 @@
 import "@/styles/globals.css"
-import { GoogleTagManager } from "@next/third-parties/google"
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google"
 import type { AppProps } from "next/app"
 import { DefaultSeo } from "next-seo"
 import { ThemeProvider } from "next-themes"
+
+import { GA_TRACKING_ID } from "@/lib/gtag"
 
 import SEO from "../../next-seo.config"
 
@@ -14,6 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
       enableSystem
       disableTransitionOnChange>
       <GoogleTagManager gtmId="GTM-TWGHHR26" />
+      {GA_TRACKING_ID && <GoogleAnalytics gaId={GA_TRACKING_ID} />}
       <div className="flex w-full">
         <DefaultSeo {...SEO} />
         <Component {...pageProps} />
