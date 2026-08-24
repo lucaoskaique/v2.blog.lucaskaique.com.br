@@ -7,7 +7,6 @@ Primeiro, execute o servidor de desenvolvimento:
 ```bash
 npm run dev
 ```
-
 Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
 
 Você pode começar a editar a página modificando `pages/index.tsx`. A página atualiza automaticamente conforme você edita o arquivo.
